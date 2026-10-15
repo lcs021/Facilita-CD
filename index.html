@@ -353,7 +353,7 @@ async function carregar(){
   if(eu&&(eu.aprovado||eu.admin)){
     const [p,o]=await Promise.all([sb.from('perfis').select('*').order('criado',{ascending:false}),sb.from('ocorrencias').select('*').order('criado',{ascending:false}).limit(500)]);
     if(p.data){perfis={};p.data.forEach(x=>perfis[x.id]=x)}
-    if(o.data)ocs=o.data;
+    if(o.data)ocs=o.data.map(x=>x.gar_status==='Enviado ao fornecedor'?{...x,gar_status:'Enviado à garantia da loja'}:x);
     if(o.error)toast(erroMsg(o.error));
   }
   carregou=true;render();
@@ -362,8 +362,8 @@ $('sair').addEventListener('click',async()=>{await sb.auth.signOut();tela='login
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
 function go(tab){ui={...ui,tab,det:null,confDel:false};if(tab==='nova'&&!draft)draft=novo();render();scrollTo(0,0);if(tab!=='nova')carregar()}
 const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia'};
-const GST=['Pendente','Enviado ao fornecedor'];
-const gstCls=s=>({'Pendente':'p','Enviado ao fornecedor':'e','Crédito recebido':'c','Recusada':'r'})[s]||'p';
+const GST=['Pendente','Enviado à garantia da loja'];
+const gstCls=s=>({'Pendente':'p','Enviado à garantia da loja':'e','Crédito recebido':'c','Recusada':'r'})[s]||'p';
 const gstBadge=o=>o.categoria==='Garantia'?`<span class="gst ${gstCls(o.gar_status)}">${esc(o.gar_status||'Pendente')}</span>`:'';
 const catCls=c=>c==='Garantia'?'gar':'rel';
 const catBadge=c=>`<span class="cat ${catCls(c||'Relatório')}">${esc(c||'Relatório')}</span>`;
@@ -486,11 +486,11 @@ function carregarXlsx(){return window.XLSX?Promise.resolve():new Promise((res,re
 async function exportarExcel(lista){
   const b=$('exportar');if(b){b.disabled=true;b.textContent='Gerando…'}
   try{await carregarXlsx()}catch(e){toast('Não foi possível carregar o gerador de Excel. Verifique a internet.');if(b){b.disabled=false;b.textContent='⬇ Exportar Excel'}return}
-  const enviadoEm=o=>{const h=[...(o.hist||[])].reverse().find(x=>/^Enviado ao fornecedor/.test(x.txt||''));return h?fData(h.t):''};
+  const enviadoEm=o=>{const h=[...(o.hist||[])].reverse().find(x=>/^Enviado (ao fornecedor|à garantia)/.test(x.txt||''));return h?fData(h.t):''};
   const linhas=lista.map(o=>{const d=new Date(o.criado);return{
     'Data':d.toLocaleDateString('pt-BR'),'Hora':d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
     'Categoria':o.categoria||'Relatório','Tipo':o.tipo||'','Origem da quebra':o.origem||'',
-    'Situação da garantia':o.categoria==='Garantia'?(o.gar_status||'Pendente'):'','Enviado ao fornecedor em':o.categoria==='Garantia'?enviadoEm(o):'',
+    'Situação da garantia':o.categoria==='Garantia'?(o.gar_status||'Pendente'):'','Enviado à garantia em':o.categoria==='Garantia'?enviadoEm(o):'',
     'Fornecedor':o.fornecedor||'','ID da quebra':o.id_quebra||'','Código da peça':o.sku||'','Peça':o.produto||'','Fabricante':o.fab||'',
     'Quantidade':o.qtd??'','Observação':o.obs||'','Registrado por':nome(o.autor),'Fotos':(o.fotos||[]).length,'Vídeos':(o.videos||[]).length}});
   const ws=XLSX.utils.json_to_sheet(linhas);
