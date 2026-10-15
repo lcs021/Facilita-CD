@@ -14,6 +14,7 @@
   --accent:#2457d6; --accent-ink:#ffffff; --accent-soft:#e8eefc;
   --gar:#e2621b; --gar-soft:#fdeee4; --gar-ink:#9a3b07;
   --min:#15803d; --min-soft:#e3f6e9; --min-ink:#14532d;
+  --bai:#7c3aed; --bai-soft:#f1eafe; --bai-ink:#4c1d95;
   --alta:#d43d30; --baixa:#1f8a4c;
   --sh1:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.06);
   --sh2:0 4px 16px rgba(16,24,40,.08),0 1px 3px rgba(16,24,40,.06);
@@ -28,6 +29,7 @@
   --accent:#6f9bff; --accent-ink:#0b1220; --accent-soft:#1a2747;
   --gar:#ff8a45; --gar-soft:#3a2216; --gar-ink:#ffc39d;
   --min:#4ade80; --min-soft:#13301f; --min-ink:#a7f3c0;
+  --bai:#b794ff; --bai-soft:#2a1f45; --bai-ink:#ddd0ff;
   --alta:#ff6b5e; --baixa:#4cc785;
   --sh1:0 1px 2px rgba(0,0,0,.3); --sh2:0 6px 20px rgba(0,0,0,.35);
   color-scheme:dark}}
@@ -248,6 +250,35 @@ details summary{cursor:pointer;list-style-position:inside}
 .cat.gar{background:var(--gar-soft);color:var(--gar-ink)}
 .cat.rel{background:var(--accent-soft);color:var(--accent)}
 .cat.min{background:var(--min-soft);color:var(--min-ink)}
+.cat.bai{background:var(--bai-soft);color:var(--bai-ink)}
+.sitem.b[aria-current="true"]{background:var(--bai-soft);color:var(--bai)}
+.bbox{border-color:color-mix(in srgb,var(--bai) 35%,var(--line));background:linear-gradient(180deg,var(--bai-soft),var(--surface) 70%)}
+.btab{width:100%;border-collapse:separate;border-spacing:0;font-size:.9rem}
+.btab th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.btab td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.btab tr.lk{cursor:pointer}.btab tr.lk:hover td{background:var(--sunken)}
+.btab .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.btab tfoot td{font-weight:800;border-bottom:0}
+.tabwrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh1)}
+.blin{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);position:relative}
+.blin .g{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.blin .g .w2{grid-column:span 2}.blin .g .w3{grid-column:span 3}.blin .g .w6{grid-column:1/-1}
+.bval{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--bai-soft);border-radius:10px;padding:8px 12px}.bval b{color:var(--bai-ink)}
+.blin .rm{align-self:start;border:0;background:var(--sunken);color:var(--muted);width:32px;height:32px;border-radius:9px;cursor:pointer;font-size:1.1rem}
+.blin .rm:hover{color:var(--alta)}
+.blin .nl{position:absolute;top:-9px;left:12px;background:var(--bai);color:#fff;font-size:.7rem;font-weight:800;border-radius:999px;padding:1px 8px}
+.blin .tl{font-size:.8rem;color:var(--muted);margin-top:2px}
+@media (max-width:620px){.blin .g{grid-template-columns:repeat(2,minmax(0,1fr))}.blin .g .w2,.blin .g .w3{grid-column:span 2}}
+.sethead.bbox{border-color:color-mix(in srgb,var(--bai) 35%,var(--line));background:linear-gradient(180deg,var(--bai-soft),var(--surface) 70%)}
+.btab{font-size:.84rem}.btab td{padding:9px 8px}.btab th{padding:8px}.btab .nw{white-space:nowrap}.btab .ds{min-width:170px}
+.cbaiano{width:100%;table-layout:fixed;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-weight:700;color:#000;font-size:8.5pt}
+.cbaiano td,.cbaiano th{border:1px solid #000;padding:3pt 2pt;text-align:center;vertical-align:middle;height:24pt;white-space:nowrap}
+.cbaiano td.esq{white-space:normal}
+.cbaiano th{font-size:9.5pt;height:22pt;padding:1pt 2pt;white-space:normal;line-height:1.1}
+.cbaiano .tit{font-size:10.5pt;height:38pt;border-bottom:1px solid #000}
+.cbaiano .tot{height:26pt;vertical-align:bottom;padding-bottom:1pt;font-size:10.5pt}
+.cbaiano .esq{text-align:center}
+.cbaiano,.cbaiano *{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 .catpick.c3{grid-template-columns:repeat(3,1fr)}
 @media (max-width:520px){.catpick.c3 small{display:none}.catpick.c3 button{padding:12px 8px;text-align:center}}
 .catpick button.min[aria-pressed="true"]{border-color:var(--min);background:var(--min-soft);box-shadow:0 0 0 3px color-mix(in srgb,var(--min) 15%,transparent)}
@@ -683,6 +714,11 @@ language sql stable security definer set search_path = public as $$
   from public.perfis where admin and email like '%@%' order by criado limit 1
 $$;
 grant execute on function public.email_novo_usuario(text) to anon, authenticated;
+
+-- Consertos Baiano
+alter table public.ocorrencias add column if not exists requisitante text;
+alter table public.ocorrencias add column if not exists valor_conserto numeric;
+alter table public.ocorrencias add column if not exists data_ref date;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
@@ -760,7 +796,8 @@ document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()
 const icChev='<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
 const icMod={Garantia:'<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
   'Relatório':'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
-  Minucioso:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/>'};
+  Minucioso:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/>',
+  'Consertos Baiano':'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.4-.4-2.4z"/>'};
 const svgI=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const iniciais=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'?';
 const corNome=n=>{let h=0;for(const c of String(n||''))h=(h*31+c.charCodeAt(0))%360;return`hsl(${h} 62% 46%)`};
@@ -770,19 +807,19 @@ const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filte
   const pend=ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')==='Pendente').length,mesAt=mesKey(Date.now());
   const relMes=ocs.filter(o=>(o.categoria||'Relatório')==='Relatório'&&mesKey(o.criado)===mesAt).length;
   const setAt=SETORES.filter(s=>ns(s)).length;
-  const sub={Garantia:pend?`${pend} pendente${pend===1?'':'s'}`:'Nada pendente','Relatório':`${relMes} este mês`,Minucioso:`${setAt} de ${SETORES.length} setores ativos`};
-  const cor={Garantia:'var(--gar)','Relatório':'var(--accent)',Minucioso:'var(--min)'},cls={Garantia:'g','Relatório':'r',Minucioso:'m'};
+  const sub={Garantia:pend?`${pend} pendente${pend===1?'':'s'}`:'Nada pendente','Relatório':`${relMes} este mês`,Minucioso:`${setAt} de ${SETORES.length} setores ativos`,'Consertos Baiano':(()=>{const v=ocs.filter(o=>o.categoria==='Consertos Baiano'&&mesKey(o.criado)===mesAt).reduce((a,o)=>a+(totalBai(o)||0),0);return v?brl(v)+' este mês':'Nada este mês'})()};
+  const cor={Garantia:'var(--gar)','Relatório':'var(--accent)',Minucioso:'var(--min)','Consertos Baiano':'var(--bai)'},cls={Garantia:'g','Relatório':'r',Minucioso:'m','Consertos Baiano':'b'};
   const item=c=>`<button class="sitem ${cls[c]}${c==='Minucioso'&&ui.cat==='Minucioso'?' aberto':''}" data-mcat="${c}" aria-current="${ui.cat===c&&(c!=='Minucioso'||!ui.setor)}" style="--c:${cor[c]}">
     <span class="ico">${svgI(icMod[c])}</span><span class="tx"><b>${c}</b><small>${sub[c]}</small></span><span class="n">${n(c)}</span>${c==='Minucioso'?icChev:''}</button>`;
   return`<div class="sidehead"><span class="av" style="background:${corNome(eu&&eu.nome)}">${esc(iniciais(eu&&eu.nome))}</span><div class="tx"><b>${esc(eu?eu.nome:'')}</b><small>${esc(eu?cargoNome(eu.cargo):'')}</small></div></div>
-  <button class="sidenew${ui.tab==='nova'?' ativo':''}" data-snew="1">${svgI('<path d="M12 5v14M5 12h14"/>')}Novo registro${ui.cat?` <span>· ${esc(ui.cat)}</span>`:''}</button>
+  <button class="sidenew${ui.tab==='nova'?' ativo':''}" data-snew="1">${svgI('<path d="M12 5v14M5 12h14"/>')}Novo registro${ui.cat?` <span>· ${esc(ui.cat==='Consertos Baiano'?'Baiano':ui.cat)}</span>`:''}</button>
   <div class="sidesec">Navegação</div>${navItem('lista','Registros','<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/>')}${pode('resumo')?navItem('resumo','Resumo','<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'):''}${eu&&eu.admin?navItem('equipe','Equipe','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/>',pendEq):''}
   <div class="sidesec">Módulos</div>${item('Garantia')}${item('Relatório')}<div class="mwrap">${item('Minucioso')}
   <div class="subitems${ui.cat==='Minucioso'?' show':''}"><div class="subhead"><b>Setores</b><span>${SETORES.length}</span></div>
   <label class="subsearch">${svgI('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')}<input id="buscaSetor" placeholder="Buscar setor ou chefe" autocomplete="off"></label>
   <button class="ssub todos" data-mset="" aria-current="${ui.cat==='Minucioso'&&!ui.setor}" style="--i:0"><span class="sav all">${svgI('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>')}</span><span class="nm">Todos os setores<small>Visão geral</small></span><span class="n">${n('Minucioso')}</span></button>
   ${SETORES.map((s,i)=>{const ch=chefeDe(s),q=ns(s);return`<button class="ssub" data-mset="${esc(s)}" data-busca="${esc((s+' '+ch).toLowerCase())}" aria-current="${ui.cat==='Minucioso'&&ui.setor===s}" style="--i:${i+1}"><span class="sav" style="background:${ch?corNome(ch):'var(--line2)'}">${ch?esc(iniciais(ch)):'?'}</span><span class="nm">${esc(s)}<small>${ch?esc(ch):'Sem chefe definido'}</small></span><span class="n${q?' tem':''}">${q}</span></button>`}).join('')}
-  <div class="subvazio" hidden>Nenhum setor encontrado</div></div></div>`}
+  <div class="subvazio" hidden>Nenhum setor encontrado</div></div></div>${item('Consertos Baiano')}`}
 function abreMenu(on){const s=$('side'),b=$('sideBack');s.classList.toggle('open',on);b.hidden=!on||matchMedia('(hover:hover) and (min-width:960px)').matches;$('menuBtn').setAttribute('aria-expanded',String(on))}
 function renderSide(){const s=$('side');s.innerHTML=sideHTML();
   s.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{abreMenu(false);go(b.dataset.goto)});
@@ -803,21 +840,24 @@ const hoverFecha=()=>{if(!mqHover.matches)return;clearTimeout(tFecha);tFecha=set
 ['menuBtn','side','hoverzone'].forEach(id=>{$(id).addEventListener('mouseenter',hoverAbre);$(id).addEventListener('mouseleave',hoverFecha)});
 $('sideBack').addEventListener('click',()=>abreMenu(false));
 function go(tab){ui={...ui,tab,det:null,confDel:false};if(tab==='nova'&&!draft)draft=novo();render();scrollTo(0,0);if(tab!=='nova')carregar()}
-const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia','Minucioso':'Relatório de falta de produtos por setor, para o chefe assinar'};
+const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia','Minucioso':'Relatório de falta de produtos por setor, para o chefe assinar','Consertos Baiano':'Peças sem garantia enviadas para conserto'};
 const SETORES=['Expedição','Shopee','Mercado Livre','Cofre','1º andar','2º andar','3º andar','Carga e descarga','Recebimento','Parachoque'];
 let chefes={};
 const chefeDe=s=>chefes[s]||'';
 const difDe=o=>(o.qtd_sistema==null||o.qtd_contada==null)?null:o.qtd_contada-o.qtd_sistema;
 const brl=v=>v==null||v===''||isNaN(v)?'—':Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const totalBai=o=>(o.valor_conserto!=null)?Number(o.valor_conserto)*(Number(o.qtd)||1):null;
+const dataBai=o=>o.data_ref?String(o.data_ref).slice(0,10).split('-').reverse().join('/'):new Date(o.criado).toLocaleDateString('pt-BR');
 const totalMin=o=>(o.custo!=null&&o.falta!=null)?Number(o.custo)*Number(o.falta):null;
 const difHTML=v=>v==null?'—':`<span class="dif ${v>0?'pos':v<0?'neg':'zero'}">${v>0?'+':''}${v}</span>`;
 const GST=['Pendente','Enviado à garantia da loja'];
 const gstCls=s=>({'Pendente':'p','Enviado à garantia da loja':'e','Crédito recebido':'c','Recusada':'r'})[s]||'p';
 const gstBadge=o=>o.categoria==='Garantia'?`<span class="gst ${gstCls(o.gar_status)}">${esc(o.gar_status||'Pendente')}</span>`:'';
 const cargoNome=c=>c;
-const catCls=c=>c==='Garantia'?'gar':c==='Minucioso'?'min':'rel';
+const catCls=c=>c==='Garantia'?'gar':c==='Minucioso'?'min':c==='Consertos Baiano'?'bai':'rel';
 const catBadge=c=>`<span class="cat ${catCls(c||'Relatório')}">${esc(c||'Relatório')}</span>`;
-function novo(){return{cat:ui.cat||'Garantia',setor:ui.cat==='Minucioso'?ui.setor:'',qs:'',qc:'',chefe:ui.cat==='Minucioso'?chefeDe(ui.setor):'',custo:'',falta:'',motivo_inventario:'',motivo_chefe:'',motivo_allan:'',origem:'',forn:'',idq:'',tipo:'',end:'',andar:'',letra:'',sku:'',produto:'',fab:'',qtd:'',obs:'',fotos:[],videos:[]}}
+const linhaBai=()=>({sku:'',produto:'',qtd:'1',custo:''});
+function novo(){return{cat:ui.cat||'Garantia',setor:ui.cat==='Minucioso'?ui.setor:'',qs:'',qc:'',chefe:ui.cat==='Minucioso'?chefeDe(ui.setor):'',custo:'',falta:'',motivo_inventario:'',motivo_chefe:'',motivo_allan:'',bai:[linhaBai()],req:'',dref:'',origem:'',forn:'',idq:'',tipo:'',end:'',andar:'',letra:'',sku:'',produto:'',fab:'',qtd:'',obs:'',fotos:[],videos:[]}}
 
 function render(){
   const v=$('view'),fora=()=>{$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';$('side').hidden=true;abreMenu(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
@@ -835,9 +875,9 @@ function render(){
   $('nav').style.gridTemplateColumns=`repeat(${document.querySelectorAll('nav button:not([hidden])').length},1fr)`;
   if((ui.tab==='resumo'&&!pode('resumo'))||(ui.tab==='equipe'&&!eu.admin))ui.tab='lista';
   document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',String(b.dataset.tab===ui.tab&&!ui.det)));
-  if(ui.det){const od=ocs.find(x=>x.id===ui.det);if(od&&od.categoria==='Minucioso'&&!(od.qtd_contada!=null&&od.falta==null)){v.innerHTML=minDetHTML(od);bindMinDet(od)}else{v.innerHTML=detHTML();bindDet()}}
+  if(ui.det){const od=ocs.find(x=>x.id===ui.det);if(od&&od.categoria==='Consertos Baiano'){v.innerHTML=baiDetHTML(od);bindBaiDet(od)}else if(od&&od.categoria==='Minucioso'&&!(od.qtd_contada!=null&&od.falta==null)){v.innerHTML=minDetHTML(od);bindMinDet(od)}else{v.innerHTML=detHTML();bindDet()}}
   else if(ui.tab==='lista'){v.innerHTML=listaHTML();bindLista()}
-  else if(ui.tab==='nova'){if(draft.cat==='Minucioso'){v.innerHTML=minFormHTML();bindMinForm()}else{v.innerHTML=formHTML();bindForm()}}
+  else if(ui.tab==='nova'){if(draft.cat==='Consertos Baiano'){v.innerHTML=baiFormHTML();bindBaiForm()}else if(draft.cat==='Minucioso'){v.innerHTML=minFormHTML();bindMinForm()}else{v.innerHTML=formHTML();bindForm()}}
   else if(ui.tab==='resumo'){v.innerHTML=resumoHTML();bindCards();bindResumo()}
   else{v.innerHTML=equipeHTML();bindEquipe()}
   pedirUrls();
@@ -933,7 +973,7 @@ function filtrar(){const q=ui.busca.trim().toLowerCase();
     if(ui.cat==='Minucioso'&&ui.setor&&o.setor!==ui.setor)return false;
     if(ui.pessoa&&o.autor!==ui.pessoa&&!(o.hist||[]).some(h=>h.por===ui.pessoa))return false;
     const d=dia(o.criado);if(ui.de&&d<ui.de)return false;if(ui.ate&&d>ui.ate)return false;
-    if(q&&![o.sku,o.produto,o.fab,o.setor,o.chefe,o.origem,o.fornecedor,o.id_quebra,o.endereco,nome(o.autor),o.obs].join(' ').toLowerCase().includes(q))return false;return true})
+    if(q&&![o.sku,o.produto,o.fab,o.setor,o.chefe,o.origem,o.fornecedor,o.id_quebra,o.endereco,o.requisitante,nome(o.autor),o.obs].join(' ').toLowerCase().includes(q))return false;return true})
   .sort((a,b)=>ts(b.criado)-ts(a.criado))}
 function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<button class="card" data-id="${esc(o.id)}">
   <div class="thumb">${f?`<img data-path="${esc(f)}" alt="">`:nv?'▶ vídeo':'sem foto'}${f&&nv?'<span class="vb">▶</span>':''}</div>
@@ -941,7 +981,7 @@ function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<b
   ${o.endereco||o.sku?`<div class="line">${o.endereco?`<span class="addr">${esc(o.endereco)}</span> `:''}${esc(o.sku||'')}</div>`:''}
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
   <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
-function listaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p.nome).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+function listaHTML(){if(ui.cat==='Consertos Baiano')return baiListaHTML();const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p.nome).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
   const ativos=[ui.pessoa,ui.de,ui.ate,ui.tipo,ui.busca].filter(Boolean).length;
   const rapido=(k,t,de,ate)=>`<button type="button" class="chip" data-per="${k}" aria-pressed="${ui.de===de&&ui.ate===ate}">${t}</button>`;
   return`<div class="stack">
@@ -964,7 +1004,8 @@ function setoresGridHTML(){
   return`<div class="box sethead"><div class="row"><div><b>${ui.setor?esc(ui.setor):'Todos os setores'}</b><div class="muted small">${ui.setor?(chefeDe(ui.setor)?'Chefe: <b style="color:var(--fg)">'+esc(chefeDe(ui.setor))+'</b>':'Sem chefe definido · defina na aba Equipe'):'Escolha um setor no menu para ver só os relatórios dele'}</div></div><span class="cat min">Minucioso</span></div>
   <div class="setnums"><div><b>${l.length}</b><span>relatório${l.length===1?'':'s'}</span></div><div><b class="dif neg">${pf}</b><span>peças em falta</span></div><div><b style="font-size:1rem">${brl(vt)}</b><span>valor em falta</span></div><div><b class="dif pos">${semMot}</b><span>sem motivo do chefe</span></div></div></div>`}
 function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{ui.det=c.dataset.id;render();scrollTo(0,0)}))}
-function bindLista(){const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
+function bindLista(){const pb=$('imprBai');if(pb)pb.onclick=()=>{const l=filtrar();if(l.length)imprimirBai(l.reverse())};document.querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>{ui.det=r.dataset.id;render();scrollTo(0,0)});
+  const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
   $('ftipo').addEventListener('change',e=>{ui.tipo=e.target.value;render()});
   $('fpessoa').addEventListener('change',e=>{ui.pessoa=e.target.value;render()});
   const aplicaAno=()=>{if(!ui.fano){ui.de='';ui.ate='';ui.fmes=''}else if(!ui.fmes){ui.de=ui.fano+'-01-01';ui.ate=ui.fano+'-12-31'}else{const ult=new Date(+ui.fano,+ui.fmes,0).getDate();ui.de=ui.fano+'-'+ui.fmes+'-01';ui.ate=ui.fano+'-'+ui.fmes+'-'+String(ult).padStart(2,'0')}render()};
@@ -991,14 +1032,14 @@ async function exportarExcel(lista){
     'Data':d.toLocaleDateString('pt-BR'),'Hora':d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
     'Categoria':o.categoria||'Relatório','Tipo':o.tipo||'','Origem da quebra':o.origem||'',
     'Situação da garantia':o.categoria==='Garantia'?(o.gar_status||'Pendente'):'','Enviado à garantia em':o.categoria==='Garantia'?enviadoEm(o):'',
-    'Setor':o.setor||'','Chefe do setor':o.chefe||'','Custo':o.custo??'','Falta':o.falta??'','Total':totalMin(o)??'','Motivo chefe setor':o.motivo_chefe||'','Motivo inventário':o.motivo_inventario||'','Motivo Allan':o.motivo_allan||'',
+    'Setor':o.setor||'','Chefe do setor':o.chefe||'','Custo':o.custo??'','Falta':o.falta??'','Total':totalMin(o)??'','Motivo chefe setor':o.motivo_chefe||'','Motivo inventário':o.motivo_inventario||'','Motivo Allan':o.motivo_allan||'',...(o.categoria==='Consertos Baiano'?{'Preço de custo':o.custo??'','Requisitante':o.requisitante||'','Valor conserto':o.valor_conserto??'','Total conserto':totalBai(o)??'','Data conserto':dataBai(o)}:{}),
     'Fornecedor':o.fornecedor||'','ID da quebra':o.id_quebra||'','Código da peça':o.sku||'','Peça':o.produto||'','Fabricante':o.fab||'',
     'Quantidade':o.qtd??'','Observação':o.obs||'','Registrado por':nome(o.autor),'Fotos':(o.fotos||[]).length,'Vídeos':(o.videos||[]).length}});
   const ws=XLSX.utils.json_to_sheet(linhas);
   const cols=Object.keys(linhas[0]||{Data:''});ws['!cols']=cols.map(c=>({wch:Math.min(45,Math.max(c.length+2,...linhas.map(r=>String(r[c]??'').length+2)))}));
   if(linhas.length)ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:linhas.length,c:cols.length-1}})};
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,ui.cat==='Garantia'?'Garantias':ui.cat==='Minucioso'?'Minucioso':'Relatórios');
-  const partes=['inventario',ui.cat==='Garantia'?'garantias':ui.cat==='Minucioso'?'minucioso':'relatorios'];if(ui.cat==='Minucioso'&&ui.setor)partes.push(ui.setor.toLowerCase().replace(/[^a-z0-9]+/gi,'-'));if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,ui.cat==='Garantia'?'Garantias':ui.cat==='Minucioso'?'Minucioso':ui.cat==='Consertos Baiano'?'Consertos Baiano':'Relatórios');
+  const partes=['inventario',ui.cat==='Garantia'?'garantias':ui.cat==='Minucioso'?'minucioso':ui.cat==='Consertos Baiano'?'consertos-baiano':'relatorios'];if(ui.cat==='Minucioso'&&ui.setor)partes.push(ui.setor.toLowerCase().replace(/[^a-z0-9]+/gi,'-'));if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
   if(ui.pessoa)partes.push(nome(ui.pessoa).split(' ')[0].toLowerCase());partes.push(ui.de||ui.ate?(ui.de||'inicio')+'_a_'+(ui.ate||hoje()):hoje());
   XLSX.writeFile(wb,partes.join('-').normalize('NFD').replace(/[\u0300-\u036f]/g,'')+'.xlsx');
   toast(lista.length+(lista.length===1?' linha exportada':' linhas exportadas'));if(b){b.disabled=false;b.textContent='⬇ Exportar Excel'}}
@@ -1067,6 +1108,92 @@ function comprimir(file){return new Promise((res,rej)=>{const r=new FileReader()
   const s=Math.min(1,1280/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
   const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,c.height-28,c.width,28);x.fillStyle='#fff';x.font='16px monospace';x.fillText(fData(Date.now()),10,c.height-9);
   const prev=c.toDataURL('image/jpeg',0.7);c.toBlob(b=>b?res({blob:b,prev}):rej(new Error('imagem')),'image/jpeg',0.7)};img.src=r.result};r.readAsDataURL(file)})}
+
+
+/* ---------- Consertos Baiano ---------- */
+const txtBai=l=>{const v=valorBai(numBR(l.custo));return v==null?'Informe o custo':v===0?'R$ 0,00 · cortado da soma':brl(v)+' · Total '+brl(v*(numBR(l.qtd)||1))};
+const valorBai=c=>c==null||isNaN(c)?null:c<15?0:c<30?3:c<=70?5:10;
+const REGRA_BAI='Abaixo de R$ 15: cortado da soma (R$ 0) · R$ 15 a 30: R$ 3 · R$ 30 a 70: R$ 5 · Acima de R$ 70: R$ 10';
+const reqPadrao=()=>((eu&&eu.nome?eu.nome.split(' ')[0]:'')+' - Inventario').replace(/^ - /,'');
+function baiFormHTML(){const d=draft;if(!d.bai||!d.bai.length)d.bai=[linhaBai()];if(!d.req)d.req=reqPadrao();if(!d.dref)d.dref=hoje();
+  const vl=l=>valorBai(numBR(l.custo)),tot=d.bai.reduce((a,l)=>a+((vl(l)||0)*(numBR(l.qtd)||1)),0);
+  return`<form class="stack" id="fbai" novalidate>
+  <h2>Novo registro</h2>
+  <div class="fhead">${catBadge(d.cat)}<span class="muted">${esc(CATS[d.cat]||'')}</span><button type="button" class="btn link" data-abremenu="1" style="margin-left:auto">Trocar no menu</button></div>
+  <div class="box stack bbox"><div><b>Consertos Baiano</b><div class="muted small">Preencha as peças e imprima a folha no formato da planilha. O valor do conserto é calculado pelo preço de custo.</div><div class="small" style="margin-top:6px;color:var(--bai-ink)"><b>${REGRA_BAI}</b></div></div>
+  <div class="two"><div class="field"><label class="lbl" for="breq">Requisitante</label><input id="breq" value="${esc(d.req)}" placeholder="Ex.: Lucas - Inventario"></div>
+  <div class="field"><label class="lbl" for="bdata">Data</label><input id="bdata" type="date" value="${esc(d.dref)}"></div></div></div>
+  ${d.bai.map((l,i)=>`<div class="blin"><span class="nl">Peça ${i+1}</span><div class="g">
+    <div class="field"><label class="lbl" for="bs${i}">Código *</label><input id="bs${i}" data-bi="${i}" data-bk="sku" class="mono" value="${esc(l.sku)}"></div>
+    <div class="field w3"><label class="lbl" for="bp${i}">Descrição do produto</label><input id="bp${i}" data-bi="${i}" data-bk="produto" autocapitalize="characters" value="${esc(l.produto)}" placeholder="Ex.: FAROL CORSA 08/12 LD"></div>
+    <div class="field"><label class="lbl" for="bq${i}">Qtde</label><input id="bq${i}" data-bi="${i}" data-bk="qtd" type="number" min="1" inputmode="numeric" value="${esc(l.qtd)}"></div>
+    <div class="field"><label class="lbl" for="bc${i}">Custo *</label><input id="bc${i}" data-bi="${i}" data-bk="custo" inputmode="decimal" placeholder="0,00" value="${esc(l.custo)}"></div>
+    <div class="bval w6"><span class="lbl">Valor do conserto</span><b id="bt${i}">${txtBai(l)}</b></div>
+  </div>${d.bai.length>1?`<button type="button" class="rm" data-brm="${i}" aria-label="Remover peça ${i+1}">×</button>`:'<span></span>'}</div>`).join('')}
+  <button type="button" class="btn" id="baddl" style="border-style:dashed">+ Adicionar outra peça</button>
+  <div class="box row"><span class="lbl" style="margin:0">Total dos consertos</span><b class="mono" id="btot" style="font-size:1.25rem">${brl(tot)}</b></div>
+  <div class="err" id="ferr" hidden></div>
+  <button class="btn primary" type="submit" data-imp="1">🖨 Salvar e imprimir</button>
+  <button class="btn" type="submit" data-imp="0">Só salvar</button>
+  <button class="btn" type="button" id="limpar">Limpar</button></form>`}
+function lerBai(){draft.req=$('breq').value.trim();draft.dref=$('bdata').value;
+  document.querySelectorAll('[data-bi]').forEach(i=>{draft.bai[+i.dataset.bi][i.dataset.bk]=i.value.trim()});
+  let tot=0;draft.bai.forEach((l,i)=>{tot+=(valorBai(numBR(l.custo))||0)*(numBR(l.qtd)||1);const e=$('bt'+i);if(e)e.textContent=txtBai(l)});$('btot').textContent=brl(tot)}
+function bindBaiForm(){const fm=$('fbai');document.querySelectorAll('[data-abremenu]').forEach(b=>b.onclick=()=>{lerBai();abreMenu(true)});fm.addEventListener('input',lerBai);
+  $('baddl').onclick=()=>{lerBai();draft.bai.push(linhaBai());render();const n=$('bs'+(draft.bai.length-1));if(n)n.focus()};
+  document.querySelectorAll('[data-brm]').forEach(b=>b.onclick=()=>{lerBai();draft.bai.splice(+b.dataset.brm,1);render()});
+  $('limpar').onclick=()=>{draft=novo();draft.cat='Consertos Baiano';render()};
+  let imp=true;fm.querySelectorAll('[data-imp]').forEach(b=>b.addEventListener('click',()=>{imp=b.dataset.imp==='1'}));
+  fm.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;lerBai();const er=$('ferr');
+    const ls=draft.bai.filter(l=>l.sku||l.produto||l.custo);let m=!ls.length?'Preencha pelo menos uma peça.':'';
+    ls.forEach((l,i)=>{if(m)return;const k=draft.bai.indexOf(l)+1;
+      if(!l.sku)m=`Peça ${k}: informe o código.`;else if(numBR(l.custo)==null)m=`Peça ${k}: informe o preço de custo (ex.: 44,00).`;else if(l.qtd&&!(numBR(l.qtd)>0))m=`Peça ${k}: a quantidade precisa ser maior que zero.`});
+    if(m){er.textContent=m;er.hidden=false;return}
+    const agora=new Date().toISOString();
+    const regs=ls.map(l=>({categoria:'Consertos Baiano',tipo:'Conserto',endereco:'',sku:l.sku,produto:l.produto||null,qtd:numBR(l.qtd)||1,custo:numBR(l.custo),valor_conserto:valorBai(numBR(l.custo)),
+      requisitante:draft.req||null,data_ref:draft.dref||hoje(),fotos:[],videos:[],autor:uid,status:'registrada',hist:[{t:agora,por:uid,txt:'Registrado'}]}));
+    saving=true;const bt=fm.querySelectorAll('[type=submit]');bt.forEach(b=>b.disabled=true);
+    const {data,error}=await sb.from('ocorrencias').insert(regs).select();saving=false;bt.forEach(b=>b.disabled=false);
+    if(error){er.textContent=/valor_conserto|requisitante|data_ref|schema cache/i.test(error.message||'')?'O banco precisa de uma atualização (Consertos Baiano). Rode o SQL novo no Supabase.':erroMsg(error);er.hidden=false;return}
+    const novos=(data&&data.length?data:regs.map((r,i)=>({...r,id:'tmp'+Date.now()+i,criado:agora})));novos.forEach(r=>ocs.unshift(r));
+    draft=null;toast(novos.length===1?'Conserto salvo':novos.length+' consertos salvos');ui={...ui,tab:'lista',cat:'Consertos Baiano',det:null};render();scrollTo(0,0);
+    if(imp)setTimeout(()=>imprimirBai(novos),300)})}
+function baiListaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p.nome).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+  const ativos=[ui.pessoa,ui.de,ui.ate,ui.busca].filter(Boolean).length,tot=l.reduce((a,o)=>a+(totalBai(o)||0),0),pecas=l.reduce((a,o)=>a+(Number(o.qtd)||1),0);
+  const rapido=(k,t,de,ate)=>`<button type="button" class="chip" data-per="${k}" aria-pressed="${ui.de===de&&ui.ate===ate}">${t}</button>`;
+  return`<div class="stack">
+  <div class="listhead"><h2>Consertos Baiano</h2>${catBadge('Consertos Baiano')}</div>
+  <div class="box sethead bbox"><div class="setnums"><div><b>${l.length}</b><span>registro${l.length===1?'':'s'}</span></div><div><b>${pecas}</b><span>peça${pecas===1?'':'s'}</span></div><div><b style="font-size:1rem;color:var(--bai)">${brl(tot)}</b><span>total dos consertos</span></div></div></div>
+  <div class="filters"><input id="busca" type="search" placeholder="Buscar código, descrição, requisitante" value="${esc(ui.busca)}"><select id="ftipo" hidden></select></div>
+  <div class="filters"><select id="fpessoa" aria-label="Pessoa"><option value="">Todas as pessoas</option>${pessoas.map(p=>`<option value="${esc(p.id)}" ${p.id===ui.pessoa?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
+  <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
+  <div class="datas"><label class="dt"><span>Ano</span><select id="fano"><option value="">Todos os anos</option>${ANOS.map(a=>`<option ${String(a)===ui.fano?'selected':''}>${a}</option>`).join('')}</select></label><label class="dt"><span>Mês</span><select id="fmesl" ${ui.fano?'':'disabled'}><option value="">Ano inteiro</option>${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.fmes?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></label></div>
+  <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
+  <div class="exprow"><div class="muted small">${l.length} conserto${l.length===1?'':'s'} na lista</div><button type="button" class="btn sm" id="imprBai" ${l.length?'':'disabled'}>🖨 Imprimir lista (${l.length})</button><button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button></div>
+  ${l.length?`<div class="tabwrap"><table class="btab"><thead><tr><th>Código</th><th>Descrição</th><th class="num">Qtde</th><th class="num">Custo</th><th>Requisitante</th><th class="num">Valor</th><th class="num">Total</th><th>Data</th></tr></thead>
+  <tbody>${l.map(o=>`<tr class="lk" data-id="${esc(o.id)}"><td class="mono">${esc(o.sku||'')}</td><td class="ds">${esc(o.produto||'')}</td><td class="num">${esc(o.qtd??1)}</td><td class="num">${brl(o.custo)}</td><td>${esc(o.requisitante||'')}</td><td class="num">${brl(o.valor_conserto)}</td><td class="num"><b>${brl(totalBai(o))}</b></td><td class="nw">${dataBai(o)}</td></tr>`).join('')}</tbody>
+  <tfoot><tr><td colspan="6">Total</td><td class="num" style="color:var(--bai)">${brl(tot)}</td><td></td></tr></tfoot></table></div>`:`<div class="empty">${ocs.some(o=>o.categoria==='Consertos Baiano')?'Nenhum conserto com esses filtros.':'Nenhum conserto registrado ainda.<br>Clique em <b>Novo registro</b> no menu para lançar o primeiro.'}</div>`}</div>`}
+function folhaBai(lista){const tot=lista.reduce((a,o)=>a+(totalBai(o)||0),0);
+  return`<div class="folha"><table class="cbaiano"><colgroup><col style="width:7%"><col style="width:32%"><col style="width:5%"><col style="width:10.5%"><col style="width:15.5%"><col style="width:9%"><col style="width:9.5%"><col style="width:11.5%"></colgroup>
+  <tr><td colspan="8" class="tit">CONSERTOS BAIANO</td></tr>
+  <tr><th>Código</th><th>Descrição do Produto</th><th>Qtde</th><th>Preço de Custo</th><th>Requisitante</th><th>Valor</th><th>Total</th><th>Data</th></tr>
+  ${lista.map(o=>`<tr><td>${esc(o.sku||'')}</td><td class="esq">${esc(o.produto||'')}</td><td>${esc(o.qtd??1)}</td><td>${o.custo!=null?brl(o.custo):''}</td><td>${esc(o.requisitante||'')}</td><td>${o.valor_conserto!=null?brl(o.valor_conserto):''}</td><td>${totalBai(o)!=null?brl(totalBai(o)):''}</td><td>${dataBai(o)}</td></tr>`).join('')}
+  <tr><td colspan="8" class="tot">${brl(tot)}</td></tr></table></div>`}
+function imprimirBai(lista){const l=[...lista].sort((a,b)=>String(a.data_ref||dia(a.criado)).slice(0,10).localeCompare(String(b.data_ref||dia(b.criado)).slice(0,10)));
+  let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+  a.innerHTML=folhaBai(l);document.body.classList.add('imprimindo');
+  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);
+  setTimeout(()=>{try{print()}catch(e){toast('Não foi possível abrir a impressão neste navegador.')}},80)}
+function baiDetHTML(o){return`<div class="stack"><button class="btn sm" id="voltar" style="align-self:flex-start">← Voltar</button>
+  <div>${catBadge('Consertos Baiano')}<h2 style="margin-top:6px">${esc(o.sku||'')} · ${esc(o.produto||'Sem descrição')}</h2><div class="muted small">Registrado por <b>${esc(nome(o.autor))}</b> em ${fData(o.criado)}</div></div>
+  <button class="btn primary" id="imprimir">🖨 Imprimir / Salvar PDF</button>
+  <div class="prevwrap"><div class="prev" style="width:760px">${folhaBai([o])}</div></div>
+  ${pode('apagar')?(ui.confDel?`<div class="box stack"><b>Apagar este conserto?</b><div class="actions"><button class="btn danger" id="delSim">Apagar</button><button class="btn" id="delNao">Cancelar</button></div></div>`:'<button class="btn sm danger" id="del" style="align-self:flex-start">Apagar conserto</button>'):''}</div>`}
+function bindBaiDet(o){$('voltar').onclick=()=>{ui.det=null;render()};$('imprimir').onclick=()=>imprimirBai([o]);
+  const d=$('del');if(d)d.onclick=()=>{ui.confDel=true;render()};
+  const n=$('delNao');if(n)n.onclick=()=>{ui.confDel=false;render()};
+  const s=$('delSim');if(s)s.onclick=async()=>{s.disabled=true;const {error}=await sb.from('ocorrencias').delete().eq('id',o.id);if(error){s.disabled=false;toast(erroMsg(error));return}
+    ocs=ocs.filter(x=>x.id!==o.id);ui.det=null;ui.confDel=false;toast('Conserto apagado');render()}}
 
 /* ---------- Minucioso (ficha para impressão) ---------- */
 function minFormHTML(){const d=draft;const tot=(d.custo!==''&&d.falta!=='')?brl(Number(String(d.custo).replace(',','.'))*Number(d.falta)):'—';
@@ -1179,7 +1306,7 @@ const mesLongo=k=>{const [y,m]=k.split('-');return MESES_L[+m-1]+' de '+y};
 function ultimosMeses(n){const d=new Date(),r=[];for(let i=n-1;i>=0;i--)r.push(mesKey(new Date(d.getFullYear(),d.getMonth()-i,1)));return r}
 function mensalHTML(){
   const atual=mesKey(Date.now());if(!ui.mes)ui.mes=atual;
-  const conta=k=>{const r={g:0,r:0,m:0,gp:0};ocs.forEach(o=>{if(mesKey(o.criado)!==k)return;if(o.categoria==='Garantia'){r.g++;if((o.gar_status||'Pendente')==='Pendente')r.gp++}else if(o.categoria==='Minucioso')r.m++;else r.r++});return r};
+  const conta=k=>{const r={g:0,r:0,m:0,gp:0};ocs.forEach(o=>{if(mesKey(o.criado)!==k)return;if(o.categoria==='Garantia'){r.g++;if((o.gar_status||'Pendente')==='Pendente')r.gp++}else if(o.categoria==='Minucioso')r.m++;else if(o.categoria!=='Consertos Baiano')r.r++});return r};
   const ano=ui.mes.slice(0,4),meses=Array.from({length:12},(_,i)=>ano+'-'+String(i+1).padStart(2,'0')),dados=meses.map(k=>({k,...conta(k)}));
   const totAno=dados.reduce((a,d)=>({g:a.g+d.g,r:a.r+d.r,m:a.m+d.m}),{g:0,r:0,m:0});
   const sel=conta(ui.mes);
@@ -1215,7 +1342,7 @@ function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{c
     return`<span class="lbl">Minucioso: relatórios por setor</span><div class="box stack" style="gap:8px">${bars(Object.entries(c).sort((a,b)=>b[1]-a[1]))}</div>
     <span class="lbl">Minucioso: valor em falta por setor</span><div class="box stack" style="gap:8px">${Object.entries(dd).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<div class="bar" style="grid-template-columns:minmax(0,10rem) 1fr auto"><span class="n">${esc(n)}</span><div class="tr"><div class="f" style="width:${v/Math.max(...Object.values(dd))*100}%"></div></div><span class="v">${brl(v)}</span></div>`).join('')||'<span class="muted small">Sem valores</span>'}</div>`})()}
   <span class="lbl">Por categoria</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.categoria||'Relatório'))}</div>
-  <span class="lbl">Por tipo</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.categoria==='Minucioso'?null:o.tipo).filter(x=>x[0]!=='null'))}</div>
+  <span class="lbl">Por tipo</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.categoria==='Minucioso'||o.categoria==='Consertos Baiano'?null:o.tipo).filter(x=>x[0]!=='null'))}</div>
   <span class="lbl">Por pessoa</span><div class="box stack" style="gap:8px">${bars(cont(o=>nome(o.autor)))}</div></div>`}
 
 /* ---------- Equipe ---------- */
