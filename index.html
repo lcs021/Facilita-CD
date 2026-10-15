@@ -344,6 +344,57 @@ code{font-family:var(--mono);font-size:.86em;background:var(--sunken);padding:1p
   .mwrap:hover .subitems,.mwrap:focus-within .subitems{display:flex}
   .mwrap:hover>.sitem .chev{transform:rotate(90deg)}
 }
+/* Menu moderno */
+.side{padding-top:12px}
+.sidehead{display:flex;align-items:center;gap:11px;padding:8px 8px 14px;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.sidehead .av{width:40px;height:40px;border-radius:12px;color:#fff;display:grid;place-items:center;font-weight:800;font-size:.9rem;flex:none;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.sidehead .tx{display:flex;flex-direction:column;min-width:0}
+.sidehead b{font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidehead small{font-size:.75rem;color:var(--muted);font-weight:600}
+.sidenew{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;margin:6px 0 10px;padding:11px 12px;border:0;border-radius:12px;background:linear-gradient(135deg,#ff8a45,#e2621b);color:#fff;font:800 .9rem var(--font);cursor:pointer;box-shadow:0 6px 16px rgba(226,98,27,.32);transition:transform .12s,box-shadow .15s}
+.sidenew svg{width:18px;height:18px}
+.sidenew span{font-weight:600;opacity:.9}
+.sidenew:hover{transform:translateY(-1px);box-shadow:0 9px 20px rgba(226,98,27,.38)}
+.sidenew:active{transform:translateY(0)}
+.sitem{position:relative;gap:11px;padding:9px 10px;margin:2px 0;transition:background .15s,transform .12s}
+.sitem:hover{background:var(--sunken);transform:translateX(2px)}
+.sitem .ico{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c);transition:background .15s,color .15s,transform .15s}
+.sitem .ico svg{width:19px;height:19px}
+.sitem:hover .ico{transform:scale(1.06)}
+.sitem .tx{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+.sitem .tx b{font-size:.95rem}
+.sitem .tx small{font-size:.72rem;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sitem[aria-current="true"]{background:color-mix(in srgb,var(--c) 11%,var(--surface))!important;color:var(--fg)!important}
+.sitem[aria-current="true"] .ico{background:var(--c);color:#fff;box-shadow:0 4px 12px color-mix(in srgb,var(--c) 40%,transparent)}
+.sitem[aria-current="true"] .tx b{color:var(--c)}
+.sitem::before{content:"";position:absolute;left:-12px;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--c);transform:scaleY(0);transition:transform .2s}
+.sitem[aria-current="true"]::before,.sitem.m.aberto::before{transform:scaleY(1)}
+.sitem .n{background:var(--sunken);font-size:.72rem}
+.sitem[aria-current="true"] .n{background:var(--c);color:#fff}
+.subitems{gap:2px}
+.subhead{display:flex;justify-content:space-between;align-items:center;padding:6px 8px 2px;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.subhead span{font-family:var(--mono)}
+.subsearch{display:flex;align-items:center;gap:7px;margin:4px 2px 6px;padding:0 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg)}
+.subsearch svg{width:15px;height:15px;color:var(--muted);flex:none}
+.subsearch input{border:0;background:none;padding:8px 0;font-size:.85rem;box-shadow:none!important}
+.subsearch:focus-within{border-color:var(--min)}
+.ssub{gap:10px;padding:7px 8px;transition:background .12s,transform .12s;animation:entra .22s ease-out both;animation-delay:calc(var(--i,0)*18ms)}
+.ssub:hover{background:var(--sunken);transform:translateX(3px)}
+.ssub .sav{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:.68rem;font-weight:800;flex:none}
+.ssub .sav.all{border-radius:9px;background:var(--min-soft);color:var(--min)}
+.ssub .sav.all svg{width:15px;height:15px}
+.ssub .nm{line-height:1.25;font-weight:700}
+.ssub .n{min-width:24px;text-align:center;border-radius:999px;padding:1px 6px;background:var(--sunken)}
+.ssub .n.tem{background:var(--min-soft);color:var(--min)}
+.ssub[aria-current="true"]{background:var(--min-soft);color:var(--min);box-shadow:inset 3px 0 0 var(--min)}
+.ssub[aria-current="true"] .n{background:var(--min);color:#fff}
+.subvazio{font-size:.82rem;color:var(--muted);padding:10px;text-align:center}
+@keyframes entra{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+@media (hover:hover) and (min-width:960px){
+  .side{width:280px;transition:transform .22s cubic-bezier(.2,.8,.2,1),opacity .22s;opacity:0}
+  .side.open{opacity:1}
+  .mwrap .subitems{width:290px;max-height:calc(100vh - 140px);overflow-y:auto;padding:10px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -591,12 +642,33 @@ async function carregar(){
 $('sair').addEventListener('click',async()=>{await sb.auth.signOut();tela='login';msgLogin='';draft=null;ui={...ui,tab:'lista',det:null}});
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
 const icChev='<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+const icMod={Garantia:'<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+  'Relatório':'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
+  Minucioso:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/>'};
+const svgI=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const iniciais=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'?';
+const corNome=n=>{let h=0;for(const c of String(n||''))h=(h*31+c.charCodeAt(0))%360;return`hsl(${h} 62% 46%)`};
 function sideHTML(){const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filter(o=>o.categoria==='Minucioso'&&o.setor===s).length;
-  const item=(c,cls,cor)=>`<button class="sitem ${cls}${c==='Minucioso'&&ui.cat==='Minucioso'?' aberto':''}" data-mcat="${c}" aria-current="${ui.cat===c&&(c!=='Minucioso'||!ui.setor)}"><span class="dotc" style="background:${cor}"></span>${c}<span class="n">${n(c)}</span>${c==='Minucioso'?icChev:''}</button>`;
-  return`<div class="sidesec">Menu</div>${item('Garantia','g','var(--gar)')}${item('Relatório','r','var(--accent)')}<div class="mwrap">${item('Minucioso','m','var(--min)')}
-  <div class="subitems${ui.cat==='Minucioso'?' show':''}">${SETORES.map(s=>`<button class="ssub" data-mset="${esc(s)}" aria-current="${ui.cat==='Minucioso'&&ui.setor===s}"><span class="nm">${esc(s)}<small>${chefeDe(s)?'Chefe: '+esc(chefeDe(s)):'Sem chefe'}</small></span><span class="n">${ns(s)}</span></button>`).join('')}</div></div>`}
+  const pend=ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')==='Pendente').length,mesAt=mesKey(Date.now());
+  const relMes=ocs.filter(o=>(o.categoria||'Relatório')==='Relatório'&&mesKey(o.criado)===mesAt).length;
+  const setAt=SETORES.filter(s=>ns(s)).length;
+  const sub={Garantia:pend?`${pend} pendente${pend===1?'':'s'}`:'Nada pendente','Relatório':`${relMes} este mês`,Minucioso:`${setAt} de ${SETORES.length} setores ativos`};
+  const cor={Garantia:'var(--gar)','Relatório':'var(--accent)',Minucioso:'var(--min)'},cls={Garantia:'g','Relatório':'r',Minucioso:'m'};
+  const item=c=>`<button class="sitem ${cls[c]}${c==='Minucioso'&&ui.cat==='Minucioso'?' aberto':''}" data-mcat="${c}" aria-current="${ui.cat===c&&(c!=='Minucioso'||!ui.setor)}" style="--c:${cor[c]}">
+    <span class="ico">${svgI(icMod[c])}</span><span class="tx"><b>${c}</b><small>${sub[c]}</small></span><span class="n">${n(c)}</span>${c==='Minucioso'?icChev:''}</button>`;
+  return`<div class="sidehead"><span class="av" style="background:${corNome(eu&&eu.nome)}">${esc(iniciais(eu&&eu.nome))}</span><div class="tx"><b>${esc(eu?eu.nome:'')}</b><small>${esc(eu?cargoNome(eu.cargo):'')}</small></div></div>
+  <button class="sidenew" data-snew="1">${svgI('<path d="M12 5v14M5 12h14"/>')}Novo registro${ui.cat?` <span>· ${esc(ui.cat)}</span>`:''}</button>
+  <div class="sidesec">Módulos</div>${item('Garantia')}${item('Relatório')}<div class="mwrap">${item('Minucioso')}
+  <div class="subitems${ui.cat==='Minucioso'?' show':''}"><div class="subhead"><b>Setores</b><span>${SETORES.length}</span></div>
+  <label class="subsearch">${svgI('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')}<input id="buscaSetor" placeholder="Buscar setor ou chefe" autocomplete="off"></label>
+  <button class="ssub todos" data-mset="" aria-current="${ui.cat==='Minucioso'&&!ui.setor}" style="--i:0"><span class="sav all">${svgI('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>')}</span><span class="nm">Todos os setores<small>Visão geral</small></span><span class="n">${n('Minucioso')}</span></button>
+  ${SETORES.map((s,i)=>{const ch=chefeDe(s),q=ns(s);return`<button class="ssub" data-mset="${esc(s)}" data-busca="${esc((s+' '+ch).toLowerCase())}" aria-current="${ui.cat==='Minucioso'&&ui.setor===s}" style="--i:${i+1}"><span class="sav" style="background:${ch?corNome(ch):'var(--line2)'}">${ch?esc(iniciais(ch)):'?'}</span><span class="nm">${esc(s)}<small>${ch?esc(ch):'Sem chefe definido'}</small></span><span class="n${q?' tem':''}">${q}</span></button>`}).join('')}
+  <div class="subvazio" hidden>Nenhum setor encontrado</div></div></div>`}
 function abreMenu(on){const s=$('side'),b=$('sideBack');s.classList.toggle('open',on);b.hidden=!on||matchMedia('(hover:hover) and (min-width:960px)').matches;$('menuBtn').setAttribute('aria-expanded',String(on))}
 function renderSide(){const s=$('side');s.innerHTML=sideHTML();
+  const nb=s.querySelector('[data-snew]');if(nb)nb.onclick=()=>{abreMenu(false);if(ui.tab!=='nova'){draft=null;go('nova')}};
+  const bs=$('buscaSetor');if(bs){bs.addEventListener('click',e=>e.stopPropagation());bs.addEventListener('input',()=>{const q=bs.value.trim().toLowerCase();let vis=0;
+    s.querySelectorAll('.ssub[data-busca]').forEach(b=>{const ok=!q||b.dataset.busca.includes(q);b.hidden=!ok;if(ok)vis++});s.querySelector('.ssub.todos').hidden=!!q;s.querySelector('.subvazio').hidden=vis>0})}
   s.querySelectorAll('[data-mcat]').forEach(b=>b.onclick=()=>escolheMenu(b.dataset.mcat,''));
   s.querySelectorAll('[data-mset]').forEach(b=>b.onclick=()=>escolheMenu('Minucioso',b.dataset.mset))}
 function escolheMenu(cat,setor){ui={...ui,cat,setor:setor||'',gst:'',tipo:'',det:null,confDel:false};
