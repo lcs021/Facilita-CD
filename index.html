@@ -175,7 +175,9 @@ ul.hist li{font-size:.9rem;border-left:2px solid var(--line2);padding-left:12px}
 .bar .tr{height:10px;background:var(--sunken);border-radius:999px;overflow:hidden}
 .bar .f{height:100%;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#fff));border-radius:999px}
 .bar .v{text-align:right;font-family:var(--mono);font-weight:700}
-.mesrow select{max-width:260px}
+.stack>.datas{flex:none!important}
+.mesrow{display:grid;grid-template-columns:minmax(0,8rem) minmax(0,12rem);gap:10px}
+.mchart .vl.mini{font-size:9px}
 .mesnum{display:flex;gap:22px;flex-wrap:wrap;font-size:.95rem;align-items:flex-end}
 .mesnum b{font-size:1.6rem;font-family:var(--mono);font-weight:800;margin-right:3px}
 .chartwrap{overflow-x:auto}
@@ -379,7 +381,7 @@ const BUCKET='midias',H=3600e3,MAX_VIDEO=50*1024*1024;
 
 let sb=null,uid=null,eu=null,perfis={},ocs=[],carregou=false;
 let tela='login',msgLogin='';
-let ui={tab:'lista',mes:'',cat:'Garantia',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
+let ui={tab:'lista',mes:'',fano:'',fmes:'',cat:'Garantia',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
 let draft=null,saving=false,enviando=0;
 const urls={},pedindo=new Set();
 
@@ -540,7 +542,8 @@ function listaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p
   <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, fornecedor" value="${esc(ui.busca)}">
   <select id="ftipo" aria-label="Tipo"><option value="">Todos os tipos</option>${[...new Set([...(TIPOS_CAT[ui.cat]||TIPOS),...ocs.filter(o=>(o.categoria||'Relatório')===ui.cat).map(o=>o.tipo)])].map(t=>`<option ${t===ui.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
   <div class="filters"><select id="fpessoa" aria-label="Pessoa"><option value="">Todas as pessoas</option>${pessoas.map(p=>`<option value="${esc(p.id)}" ${p.id===ui.pessoa?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
-  <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}" max="${hoje()}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}" max="${hoje()}"></label></div></div>
+  <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
+  <div class="datas"><label class="dt"><span>Ano</span><select id="fano"><option value="">Todos os anos</option>${ANOS.map(a=>`<option ${String(a)===ui.fano?'selected':''}>${a}</option>`).join('')}</select></label><label class="dt"><span>Mês</span><select id="fmesl" ${ui.fano?'':'disabled'}><option value="">Ano inteiro</option>${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.fmes?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></label></div>
   <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
   <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div><button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button></div>
   <div class="list">${l.length?l.map(cardHTML).join(''):`<div class="empty">${ocs.length?'Nenhuma ocorrência com esses filtros.':'Nenhuma ocorrência registrada ainda.<br>Toque em <b>+ Registrar</b> para criar a primeira.'}</div>`}</div></div>`}
@@ -548,10 +551,13 @@ function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventLis
 function bindLista(){const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
   $('ftipo').addEventListener('change',e=>{ui.tipo=e.target.value;render()});
   $('fpessoa').addEventListener('change',e=>{ui.pessoa=e.target.value;render()});
-  $('fde').addEventListener('change',e=>{ui.de=e.target.value;if(ui.ate&&ui.de>ui.ate)ui.ate=ui.de;render()});
-  $('fate').addEventListener('change',e=>{ui.ate=e.target.value;if(ui.de&&ui.ate<ui.de)ui.de=ui.ate;render()});
-  document.querySelectorAll('[data-per]').forEach(c=>c.addEventListener('click',()=>{const k=c.dataset.per;ui.ate=hoje();ui.de=k==='hoje'?hoje():diasAtras(k==='7'?6:29);render()}));
-  const lf=$('limparF');if(lf)lf.onclick=()=>{Object.assign(ui,{gst:'',pessoa:'',de:'',ate:'',tipo:'',busca:''});render()};
+  const aplicaAno=()=>{if(!ui.fano){ui.de='';ui.ate='';ui.fmes=''}else if(!ui.fmes){ui.de=ui.fano+'-01-01';ui.ate=ui.fano+'-12-31'}else{const ult=new Date(+ui.fano,+ui.fmes,0).getDate();ui.de=ui.fano+'-'+ui.fmes+'-01';ui.ate=ui.fano+'-'+ui.fmes+'-'+String(ult).padStart(2,'0')}render()};
+  $('fano').addEventListener('change',e=>{ui.fano=e.target.value;aplicaAno()});
+  $('fmesl').addEventListener('change',e=>{ui.fmes=e.target.value;aplicaAno()});
+  $('fde').addEventListener('change',e=>{ui.fano='';ui.fmes='';ui.de=e.target.value;if(ui.ate&&ui.de>ui.ate)ui.ate=ui.de;render()});
+  $('fate').addEventListener('change',e=>{ui.fano='';ui.fmes='';ui.ate=e.target.value;if(ui.de&&ui.ate<ui.de)ui.de=ui.ate;render()});
+  document.querySelectorAll('[data-per]').forEach(c=>c.addEventListener('click',()=>{const k=c.dataset.per;ui.fano='';ui.fmes='';ui.ate=hoje();ui.de=k==='hoje'?hoje():diasAtras(k==='7'?6:29);render()}));
+  const lf=$('limparF');if(lf)lf.onclick=()=>{Object.assign(ui,{gst:'',fano:'',fmes:'',pessoa:'',de:'',ate:'',tipo:'',busca:''});render()};
   document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{ui.cat=b.dataset.cat;ui.gst='';render()}));
   document.querySelectorAll('[data-gst]').forEach(b=>b.addEventListener('click',()=>{ui.gst=b.dataset.gst;render()}));
   $('exportar').onclick=()=>exportarExcel(filtrar());
@@ -662,6 +668,7 @@ function bindDet(){const o=ocs.find(x=>x.id===ui.det);$('voltar').onclick=()=>{u
     removerArquivos([...(o.fotos||[]),...(o.videos||[])]);ocs=ocs.filter(x=>x.id!==o.id);toast('Ocorrência apagada');go('lista')}}
 
 /* ---------- Resumo ---------- */
+const ANO_ATUAL=new Date().getFullYear(),ANOS=Array.from({length:ANO_ATUAL+5-2015+1},(_,i)=>2015+i);
 const MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const MESES_L=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const mesKey=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
@@ -671,26 +678,26 @@ function ultimosMeses(n){const d=new Date(),r=[];for(let i=n-1;i>=0;i--)r.push(m
 function mensalHTML(){
   const atual=mesKey(Date.now());if(!ui.mes)ui.mes=atual;
   const conta=k=>{const r={g:0,r:0,gp:0};ocs.forEach(o=>{if(mesKey(o.criado)!==k)return;if(o.categoria==='Garantia'){r.g++;if((o.gar_status||'Pendente')==='Pendente')r.gp++}else r.r++});return r};
-  const meses=ultimosMeses(6),dados=meses.map(k=>({k,...conta(k)}));
-  const todos=[...new Set([atual,...ocs.map(o=>mesKey(o.criado))])].sort().reverse();
+  const ano=ui.mes.slice(0,4),meses=Array.from({length:12},(_,i)=>ano+'-'+String(i+1).padStart(2,'0')),dados=meses.map(k=>({k,...conta(k)}));
+  const totAno=dados.reduce((a,d)=>({g:a.g+d.g,r:a.r+d.r}),{g:0,r:0});
   const sel=conta(ui.mes);
   const mx=Math.max(1,...dados.map(d=>Math.max(d.g,d.r)));const passo=mx<=5?1:mx<=10?2:mx<=25?5:mx<=50?10:Math.ceil(mx/50)*10;const top=Math.ceil(mx/passo)*passo;
-  const W=innerWidth<520?360:600,H=innerWidth<520?220:230,L=28,R=6,T=18,B=34,ph=H-T-B,gw=(W-L-R)/dados.length,bw=Math.min(30,gw*0.3);
+  const W=innerWidth<520?360:600,H=innerWidth<520?220:230,L=28,R=6,T=18,B=34,ph=H-T-B,gw=(W-L-R)/dados.length,bw=Math.min(24,gw*0.32);
   const y=v=>T+ph-(v/top)*ph;
   let svg='';for(let v=0;v<=top;v+=passo){svg+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="gl"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end" class="ax">${v}</text>`}
   dados.forEach((d,i)=>{const cx=L+gw*i+gw/2,on=d.k===ui.mes;
     svg+=`<g class="mg" data-mes="${d.k}" role="button" tabindex="0" aria-label="${mesLongo(d.k)}: ${d.g} garantias, ${d.r} relatórios">`;
     svg+=`<rect x="${L+gw*i+2}" y="${T}" width="${gw-4}" height="${ph+B-4}" rx="6" class="${on?'sel':'hit'}"/>`;
-    [[d.g,'bg',-bw-2],[d.r,'br',2]].forEach(([v,c,dx])=>{const h=(v/top)*ph;svg+=`<rect x="${cx+dx}" y="${y(v)}" width="${bw}" height="${Math.max(h,v?2:0)}" rx="3" class="${c}"/>`;if(v)svg+=`<text x="${cx+dx+bw/2}" y="${y(v)-5}" text-anchor="middle" class="vl">${v}</text>`});
-    svg+=`<text x="${cx}" y="${H-12}" text-anchor="middle" class="ax${on?' on':''}">${mesCurto(d.k)}</text></g>`});
+    [[d.g,'bg',-bw-2],[d.r,'br',2]].forEach(([v,c,dx])=>{const h=(v/top)*ph;svg+=`<rect x="${cx+dx}" y="${y(v)}" width="${bw}" height="${Math.max(h,v?2:0)}" rx="3" class="${c}"/>`;if(v)svg+=`<text x="${cx+dx+bw/2}" y="${y(v)-5}" text-anchor="middle" class="vl${gw<40?' mini':''}">${v}</text>`});
+    svg+=`<text x="${cx}" y="${H-12}" text-anchor="middle" class="ax${on?' on':''}">${MESES[+d.k.slice(5)-1]}</text></g>`});
   return`<span class="lbl">Garantias e relatórios por mês</span>
   <div class="box stack" style="gap:12px">
-   <div class="mesrow"><select id="fmes" aria-label="Mês">${todos.map(k=>`<option value="${k}" ${k===ui.mes?'selected':''}>${mesLongo(k)}</option>`).join('')}</select></div>
-   <div class="mesnum"><div><span class="dot bg"></span><b>${sel.g}</b> ${sel.g===1?'garantia':'garantias'}${sel.g?`<div class="muted small">${sel.gp} pendente${sel.gp===1?'':'s'} · ${sel.g-sel.gp} enviada${sel.g-sel.gp===1?'':'s'}</div>`:''}</div><div><span class="dot br"></span><b>${sel.r}</b> ${sel.r===1?'relatório':'relatórios'}</div><div><b>${sel.g+sel.r}</b> no total</div></div>
-   <div class="chartwrap"><svg viewBox="0 0 ${W} ${H}" class="mchart" role="img" aria-label="Gráfico dos últimos 6 meses">${svg}</svg></div>
-   <div class="legend"><span><span class="dot bg"></span>Garantia</span><span><span class="dot br"></span>Relatório</span><span class="muted">Toque num mês para ver os números</span></div>
+   <div class="mesrow"><select id="rano" aria-label="Ano">${ANOS.map(a=>`<option ${String(a)===ano?'selected':''}>${a}</option>`).join('')}</select><select id="rmes" aria-label="Mês">${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.mes.slice(5)?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></div>
+   <div class="mesnum"><div><span class="dot bg"></span><b>${sel.g}</b> ${sel.g===1?'garantia':'garantias'}${sel.g?`<div class="muted small">${sel.gp} pendente${sel.gp===1?'':'s'} · ${sel.g-sel.gp} enviada${sel.g-sel.gp===1?'':'s'}</div>`:''}</div><div><span class="dot br"></span><b>${sel.r}</b> ${sel.r===1?'relatório':'relatórios'}</div><div><b>${sel.g+sel.r}</b> no total em ${MESES_L[+ui.mes.slice(5)-1]}</div></div>
+   <div class="chartwrap"><svg viewBox="0 0 ${W} ${H}" class="mchart" role="img" aria-label="Gráfico mês a mês do ano">${svg}</svg></div>
+   <div class="legend"><span><span class="dot bg"></span>Garantia</span><span><span class="dot br"></span>Relatório</span><span class="muted">Ano de ${ano}: ${totAno.g} garantias e ${totAno.r} relatórios</span></div>
   </div>`}
-function bindResumo(){const s=$('fmes');if(s)s.onchange=()=>{ui.mes=s.value;render()};
+function bindResumo(){const a=$('rano'),m=$('rmes');if(a)a.onchange=()=>{ui.mes=a.value+'-'+ui.mes.slice(5);render()};if(m)m.onchange=()=>{ui.mes=ui.mes.slice(0,4)+'-'+m.value;render()};
   document.querySelectorAll('.mg').forEach(g=>{const f=()=>{ui.mes=g.dataset.mes;render()};g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}})})}
 function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{const d=dia(o.criado);if(d===hoje())c.hoje++;if(d>=diasAtras(6))c.sete++});
   const cont=f=>{const m={};ocs.forEach(o=>{const k=f(o);m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,8)};
