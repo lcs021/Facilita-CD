@@ -835,7 +835,7 @@ function folhaMin(o){const linha=(r,v,cl='')=>`<tr><th>${r}</th><td class="${cl}
   <tr class="mot"><th>MOTIVO INVENTÁRIO</th><td>${esc(o.motivo_inventario||'')}</td></tr>
   <tr class="mot"><th>MOTIVO ALLAN</th><td>${esc(o.motivo_allan||'')}</td></tr></table>
   <div class="assin"><div><span></span>Assinatura do chefe do setor</div><div><span></span>Data</div></div>
-  <div class="rodape">Inventário CD · registrado por ${esc(nome(o.autor))} em ${new Date(o.criado||Date.now()).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}</div></div>`}
+  </div>`}
 function imprimirMin(lista){let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
   a.innerHTML=lista.map(folhaMin).join('');document.body.classList.add('imprimindo');
   const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);
