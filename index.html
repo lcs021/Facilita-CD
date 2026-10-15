@@ -675,6 +675,14 @@ grant execute on function public.email_do_usuario(text) to anon, authenticated;
 update public.perfis set usuario = 'Lucas Carvalho'
 where id = (select id from public.perfis where admin order by criado limit 1)
   and not exists (select 1 from public.perfis where lower(usuario) = 'lucas carvalho');
+
+-- Cadastro sem e-mail: gera um endereço interno (caixa do administrador com +código)
+create or replace function public.email_novo_usuario(u text) returns text
+language sql stable security definer set search_path = public as $$
+  select split_part(email, '@', 1) || '+u' || substr(md5(lower(regexp_replace(trim(u), '\s+', ' ', 'g'))), 1, 10) || '@' || split_part(email, '@', 2)
+  from public.perfis where admin and email like '%@%' order by criado limit 1
+$$;
+grant execute on function public.email_novo_usuario(text) to anon, authenticated;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
@@ -865,6 +873,7 @@ const authShell=(mode,titulo,sub,form)=>`<div class="authshell"><div class="acar
   <p class="atroca">${mode==='login'?'Ainda não tem cadastro? <button class="btn link" type="button" id="irCad">Criar cadastro</button>':'Já tem cadastro? <button class="btn link" type="button" id="irLogin">Entrar</button>'}</p>
   </div></div>`;
 const campo=(id,rot,tipo,ac,ico,extra='')=>`<div class="field"><label class="lbl" for="${id}">${rot}</label><div class="inp${tipo==='password'?' pw':''}">${IC[ico]}<input id="${id}" type="${tipo}" autocomplete="${ac}" ${extra}>${tipo==='password'?`<button type="button" class="eye" data-eye="${id}" aria-label="Mostrar senha" tabindex="-1">${IC.eye}</button>`:''}</div></div>`;
+const mostraEmail=p=>p.email&&!/\+u[0-9a-f]{10}@/.test(p.email);
 function authErr(er,msg){er.textContent=msg;er.hidden=false;const c=$('acard');if(c){c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}}
 function authFx(f){
   f.querySelectorAll('[data-eye]').forEach(b=>b.onclick=()=>{const i=$(b.dataset.eye),m=i.type==='password';i.type=m?'text':'password';b.setAttribute('aria-label',m?'Ocultar senha':'Mostrar senha');b.style.color=m?'var(--accent)':''});
@@ -893,25 +902,25 @@ function bindLogin(){const f=$('flogin');($('lemail').value?$('lsenha'):$('lemai
     const {error}=await sb.auth.signInWithPassword({email,password:senha});saving=false;
     if(error){falha(erroMsg(error))}})}
 function cadastroHTML(){return authShell('cad','Criar cadastro','Depois de criar, o administrador libera seu acesso.',`<form class="stack" id="fcad" novalidate>
-  ${campo('cnome','Nome completo','text','name','user','placeholder="Ex.: Lucas Carvalho"')}
-  ${campo('cusuario','Usuário (para entrar)','text','username','user','placeholder="Ex.: Lucas Carvalho" autocapitalize="off" spellcheck="false"')}
-  ${campo('cemail','E-mail (para confirmar o cadastro)','email','email','mail','placeholder="voce@empresa.com"')}
+  ${campo('cusuario','Usuário','text','username','user','placeholder="Ex.: Lucas Carvalho" autocapitalize="off" spellcheck="false"')}
   <div class="two">${campo('csenha','Senha (mín. 6)','password','new-password','lock')}${campo('csenha2','Repita a senha','password','new-password','lock')}</div>
   <div class="err" id="cerr" hidden></div>
   <button class="btn primary go" type="submit"><span>Criar cadastro</span>${IC.arrow}</button></form>`)}
-function bindCadastro(){const f=$('fcad');$('cnome').focus();authFx(f);
+function bindCadastro(){const f=$('fcad');$('cusuario').focus();authFx(f);
   $('irLogin').onclick=()=>{tela='login';msgLogin='';render()};
   f.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;const er=$('cerr');
-    const n=$('cnome').value.trim(),usu=$('cusuario').value.trim().replace(/\s+/g,' '),email=$('cemail').value.trim(),s=$('csenha').value,s2=$('csenha2').value;
-    const m=!n?'Preencha seu nome.':usu.length<3?'Escolha um usuário com pelo menos 3 letras.':usu.includes('@')?'O usuário não pode ter @.':!/^\S+@\S+\.\S+$/.test(email)?'Informe um e-mail válido.':s.length<6?'A senha precisa ter pelo menos 6 caracteres.':s!==s2?'As senhas não são iguais.':'';
+    const usu=$('cusuario').value.trim().replace(/\s+/g,' '),n=usu,s=$('csenha').value,s2=$('csenha2').value;
+    const m=usu.length<3?'Escolha um usuário com pelo menos 3 letras.':usu.includes('@')?'O usuário não pode ter @.':s.length<6?'A senha precisa ter pelo menos 6 caracteres.':s!==s2?'As senhas não são iguais.':'';
     if(m){authErr(er,m);return}
     saving=true;const bt=f.querySelector('[type=submit]');bt.disabled=true;bt.classList.add('busy');
     const ex=await sb.rpc('email_do_usuario',{u:usu});
     if(ex.error){saving=false;authErr(er,'O banco precisa de uma atualização (login por usuário). Peça ao administrador para rodar o SQL novo.');bt.disabled=false;bt.classList.remove('busy');return}
     if(ex.data){saving=false;authErr(er,'Esse usuário já existe. Escolha outro.');bt.disabled=false;bt.classList.remove('busy');return}
-    const {data,error}=await sb.auth.signUp({email,password:s,options:{data:{nome:n,usuario:usu}}});saving=false;
+    const en=await sb.rpc('email_novo_usuario',{u:usu});
+    if(en.error||!en.data){saving=false;authErr(er,'O banco precisa de uma atualização (cadastro sem e-mail). Peça ao administrador para rodar o SQL novo.');bt.disabled=false;bt.classList.remove('busy');return}
+    const {data,error}=await sb.auth.signUp({email:en.data,password:s,options:{data:{nome:n,usuario:usu}}});saving=false;
     if(error){authErr(er,erroMsg(error));bt.disabled=false;bt.classList.remove('busy');return}
-    if(!data.session){tela='login';msgLogin='✓ Cadastro criado. Abra o e-mail de confirmação que enviamos para '+email+' e depois entre aqui com o usuário '+usu+'.';render()}})}
+    if(!data.session){tela='login';msgLogin='✓ Cadastro criado. Peça ao administrador para liberar seu acesso e depois entre com o usuário '+usu+'.';render()}})}
 
 /* ---------- Lista ---------- */
 const dia=t=>new Date(t).toLocaleDateString('sv-SE');
@@ -1218,7 +1227,7 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   const regs=id=>ocs.filter(o=>o.autor===id),mesAt=mesKey(Date.now());
   const opcoes=sel=>Object.keys(CARGOS).map(c=>`<option ${c===sel?'selected':''}>${c}</option>`).join('');
   const cargoPill=p=>{const c=p.admin&&!p.aprovado?'Admin':cargoNome(p.cargo),cor=CARGO_COR[c]||'#64748b';return`<span class="cpill" style="--k:${cor}">${esc(c)}${p.admin?' · admin':''}</span>`};
-  const topo=(p,extra)=>`<div class="pc-top"><span class="pav" style="background:${corNome(p.nome)}">${esc(iniciais(p.nome))}</span><div class="pc-id"><b>${esc(p.nome||'Sem nome')}${p.id===uid?' <span class="voce">você</span>':''}</b><small>${p.usuario?'Usuário: '+esc(p.usuario)+(p.email?' · ':''):''}${esc(p.email||'')}</small></div>${extra||''}</div>`;
+  const topo=(p,extra)=>`<div class="pc-top"><span class="pav" style="background:${corNome(p.nome)}">${esc(iniciais(p.nome))}</span><div class="pc-id"><b>${esc(p.nome||'Sem nome')}${p.id===uid?' <span class="voce">você</span>':''}</b><small>${p.usuario?'Usuário: '+esc(p.usuario)+(mostraEmail(p)?' · ':''):''}${mostraEmail(p)?esc(p.email):''}</small></div>${extra||''}</div>`;
   const stats=p=>{const r=regs(p.id),m=r.filter(o=>mesKey(o.criado)===mesAt).length,ult=r[0];return`<div class="pc-stats"><div><b>${r.length}</b><span>registros</span></div><div><b>${m}</b><span>este mês</span></div><div><b>${ult?idade(ult.criado):'—'}</b><span>último</span></div></div>`};
   const card=(p,i,corpo)=>`<article class="pcard" style="--i:${i}">${corpo}</article>`;
   const cPend=(p,i)=>card(p,i,`${topo(p,'<span class="cpill nova">Novo</span>')}<div class="muted small">Cadastrou-se em ${fData(p.criado)}</div>
