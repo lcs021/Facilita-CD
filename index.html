@@ -196,8 +196,12 @@ ul.hist li{font-size:.9rem;border-left:2px solid var(--line2);padding-left:12px}
 .person:first-child{padding-top:0}
 .person:last-child{border-bottom:0;padding-bottom:0}
 .person .info{min-width:0}
-.ctl{display:flex;flex-direction:column;gap:6px;flex:none;width:11rem}
+.ctl{display:flex;flex-direction:column;gap:6px;flex:none;width:13rem}
 .ctl select{padding:8px 10px;font-size:.88rem}
+.ctl2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ctl2 .btn{padding:8px 6px}
+.nao{color:var(--alta);font-weight:700}
+details summary{cursor:pointer;list-style-position:inside}
 .pill{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--sunken);color:var(--muted);white-space:nowrap}
 .pill.new{background:var(--alta);color:#fff}
 
@@ -257,6 +261,7 @@ create table if not exists public.perfis (
   admin boolean not null default false,
   criado timestamptz not null default now()
 );
+alter table public.perfis add column if not exists recusado boolean not null default false;
 
 create table if not exists public.ocorrencias (
   id uuid primary key default gen_random_uuid(),
@@ -388,7 +393,7 @@ const pode=a=>!!eu&&(eu.admin||(CARGOS[eu.cargo]||[]).includes(a));
 const andarDe=e=>{const m=String(e||'').match(/^(1[123])/);return m?m[1]:''};
 let tt;function toast(m){const e=$('toast');e.textContent=m;e.hidden=false;clearTimeout(tt);tt=setTimeout(()=>e.hidden=true,3200)}
 function erroMsg(e){const m=(e&&(e.message||e.error_description))||'';
-  if(/categoria|fornecedor|id_quebra|gar_status|origem/i.test(m))return'O banco precisa de uma atualização (coluna categoria). Peça ao administrador para rodar o comando de atualização no SQL Editor do Supabase.';
+  if(/categoria|fornecedor|id_quebra|gar_status|origem|recusado/i.test(m))return'O banco precisa de uma atualização (coluna categoria). Peça ao administrador para rodar o comando de atualização no SQL Editor do Supabase.';
   if(/Invalid login credentials/i.test(m))return'E-mail ou senha incorretos.';
   if(/Email not confirmed/i.test(m))return'Confirme seu e-mail antes de entrar. Veja a mensagem que chegou na sua caixa de entrada.';
   if(/already registered|already been registered/i.test(m))return'Este e-mail já tem cadastro. Use a tela Entrar.';
@@ -444,9 +449,10 @@ function render(){
   if(!uid){fora();if(tela==='cadastro'){v.innerHTML=cadastroHTML();bindCadastro()}else{v.innerHTML=loginHTML();bindLogin()}return}
   if(!carregou){fora();v.innerHTML='<div class="center box"><p class="muted">Carregando…</p></div>';return}
   if(!eu){fora();v.innerHTML='<div class="center box stack"><h2>Perfil não encontrado</h2><p>Sua conta existe, mas o perfil não foi criado. Peça ao administrador para conferir a configuração do banco (passo do SQL).</p></div>';return}
+  if(!eu.aprovado&&!eu.admin&&eu.recusado){fora();v.innerHTML=`<div class="center box stack"><h2>Acesso não liberado</h2><p>Olá, ${esc(eu.nome)}. O administrador não liberou seu acesso ao app. Se acha que é um engano, fale com ele.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
   if(!eu.aprovado&&!eu.admin){fora();v.innerHTML=`<div class="center box stack"><h2>Cadastro enviado</h2><p>Olá, ${esc(eu.nome)}. Seu cadastro foi recebido e está aguardando o administrador liberar o acesso.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
   $('nav').hidden=false;$('sair').hidden=false;$('who').textContent=eu.nome+' · '+(eu.admin&&eu.cargo!=='Supervisor'?'Admin':eu.cargo);
-  const pend=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin).length;
+  const pend=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
   $('badge').hidden=!(eu.admin&&pend);$('badge').textContent=pend;
   document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;
   $('nav').style.gridTemplateColumns=`repeat(${document.querySelectorAll('nav button:not([hidden])').length},1fr)`;
@@ -701,22 +707,28 @@ function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{c
   <span class="lbl">Por pessoa</span><div class="box stack" style="gap:8px">${bars(cont(o=>nome(o.autor)))}</div></div>`}
 
 /* ---------- Equipe ---------- */
-function equipeHTML(){const lista=Object.values(perfis).sort((a,b)=>((a.aprovado||a.admin)-(b.aprovado||b.admin))||ts(b.criado)-ts(a.criado));
-  const pend=lista.filter(p=>!p.aprovado&&!p.admin);
-  const linha=p=>{const ok=p.aprovado||p.admin,eu_=p.id===uid;return`<div class="person"><div class="info"><b>${esc(p.nome||'Sem nome')}</b>${eu_?' <span class="muted small">(você)</span>':''}
-    <div class="muted small">${esc(p.email||'')}</div><div class="muted small">${ok?esc(p.cargo)+(p.admin?' · administrador':''):'Novo cadastro'} · ${fData(p.criado)}</div></div>
-    ${!eu_&&!p.admin?`<div class="ctl"><select data-cg="${esc(p.id)}" ${ok?'data-ativo="1"':''} aria-label="Cargo de ${esc(p.nome)}">${Object.keys(CARGOS).map(c=>`<option ${c===(ok?p.cargo:'Conferente')?'selected':''}>${c}</option>`).join('')}</select>
-    ${ok?`<button class="btn sm" data-rev="${esc(p.id)}">Remover acesso</button>`:`<button class="btn sm primary" data-ok="${esc(p.id)}">Liberar</button>`}</div>`
-    :`<span class="pill">${p.admin?'Admin':esc(p.cargo)}</span>`}</div>`};
-  return`<div class="stack"><div class="box"><b>${pend.length?pend.length+(pend.length>1?' novos cadastros aguardando':' novo cadastro aguardando'):'Nenhum cadastro pendente'}</b>
-  <p class="muted small" style="margin:4px 0 8px">Escolha o cargo de cada pessoa ao liberar. Você pode mudar o cargo depois.</p>
-  <ul class="small" style="margin:0;padding-left:18px">${Object.entries(CARGO_DESC).map(([c,d])=>`<li><b>${c}</b>: ${d}</li>`).join('')}</ul></div>
-  <div class="box">${lista.map(linha).join('')||'<span class="muted">Ninguém cadastrado.</span>'}</div></div>`}
+function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)-ts(a.criado));
+  const pend=todos.filter(p=>!p.aprovado&&!p.admin&&!p.recusado),ativos=todos.filter(p=>p.aprovado||p.admin),recus=todos.filter(p=>!p.aprovado&&!p.admin&&p.recusado);
+  const opcoes=(p,sel)=>Object.keys(CARGOS).map(c=>`<option ${c===sel?'selected':''}>${c}</option>`).join('');
+  const info=(p,linha2)=>`<div class="info"><b>${esc(p.nome||'Sem nome')}</b>${p.id===uid?' <span class="muted small">(você)</span>':''}<div class="muted small">${esc(p.email||'')}</div><div class="muted small">${linha2} · ${fData(p.criado)}</div></div>`;
+  const lPend=p=>`<div class="person">${info(p,'Novo cadastro')}<div class="ctl"><select data-cg="${esc(p.id)}" aria-label="Cargo de ${esc(p.nome)}">${opcoes(p,'Conferente')}</select>
+    <div class="ctl2"><button class="btn sm primary" data-ok="${esc(p.id)}">Liberar</button><button class="btn sm danger" data-nao="${esc(p.id)}">Não liberar</button></div></div></div>`;
+  const lAtivo=p=>`<div class="person">${info(p,esc(p.cargo)+(p.admin?' · administrador':''))}${p.id!==uid&&!p.admin?`<div class="ctl"><select data-cg="${esc(p.id)}" data-ativo="1" aria-label="Cargo de ${esc(p.nome)}">${opcoes(p,p.cargo)}</select><button class="btn sm" data-rev="${esc(p.id)}">Remover acesso</button></div>`:`<span class="pill">${p.admin?'Admin':esc(p.cargo)}</span>`}</div>`;
+  const lRec=p=>`<div class="person">${info(p,'<span class="nao">Não liberado</span>')}<div class="ctl"><button class="btn sm" data-rec="${esc(p.id)}">Reconsiderar</button></div></div>`;
+  return`<div class="stack">
+  <div class="box"><div class="row"><b>${pend.length?pend.length+(pend.length>1?' cadastros aguardando':' cadastro aguardando'):'Nenhum cadastro aguardando'}</b>${pend.length?'<span class="pill new">Novo</span>':''}</div>
+  <p class="muted small" style="margin:4px 0 0">Escolha o cargo e toque em <b>Liberar</b>, ou em <b>Não liberar</b> se a pessoa não deve ter acesso.</p>
+  ${pend.length?`<div style="margin-top:12px">${pend.map(lPend).join('')}</div>`:''}</div>
+  <span class="lbl">Com acesso (${ativos.length})</span><div class="box">${ativos.map(lAtivo).join('')||'<span class="muted">Ninguém.</span>'}</div>
+  ${recus.length?`<span class="lbl">Não liberados (${recus.length})</span><div class="box">${recus.map(lRec).join('')}</div>`:''}
+  <details class="box small"><summary><b>O que cada cargo pode fazer</b></summary><ul style="margin:10px 0 0;padding-left:18px">${Object.entries(CARGO_DESC).map(([c,d])=>`<li><b>${c}</b>: ${d}</li>`).join('')}</ul></details></div>`}
 async function mudaPerfil(id,campos,msg){const {error}=await sb.from('perfis').update(campos).eq('id',id);if(error){toast(erroMsg(error));return}Object.assign(perfis[id],campos);toast(msg);render()}
 function bindEquipe(){
   document.querySelectorAll('select[data-ativo]').forEach(s=>s.addEventListener('change',()=>mudaPerfil(s.dataset.cg,{cargo:s.value},'Cargo alterado para '+s.value)));
-  document.querySelectorAll('[data-ok]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;const cg=document.querySelector(`select[data-cg="${b.dataset.ok}"]`).value;mudaPerfil(b.dataset.ok,{aprovado:true,cargo:cg},'Acesso liberado como '+cg)}));
-  document.querySelectorAll('[data-rev]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;mudaPerfil(b.dataset.rev,{aprovado:false},'Acesso removido')}));
+  document.querySelectorAll('[data-ok]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;const cg=document.querySelector(`select[data-cg="${b.dataset.ok}"]`).value;mudaPerfil(b.dataset.ok,{aprovado:true,recusado:false,cargo:cg},'Acesso liberado como '+cg)}));
+  document.querySelectorAll('[data-nao]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;mudaPerfil(b.dataset.nao,{aprovado:false,recusado:true},'Cadastro não liberado')}));
+  document.querySelectorAll('[data-rev]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;mudaPerfil(b.dataset.rev,{aprovado:false,recusado:true},'Acesso removido')}));
+  document.querySelectorAll('[data-rec]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;mudaPerfil(b.dataset.rec,{recusado:false},'Cadastro voltou para aguardando')}));
 }
 
 /* ---------- Configuração inicial ---------- */
