@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="pt-BR"><head>
+<html lang="pt-BR">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Inventário CD</title>
@@ -111,6 +112,13 @@ ul.hist li{font-size:.9rem;border-left:2px solid var(--line);padding-left:10px}
 .person .info{min-width:0}
 .ctl{display:flex;flex-direction:column;gap:6px;flex:none;width:11rem}
 .ctl select{padding:7px 8px;font-size:.88rem}
+.datas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;flex:1 1 280px!important}
+.dt{min-width:0;display:flex;flex-direction:column;gap:2px;font-size:.75rem;font-weight:600;color:var(--muted)}
+.dt input{padding:7px 6px;min-width:0;width:100%;font-size:.9rem}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 12px;font:500 .85rem var(--font);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip.limpar{color:var(--alta);border-color:transparent}
 .pill{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--sunken);color:var(--muted);white-space:nowrap}
 .pill.new{background:var(--alta);color:#fff}
 .steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px}
@@ -122,16 +130,16 @@ code{font-family:var(--mono);font-size:.88em;background:var(--sunken);padding:1p
 </head>
 <body>
 <div class="wrap">
-  <header><h1>Inventário CD</h1><div class="hdr"><div class="who" id="who"></div><button class="btn sm" id="sair" hidden="">Sair</button></div></header>
+  <header><h1>Inventário CD</h1><div class="hdr"><div class="who" id="who"></div><button class="btn sm" id="sair" hidden>Sair</button></div></header>
   <main id="view"><div class="center box"><p class="muted">Carregando…</p></div></main>
 </div>
-<nav id="nav" hidden="">
+<nav id="nav" hidden>
   <button data-tab="lista">Ocorrências</button>
   <button data-tab="nova">+ Registrar</button>
   <button data-tab="resumo">Resumo</button>
-  <button data-tab="equipe">Equipe<span class="badge" id="badge" hidden=""></span></button>
+  <button data-tab="equipe">Equipe<span class="badge" id="badge" hidden></span></button>
 </nav>
-<div class="toast" id="toast" hidden=""></div>
+<div class="toast" id="toast" hidden></div>
 
 <script type="text/plain" id="sql">-- Inventário CD: estrutura do banco (rode uma vez no SQL Editor do Supabase)
 
@@ -238,9 +246,10 @@ create policy "apagar midias" on storage.objects for delete to authenticated
   using (bucket_id = 'midias' and (owner_id = auth.uid()::text or public.tem_cargo(array['Supervisor'])));
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
 <script>
 /* ===== CONFIGURAÇÃO (preenchida pela tela de configuração) ===== */
-const SUPABASE_URL="https://fyuqaitylsxlsixwhzww.supabase.co";const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5dXFhaXR5bHN4bHNpeHdoend3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjk4NDMsImV4cCI6MjEwNzYwNTg0M30.gRQ3CIc8d3VXQlckLFoRNL-QPBqXcfdeZy12EaP19rc";
+const SUPABASE_URL='';const SUPABASE_KEY='';
 /* =============================================================== */
 
 const ORIGINAL='<!doctype html>\n'+document.documentElement.outerHTML;
@@ -253,7 +262,7 @@ const BUCKET='midias',H=3600e3,MAX_VIDEO=50*1024*1024;
 
 let sb=null,uid=null,eu=null,perfis={},ocs=[],carregou=false;
 let tela='login',msgLogin='';
-let ui={tab:'lista',filtro:'abertas',busca:'',tipo:'',det:null,confDel:false};
+let ui={tab:'lista',filtro:'abertas',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
 let draft=null,saving=false,enviando=0;
 const urls={},pedindo=new Set();
 
@@ -278,9 +287,10 @@ function erroMsg(e){const m=(e&&(e.message||e.error_description))||'';
 
 /* ---------- Início ---------- */
 async function init(){
-  if(!SUPABASE_URL||!SUPABASE_KEY){telaConfig();return}
+  const CFG=window.INV_CONFIG||{},URL_=SUPABASE_URL||CFG.url,KEY_=SUPABASE_KEY||CFG.key;
+  if(!URL_||!KEY_){telaConfig();return}
   if(!window.supabase){$('view').innerHTML='<div class="center box stack"><h2>Sem conexão</h2><p>Não foi possível carregar o app. Verifique se este computador tem acesso à internet e abra o arquivo de novo.</p></div>';return}
-  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  sb=window.supabase.createClient(URL_,KEY_);
   sb.auth.onAuthStateChange((ev,s)=>{const novo=s?.user?.id||null;if(novo!==uid){uid=novo;setTimeout(entrouOuSaiu,0)}});
   const {data}=await sb.auth.getSession();uid=data.session?.user?.id||null;entrouOuSaiu();
   setInterval(()=>{if(eu&&(eu.aprovado||eu.admin)&&!document.hidden&&!ui.det&&ui.tab!=='nova')carregar()},30000);
@@ -377,9 +387,13 @@ function bindCadastro(){const f=$('fcad');$('cnome').focus();
     if(!data.session){tela='login';msgLogin='✓ Cadastro criado. Abra o e-mail de confirmação que enviamos para '+email+' e depois entre aqui.';render()}})}
 
 /* ---------- Lista ---------- */
+const dia=t=>new Date(t).toLocaleDateString('sv-SE');
+const hoje=()=>dia(Date.now()),diasAtras=n=>dia(Date.now()-n*864e5);
 function filtrar(){const q=ui.busca.trim().toLowerCase();
   return ocs.filter(o=>{if(ui.filtro==='abertas'&&o.status==='resolvida')return false;if(ui.filtro==='resolvidas'&&o.status!=='resolvida')return false;
     if(ui.tipo&&o.tipo!==ui.tipo)return false;
+    if(ui.pessoa&&o.autor!==ui.pessoa&&!(o.hist||[]).some(h=>h.por===ui.pessoa))return false;
+    const d=dia(o.criado);if(ui.de&&d<ui.de)return false;if(ui.ate&&d>ui.ate)return false;
     if(q&&![o.sku,o.produto,o.fab,o.endereco,nome(o.autor),o.obs].join(' ').toLowerCase().includes(q))return false;return true})
   .sort((a,b)=>(a.status==='resolvida')-(b.status==='resolvida')||ts(b.criado)-ts(a.criado))}
 function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<button class="card" data-id="${esc(o.id)}">
@@ -387,15 +401,27 @@ function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<b
   <div class="b"><div class="row"><span class="t">${esc(o.tipo)}</span><span class="st ${esc(o.status)}">${STATUS[o.status]||''}</span></div>
   <div class="line"><span class="addr">${esc(o.endereco)}</span> ${esc(o.sku)}</div>
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
-  <div class="line">${esc(nome(o.autor))} · há ${idade(o.criado)}</div></div></button>`}
-function listaHTML(){const l=filtrar();return`<div class="stack">
+  <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
+function listaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p.nome).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+  const ativos=[ui.pessoa,ui.de,ui.ate,ui.tipo,ui.busca].filter(Boolean).length;
+  const rapido=(k,t,de,ate)=>`<button type="button" class="chip" data-per="${k}" aria-pressed="${ui.de===de&&ui.ate===ate}">${t}</button>`;
+  return`<div class="stack">
   <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, endereço" value="${esc(ui.busca)}">
   <select id="ftipo" aria-label="Tipo"><option value="">Todos os tipos</option>${TIPOS.map(t=>`<option ${t===ui.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
+  <div class="filters"><select id="fpessoa" aria-label="Pessoa"><option value="">Todas as pessoas</option>${pessoas.map(p=>`<option value="${esc(p.id)}" ${p.id===ui.pessoa?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
+  <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}" max="${hoje()}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}" max="${hoje()}"></label></div></div>
+  <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
   <div class="seg">${[['abertas','Em aberto'],['resolvidas','Resolvidas'],['todas','Todas']].map(([k,t])=>`<button data-f="${k}" aria-pressed="${ui.filtro===k}">${t}</button>`).join('')}</div>
-  <div class="list">${l.length?l.map(cardHTML).join(''):`<div class="empty">${ocs.length?'Nenhuma ocorrência neste filtro.':'Nenhuma ocorrência registrada ainda.<br>Toque em <b>+ Registrar</b> para criar a primeira.'}</div>`}</div></div>`}
+  <div class="muted small">${l.length} ${l.length===1?'ocorrência':'ocorrências'}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div>
+  <div class="list">${l.length?l.map(cardHTML).join(''):`<div class="empty">${ocs.length?'Nenhuma ocorrência com esses filtros.':'Nenhuma ocorrência registrada ainda.<br>Toque em <b>+ Registrar</b> para criar a primeira.'}</div>`}</div></div>`}
 function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{ui.det=c.dataset.id;render();scrollTo(0,0)}))}
 function bindLista(){const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
   $('ftipo').addEventListener('change',e=>{ui.tipo=e.target.value;render()});
+  $('fpessoa').addEventListener('change',e=>{ui.pessoa=e.target.value;render()});
+  $('fde').addEventListener('change',e=>{ui.de=e.target.value;if(ui.ate&&ui.de>ui.ate)ui.ate=ui.de;render()});
+  $('fate').addEventListener('change',e=>{ui.ate=e.target.value;if(ui.de&&ui.ate<ui.de)ui.de=ui.ate;render()});
+  document.querySelectorAll('[data-per]').forEach(c=>c.addEventListener('click',()=>{const k=c.dataset.per;ui.ate=hoje();ui.de=k==='hoje'?hoje():diasAtras(k==='7'?6:29);ui.filtro='todas';render()}));
+  const lf=$('limparF');if(lf)lf.onclick=()=>{Object.assign(ui,{pessoa:'',de:'',ate:'',tipo:'',busca:''});render()};
   document.querySelectorAll('[data-f]').forEach(c=>c.addEventListener('click',()=>{ui.filtro=c.dataset.f;render()}));bindCards()}
 
 /* ---------- Registrar ---------- */
@@ -527,6 +553,7 @@ function telaConfig(){
    <div id="cfgMsg" hidden></div>
    <button class="btn primary" type="submit">Testar conexão</button>
    <button class="btn" type="button" id="baixar" disabled>Baixar arquivo configurado</button>
+   <button class="btn" type="button" id="baixarCfg" disabled>Baixar config.js (para site no GitHub)</button>
    <p class="muted small" style="margin:0">O arquivo baixado já vem com a conexão pronta. Use esse arquivo daqui em diante e copie-o para os outros computadores. <b>A primeira pessoa que se cadastrar vira administrador</b>, então faça o seu cadastro primeiro.</p>
   </form></div>`;
   $('copiarSql').onclick=()=>{const t=$('sql').textContent.trim();const box=$('sqlBox');
@@ -548,13 +575,15 @@ function telaConfig(){
     try{const h={apikey:key};if(/^eyJ/.test(key))h.Authorization='Bearer '+key;
       const r=await fetch(url+'/rest/v1/ocorrencias?select=id&limit=1',{headers:h,signal:ctl.signal});
       let corpo='';try{corpo=await r.text()}catch(x){}
-      if(r.ok){cfg={url,key};$('baixar').disabled=false;
+      if(r.ok){cfg={url,key};$('baixar').disabled=false;$('baixarCfg').disabled=false;
         show(true,window.supabase?'Conexão funcionando. Agora clique em Baixar arquivo configurado.':'O banco respondeu, mas este computador não carregou um componente do app (cdn.jsdelivr.net). Baixe o arquivo configurado e teste; se não abrir, a rede da empresa pode estar bloqueando esse endereço.')}
       else if(r.status===401||r.status===403||/Invalid API key|No API key/i.test(corpo))show(false,'O servidor recusou a chave (erro '+r.status+'). Copie de novo a chave anon public ou a Publishable key, inteira.');
       else if(r.status===404||/PGRST205|42P01|does not exist|schema cache/i.test(corpo))show(false,'Conectou, mas o banco não está pronto. Refaça o passo 2: cole o código do banco no SQL Editor e clique em Run.');
       else show(false,'O servidor respondeu com erro '+r.status+'. '+corpo.slice(0,160))}
     catch(x){show(false,x.name==='AbortError'?'O servidor não respondeu em 15 segundos. Confira a Project URL. Se estiver certa, a rede da empresa pode estar bloqueando o endereço supabase.co.':'Não foi possível chegar ao servidor. Confira a Project URL. Se estiver certa, a rede da empresa pode estar bloqueando o endereço supabase.co (teste em outra rede, como o 4G do celular).')}
     clearTimeout(timer);btn.disabled=false});
+  const baixa=(nomeArq,txt,tipo)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:tipo}));a.download=nomeArq;document.body.appendChild(a);a.click();a.remove()};
+  $('baixarCfg').onclick=()=>{if(!cfg)return;baixa('config.js','window.INV_CONFIG='+JSON.stringify(cfg)+';\n','text/javascript');toast('config.js baixado. Envie para o repositório junto com o index.html.')};
   $('baixar').onclick=()=>{if(!cfg)return;
     const html=ORIGINAL.replace("const SUPABASE_URL='';const SUPABASE_KEY='';",`const SUPABASE_URL=${JSON.stringify(cfg.url)};const SUPABASE_KEY=${JSON.stringify(cfg.key)};`);
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download='inventario-cd.html';document.body.appendChild(a);a.click();a.remove();
@@ -562,4 +591,6 @@ function telaConfig(){
 }
 
 init();
-</script></body></html>
+</script>
+</body>
+</html>
