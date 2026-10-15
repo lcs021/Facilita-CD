@@ -152,6 +152,9 @@ ul.hist li{font-size:.9rem;border-left:2px solid var(--line);padding-left:10px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;align-items:center}
 .dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle}
 .dot.bg{background:var(--gar)} .dot.br{background:var(--accent)}
+.catpick.g4o{grid-template-columns:repeat(4,1fr)}
+@media (max-width:560px){.catpick.g4o{grid-template-columns:1fr 1fr}}
+.exprow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .pill{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--sunken);color:var(--muted);white-space:nowrap}
 .pill.new{background:var(--alta);color:#fff}
 .steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px}
@@ -209,6 +212,7 @@ alter table public.ocorrencias add column if not exists categoria text not null 
 alter table public.ocorrencias add column if not exists fornecedor text;
 alter table public.ocorrencias add column if not exists id_quebra text;
 alter table public.ocorrencias add column if not exists gar_status text;
+alter table public.ocorrencias add column if not exists origem text;
 
 alter table public.perfis enable row level security;
 alter table public.ocorrencias enable row level security;
@@ -292,7 +296,9 @@ const SUPABASE_URL='';const SUPABASE_KEY='';
 /* =============================================================== */
 
 const ORIGINAL='<!doctype html>\n'+document.documentElement.outerHTML;
-const TIPOS=['Avaria / peça quebrada','Embalagem violada','Sem etiqueta / ilegível','Código divergente (peça trocada)','Kit incompleto','Material retirado como quebrado de loja','Quebrado de fábrica'];
+const TIPOS_CAT={'Garantia':['Peça quebrada','Peça com defeito','Embalagem violada','Kit incompleto'],'Relatório':['Avaria / peça quebrada','Embalagem violada','Sem etiqueta / ilegível','Código divergente (peça trocada)','Kit incompleto']};
+const ORIGENS={'Loja':'Retirado como quebrado na loja','Fábrica':'Veio quebrado ou com defeito do fabricante','Transporte':'Quebrou no frete ou na entrega','CD':'Quebrou dentro do CD'};
+const TIPOS=[...new Set([...TIPOS_CAT['Garantia'],...TIPOS_CAT['Relatório']])];
 const CARGOS={'Conferente':['registrar'],'Operador':['registrar'],'Líder':['registrar','resumo','garantia'],'Analista de inventário':['registrar','resumo','garantia'],'Supervisor':['registrar','resumo','garantia','apagar']};
 const CARGO_DESC={'Conferente':'registra','Operador':'registra','Líder':'registra, vê o resumo e atualiza garantias','Analista de inventário':'registra, vê o resumo e atualiza garantias','Supervisor':'tudo, inclusive apagar registros'};
 const ANDARES={'11':'1º andar','12':'2º andar','13':'3º andar'},LETRAS='ABCDEFGHI'.split('');
@@ -314,7 +320,7 @@ const pode=a=>!!eu&&(eu.admin||(CARGOS[eu.cargo]||[]).includes(a));
 const andarDe=e=>{const m=String(e||'').match(/^(1[123])/);return m?m[1]:''};
 let tt;function toast(m){const e=$('toast');e.textContent=m;e.hidden=false;clearTimeout(tt);tt=setTimeout(()=>e.hidden=true,3200)}
 function erroMsg(e){const m=(e&&(e.message||e.error_description))||'';
-  if(/categoria|fornecedor|id_quebra|gar_status/i.test(m))return'O banco precisa de uma atualização (coluna categoria). Peça ao administrador para rodar o comando de atualização no SQL Editor do Supabase.';
+  if(/categoria|fornecedor|id_quebra|gar_status|origem/i.test(m))return'O banco precisa de uma atualização (coluna categoria). Peça ao administrador para rodar o comando de atualização no SQL Editor do Supabase.';
   if(/Invalid login credentials/i.test(m))return'E-mail ou senha incorretos.';
   if(/Email not confirmed/i.test(m))return'Confirme seu e-mail antes de entrar. Veja a mensagem que chegou na sua caixa de entrada.';
   if(/already registered|already been registered/i.test(m))return'Este e-mail já tem cadastro. Use a tela Entrar.';
@@ -361,7 +367,7 @@ const gstCls=s=>({'Pendente':'p','Enviado ao fornecedor':'e','Crédito recebido'
 const gstBadge=o=>o.categoria==='Garantia'?`<span class="gst ${gstCls(o.gar_status)}">${esc(o.gar_status||'Pendente')}</span>`:'';
 const catCls=c=>c==='Garantia'?'gar':'rel';
 const catBadge=c=>`<span class="cat ${catCls(c||'Relatório')}">${esc(c||'Relatório')}</span>`;
-function novo(){return{cat:'',forn:'',idq:'',tipo:'',end:'',andar:'',letra:'',sku:'',produto:'',fab:'',qtd:'',obs:'',fotos:[],videos:[]}}
+function novo(){return{cat:'',origem:'',forn:'',idq:'',tipo:'',end:'',andar:'',letra:'',sku:'',produto:'',fab:'',qtd:'',obs:'',fotos:[],videos:[]}}
 
 function render(){
   const v=$('view'),fora=()=>{$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent=''};
@@ -441,11 +447,11 @@ function filtrar(){const q=ui.busca.trim().toLowerCase();
     if(ui.tipo&&o.tipo!==ui.tipo)return false;
     if(ui.pessoa&&o.autor!==ui.pessoa&&!(o.hist||[]).some(h=>h.por===ui.pessoa))return false;
     const d=dia(o.criado);if(ui.de&&d<ui.de)return false;if(ui.ate&&d>ui.ate)return false;
-    if(q&&![o.sku,o.produto,o.fab,o.fornecedor,o.id_quebra,o.endereco,nome(o.autor),o.obs].join(' ').toLowerCase().includes(q))return false;return true})
+    if(q&&![o.sku,o.produto,o.fab,o.origem,o.fornecedor,o.id_quebra,o.endereco,nome(o.autor),o.obs].join(' ').toLowerCase().includes(q))return false;return true})
   .sort((a,b)=>ts(b.criado)-ts(a.criado))}
 function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<button class="card" data-id="${esc(o.id)}">
   <div class="thumb">${f?`<img data-path="${esc(f)}" alt="">`:nv?'▶ vídeo':'sem foto'}${f&&nv?'<span class="vb">▶</span>':''}</div>
-  <div class="b"><div class="row"><span class="t">${esc(o.tipo)}</span>${catBadge(o.categoria)}</div>${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}
+  <div class="b"><div class="row"><span class="t">${esc(o.tipo)}</span>${catBadge(o.categoria)}</div>${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.origem?' · Origem: '+esc(o.origem):''}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}
   ${o.endereco||o.sku?`<div class="line">${o.endereco?`<span class="addr">${esc(o.endereco)}</span> `:''}${esc(o.sku||'')}</div>`:''}
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
   <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
@@ -456,11 +462,11 @@ function listaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p
   <div class="seg">${[['Garantia','Garantia'],['Relatório','Relatório']].map(([k,t])=>`<button data-cat="${k}" aria-pressed="${ui.cat===k}">${t}</button>`).join('')}</div>
   ${ui.cat==='Garantia'?`<div class="chips">${['',...GST].map(s=>`<button type="button" class="chip" data-gst="${s}" aria-pressed="${ui.gst===s}">${s||'Todas'}${s?' ('+ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')===s).length+')':''}</button>`).join('')}</div>`:''}
   <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, fornecedor" value="${esc(ui.busca)}">
-  <select id="ftipo" aria-label="Tipo"><option value="">Todos os tipos</option>${TIPOS.map(t=>`<option ${t===ui.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
+  <select id="ftipo" aria-label="Tipo"><option value="">Todos os tipos</option>${[...new Set([...(TIPOS_CAT[ui.cat]||TIPOS),...ocs.filter(o=>(o.categoria||'Relatório')===ui.cat).map(o=>o.tipo)])].map(t=>`<option ${t===ui.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
   <div class="filters"><select id="fpessoa" aria-label="Pessoa"><option value="">Todas as pessoas</option>${pessoas.map(p=>`<option value="${esc(p.id)}" ${p.id===ui.pessoa?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}" max="${hoje()}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}" max="${hoje()}"></label></div></div>
   <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
-  <div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div>
+  <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div><button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button></div>
   <div class="list">${l.length?l.map(cardHTML).join(''):`<div class="empty">${ocs.length?'Nenhuma ocorrência com esses filtros.':'Nenhuma ocorrência registrada ainda.<br>Toque em <b>+ Registrar</b> para criar a primeira.'}</div>`}</div></div>`}
 function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{ui.det=c.dataset.id;render();scrollTo(0,0)}))}
 function bindLista(){const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
@@ -472,7 +478,29 @@ function bindLista(){const b=$('busca');b.addEventListener('input',e=>{ui.busca=
   const lf=$('limparF');if(lf)lf.onclick=()=>{Object.assign(ui,{gst:'',pessoa:'',de:'',ate:'',tipo:'',busca:''});render()};
   document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{ui.cat=b.dataset.cat;ui.gst='';render()}));
   document.querySelectorAll('[data-gst]').forEach(b=>b.addEventListener('click',()=>{ui.gst=b.dataset.gst;render()}));
+  $('exportar').onclick=()=>exportarExcel(filtrar());
   bindCards()}
+
+/* ---------- Exportar Excel ---------- */
+function carregarXlsx(){return window.XLSX?Promise.resolve():new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+async function exportarExcel(lista){
+  const b=$('exportar');if(b){b.disabled=true;b.textContent='Gerando…'}
+  try{await carregarXlsx()}catch(e){toast('Não foi possível carregar o gerador de Excel. Verifique a internet.');if(b){b.disabled=false;b.textContent='⬇ Exportar Excel'}return}
+  const enviadoEm=o=>{const h=[...(o.hist||[])].reverse().find(x=>/^Enviado ao fornecedor/.test(x.txt||''));return h?fData(h.t):''};
+  const linhas=lista.map(o=>{const d=new Date(o.criado);return{
+    'Data':d.toLocaleDateString('pt-BR'),'Hora':d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+    'Categoria':o.categoria||'Relatório','Tipo':o.tipo||'','Origem da quebra':o.origem||'',
+    'Situação da garantia':o.categoria==='Garantia'?(o.gar_status||'Pendente'):'','Enviado ao fornecedor em':o.categoria==='Garantia'?enviadoEm(o):'',
+    'Fornecedor':o.fornecedor||'','ID da quebra':o.id_quebra||'','Código da peça':o.sku||'','Peça':o.produto||'','Fabricante':o.fab||'',
+    'Quantidade':o.qtd??'','Observação':o.obs||'','Registrado por':nome(o.autor),'Fotos':(o.fotos||[]).length,'Vídeos':(o.videos||[]).length}});
+  const ws=XLSX.utils.json_to_sheet(linhas);
+  const cols=Object.keys(linhas[0]||{Data:''});ws['!cols']=cols.map(c=>({wch:Math.min(45,Math.max(c.length+2,...linhas.map(r=>String(r[c]??'').length+2)))}));
+  if(linhas.length)ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:linhas.length,c:cols.length-1}})};
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,ui.cat==='Garantia'?'Garantias':'Relatórios');
+  const partes=['inventario',ui.cat==='Garantia'?'garantias':'relatorios'];if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
+  if(ui.pessoa)partes.push(nome(ui.pessoa).split(' ')[0].toLowerCase());partes.push(ui.de||ui.ate?(ui.de||'inicio')+'_a_'+(ui.ate||hoje()):hoje());
+  XLSX.writeFile(wb,partes.join('-').normalize('NFD').replace(/[\u0300-\u036f]/g,'')+'.xlsx');
+  toast(lista.length+(lista.length===1?' linha exportada':' linhas exportadas'));if(b){b.disabled=false;b.textContent='⬇ Exportar Excel'}}
 
 /* ---------- Registrar ---------- */
 const icCam='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></svg>';
@@ -485,7 +513,8 @@ function formHTML(){const d=draft;return`<form class="stack" id="fnova" novalida
   ${d.videos.length<2?`<label class="addbtn">${icVid}Vídeo<input id="video" type="file" accept="video/*" capture="environment"></label>`:'<span class="addbtn off">2 vídeos</span>'}</div>
   ${d.fotos.length||d.videos.length||enviando?`<div class="photos">${d.fotos.map((f,i)=>`<div class="ph"><img src="${f.prev}" alt="Foto ${i+1}"><button type="button" data-rm="${i}" aria-label="Remover foto">×</button></div>`).join('')}${d.videos.map((v,i)=>`<div class="ph"><video src="${v.prev}" muted playsinline preload="metadata"></video><span class="vb">▶</span><button type="button" data-rmv="${i}" aria-label="Remover vídeo">×</button></div>`).join('')}${enviando?'<div class="ph">Enviando…</div>':''}</div>`:''}
   <span class="muted small">Até 4 fotos e 2 vídeos curtos (máximo 50 MB cada).</span></div>
-  <div class="field"><span class="lbl">Tipo *</span><div class="radios">${TIPOS.map((t,i)=>`<label><input type="radio" name="tipo" id="tp${i}" value="${t}" ${d.tipo===t?'checked':''}>${t}</label>`).join('')}</div></div>
+  ${d.cat==='Garantia'?`<div class="field"><span class="lbl">Origem da quebra *</span><div class="catpick g4o">${Object.entries(ORIGENS).map(([k,dsc])=>`<button type="button" class="gar" data-orig="${k}" aria-pressed="${d.origem===k}"><b>${k}</b><small>${dsc}</small></button>`).join('')}</div></div>`:''}
+  <div class="field"><span class="lbl">Tipo *</span>${d.cat?'':'<span class="muted small">Escolha primeiro Garantia ou Relatório.</span>'}<div class="radios">${(TIPOS_CAT[d.cat]||[]).map((t,i)=>`<label><input type="radio" name="tipo" id="tp${i}" value="${t}" ${d.tipo===t?'checked':''}>${t}</label>`).join('')}</div></div>
   <div class="two"><div class="field"><label class="lbl" for="sku">Código da peça</label><input id="sku" autocapitalize="characters" value="${esc(d.sku)}"></div>
   <div class="field"><label class="lbl" for="qtd">Quantidade</label><input id="qtd" type="number" min="0" inputmode="numeric" value="${esc(d.qtd)}"></div></div>
   <div class="field"><label class="lbl" for="produto">Peça</label><input id="produto" value="${esc(d.produto)}" placeholder="Ex.: Amortecedor traseiro"></div>
@@ -503,7 +532,8 @@ const caminho=ext=>`${uid}/${Date.now()}-${Math.random().toString(36).slice(2,8)
 async function enviar(blob,ext,tipo){const p=caminho(ext);const {error}=await sb.storage.from(BUCKET).upload(p,blob,{contentType:tipo,upsert:false});if(error)throw error;return p}
 function removerArquivos(paths){if(paths.length)sb.storage.from(BUCKET).remove(paths).catch(()=>{})}
 function bindForm(){const fm=$('fnova');fm.addEventListener('input',ler);fm.addEventListener('change',ler);
-  document.querySelectorAll('[data-ncat]').forEach(b=>b.addEventListener('click',()=>{ler();draft.cat=b.dataset.ncat;render()}));
+  document.querySelectorAll('[data-ncat]').forEach(b=>b.addEventListener('click',()=>{ler();draft.cat=b.dataset.ncat;if(!(TIPOS_CAT[draft.cat]||[]).includes(draft.tipo))draft.tipo='';if(draft.cat!=='Garantia')draft.origem='';render()}));
+  document.querySelectorAll('[data-orig]').forEach(b=>b.addEventListener('click',()=>{ler();draft.origem=b.dataset.orig;render()}));
   const fi=$('foto');if(fi)fi.addEventListener('change',async e=>{ler();const files=[...e.target.files].slice(0,4-draft.fotos.length);const d=draft;
     for(const f of files){enviando++;render();try{const {blob,prev}=await comprimir(f);const path=await enviar(blob,'jpg','image/jpeg');d.fotos.push({path,prev})}catch(x){toast(x&&x.message?erroMsg(x):'Não foi possível ler essa imagem')}enviando--}
     if(draft===d&&ui.tab==='nova')render()});
@@ -516,10 +546,10 @@ function bindForm(){const fm=$('fnova');fm.addEventListener('input',ler);fm.addE
   document.querySelectorAll('[data-rmv]').forEach(b=>b.addEventListener('click',()=>{ler();const [v]=draft.videos.splice(+b.dataset.rmv,1);if(v)removerArquivos([v.path]);render()}));
   $('limpar').addEventListener('click',()=>{removerArquivos([...draft.fotos,...draft.videos].map(x=>x.path));draft=novo();render()});
   fm.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;if(enviando){toast('Aguarde as fotos e vídeos terminarem de enviar');return}ler();const er=$('ferr');
-    if(!draft.cat||!draft.tipo){er.textContent=!draft.cat?'Escolha se é Garantia ou Relatório.':'Escolha o tipo.';er.hidden=false;return}
+    if(!draft.cat||!draft.tipo||(draft.cat==='Garantia'&&!draft.origem)){er.textContent=!draft.cat?'Escolha se é Garantia ou Relatório.':(draft.cat==='Garantia'&&!draft.origem)?'Escolha a origem da quebra.':'Escolha o tipo.';er.hidden=false;return}
     const mid=[draft.fotos.length?draft.fotos.length+' foto(s)':'',draft.videos.length?draft.videos.length+' vídeo(s)':''].filter(Boolean).join(' e ');
     const gar=draft.cat==='Garantia';
-    const o={categoria:draft.cat,fornecedor:gar&&draft.forn||null,id_quebra:gar&&draft.idq||null,gar_status:gar?'Pendente':null,tipo:draft.tipo,endereco:'',sku:draft.sku||null,produto:draft.produto||null,fab:draft.fab||null,qtd:draft.qtd?+draft.qtd:null,obs:draft.obs||null,
+    const o={categoria:draft.cat,fornecedor:gar&&draft.forn||null,id_quebra:gar&&draft.idq||null,gar_status:gar?'Pendente':null,origem:gar?draft.origem:null,tipo:draft.tipo,endereco:'',sku:draft.sku||null,produto:draft.produto||null,fab:draft.fab||null,qtd:draft.qtd?+draft.qtd:null,obs:draft.obs||null,
       fotos:draft.fotos.map(f=>f.path),videos:draft.videos.map(v=>v.path),autor:uid,status:'registrada',hist:[{t:new Date().toISOString(),por:uid,txt:'Registrada'+(mid?' com '+mid:'')}]};
     saving=true;const {error}=await sb.from('ocorrencias').insert(o);saving=false;
     if(error){er.textContent=erroMsg(error);er.hidden=false;return}
@@ -537,7 +567,7 @@ function detHTML(){const o=ocs.find(x=>x.id===ui.det);if(!o){ui.det=null;return 
   ${(o.fotos||[]).length?`<div class="gallery">${o.fotos.map((f,i)=>`<img data-path="${esc(f)}" alt="Foto ${i+1}">`).join('')}</div>`:''}
   ${(o.videos||[]).map(v=>`<video class="vplay" data-path="${esc(v)}" controls playsinline preload="metadata"></video>`).join('')}
   ${o.categoria==='Garantia'?`<div class="box stack gbox"><div class="row"><b>Garantia</b>${gstBadge(o)}</div>
-  <dl class="facts"><dt>Fornecedor</dt><dd>${esc(o.fornecedor||'—')}</dd><dt>ID da quebra</dt><dd class="mono">${esc(o.id_quebra||'—')}</dd></dl>
+  <dl class="facts"><dt>Origem da quebra</dt><dd>${esc(o.origem||'—')}</dd><dt>Fornecedor</dt><dd>${esc(o.fornecedor||'—')}</dd><dt>ID da quebra</dt><dd class="mono">${esc(o.id_quebra||'—')}</dd></dl>
   ${pode('garantia')?`<div class="field"><span class="lbl">Atualizar situação</span><div class="chips">${GST.filter(s=>s!==(o.gar_status||'Pendente')).map(s=>`<button type="button" class="chip" data-novo="${s}">${s}</button>`).join('')}</div>
   <input id="gnota" placeholder="Observação (opcional): ex. nº do protocolo, data da coleta"></div>`:'<p class="muted small" style="margin:0">A situação da garantia é atualizada pelo líder, analista ou supervisor.</p>'}
   ${(o.hist||[]).length>1?`<ul class="hist">${o.hist.slice(1).map(h=>`<li><span class="muted small">${fData(h.t)} · ${esc(nome(h.por))}</span><br>${esc(h.txt)}</li>`).join('')}</ul>`:''}</div>`:''}
@@ -594,6 +624,7 @@ function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{c
   ${(()=>{const g=ocs.filter(o=>o.categoria==='Garantia');if(!g.length)return'';const k={};GST.forEach(s=>k[s]=0);g.forEach(o=>k[o.gar_status||'Pendente']++);
     const pf={};g.forEach(o=>{const f=o.fornecedor||'Sem fornecedor';pf[f]=(pf[f]||0)+1});
     return`<span class="lbl">Garantias</span><div class="stats g4">${GST.map(s=>`<div class="stat"><div class="v">${k[s]}</div><div class="muted small">${s}</div></div>`).join('')}</div>
+    <span class="lbl">Garantias por origem da quebra</span><div class="box stack" style="gap:8px">${bars(Object.entries(g.reduce((m,o)=>{const k=o.origem||'Não informada';m[k]=(m[k]||0)+1;return m},{})).sort((a,b)=>b[1]-a[1]))}</div>
     <span class="lbl">Garantias por fornecedor</span><div class="box stack" style="gap:8px">${bars(Object.entries(pf).sort((a,b)=>b[1]-a[1]).slice(0,8))}</div>`})()}
   <span class="lbl">Garantia x Relatório</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.categoria||'Relatório'))}</div>
   <span class="lbl">Por tipo</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.tipo))}</div>
