@@ -269,6 +269,28 @@ details summary{cursor:pointer;list-style-position:inside}
 .blin .nl{position:absolute;top:-9px;left:12px;background:var(--bai);color:#fff;font-size:.7rem;font-weight:800;border-radius:999px;padding:1px 8px}
 .blin .tl{font-size:.8rem;color:var(--muted);margin-top:2px}
 @media (max-width:620px){.blin .g{grid-template-columns:repeat(2,minmax(0,1fr))}.blin .g .w2,.blin .g .w3{grid-column:span 2}}
+.bgraf{display:flex;flex-direction:column;gap:14px}
+.bgraf .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.bgraf .per{display:flex;align-items:center;gap:6px}
+.bgraf .per button.nav{border:1px solid var(--line);background:var(--surface);color:var(--fg);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:1rem}
+.bgraf .per button.nav:disabled{opacity:.35;cursor:default}
+.bgraf .per b{min-width:0;font-size:.98rem}
+.bgraf .seg button[aria-pressed="true"]{color:var(--bai)}
+.bgraf .kp{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.bgraf .kp div{background:var(--sunken);border-radius:11px;padding:9px 11px;min-width:0}
+.bgraf .kp b{display:block;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bgraf .kp span{font-size:.74rem;color:var(--muted)}
+@media (max-width:560px){.bgraf .kp{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.bsvg{width:100%;height:auto;display:block}
+.bsvg .bar{fill:var(--bai);transition:opacity .15s}.bsvg .bar.zero{fill:var(--line2)}.bsvg g:hover .bar{opacity:.8}
+.bsvg .gl{stroke:var(--line);stroke-width:1}.bsvg text{font:600 11px var(--font);fill:var(--muted)}.bsvg .vl{fill:var(--fg);font-weight:800}
+.bsvg .hj{fill:var(--bai);font-weight:800}
+.bgraf .acts{display:flex;gap:8px;flex-wrap:wrap}
+.relbai{font-family:Arial,Helvetica,sans-serif;color:#000}
+.relbai h1{font-size:15pt;margin:0 0 2pt;text-align:center}.relbai .sub{text-align:center;font-size:10pt;margin-bottom:10pt}
+.relbai .kp{display:flex;border:1px solid #000;margin-bottom:10pt}.relbai .kp div{flex:1;padding:5pt;border-right:1px solid #000;text-align:center;font-size:9pt}.relbai .kp div:last-child{border-right:0}.relbai .kp b{display:block;font-size:13pt}
+.relbai .bsvg .bar{fill:#6d28d9}.relbai .bsvg .bar.zero{fill:#ccc}.relbai .bsvg text{fill:#333;font-family:Arial,sans-serif}.relbai .bsvg .vl,.relbai .bsvg .hj{fill:#000}.relbai .bsvg .gl{stroke:#ccc}
+.relbai .rgbox{border:1px solid #000;padding:8pt;margin-bottom:12pt}
+.relbai,.relbai *{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 .sethead.bbox{border-color:color-mix(in srgb,var(--bai) 35%,var(--line));background:linear-gradient(180deg,var(--bai-soft),var(--surface) 70%)}
 .btab{font-size:.84rem}.btab td{padding:9px 8px}.btab th{padding:8px}.btab .nw{white-space:nowrap}.btab .ds{min-width:170px}
 .cbaiano{width:100%;table-layout:fixed;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-weight:700;color:#000;font-size:8.5pt}
@@ -738,7 +760,7 @@ const BUCKET='midias',H=3600e3,MAX_VIDEO=50*1024*1024;
 
 let sb=null,uid=null,eu=null,perfis={},ocs=[],carregou=false;
 let tela='login',msgLogin='';
-let ui={tab:'lista',setor:'',mes:'',fano:'',fmes:'',cat:'Garantia',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
+let ui={baiPer:'semana',baiRef:'',tab:'lista',setor:'',mes:'',fano:'',fmes:'',cat:'Garantia',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
 let draft=null,saving=false,enviando=0;
 const urls={},pedindo=new Set();
 
@@ -1004,7 +1026,7 @@ function setoresGridHTML(){
   return`<div class="box sethead"><div class="row"><div><b>${ui.setor?esc(ui.setor):'Todos os setores'}</b><div class="muted small">${ui.setor?(chefeDe(ui.setor)?'Chefe: <b style="color:var(--fg)">'+esc(chefeDe(ui.setor))+'</b>':'Sem chefe definido · defina na aba Equipe'):'Escolha um setor no menu para ver só os relatórios dele'}</div></div><span class="cat min">Minucioso</span></div>
   <div class="setnums"><div><b>${l.length}</b><span>relatório${l.length===1?'':'s'}</span></div><div><b class="dif neg">${pf}</b><span>peças em falta</span></div><div><b style="font-size:1rem">${brl(vt)}</b><span>valor em falta</span></div><div><b class="dif pos">${semMot}</b><span>sem motivo do chefe</span></div></div></div>`}
 function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{ui.det=c.dataset.id;render();scrollTo(0,0)}))}
-function bindLista(){const pb=$('imprBai');if(pb)pb.onclick=()=>{const l=filtrar();if(l.length)imprimirBai(l.reverse())};document.querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>{ui.det=r.dataset.id;render();scrollTo(0,0)});
+function bindLista(){bindBaiGraf();const pb=$('imprBai');if(pb)pb.onclick=()=>{const l=filtrar();if(l.length)imprimirBai(l.reverse())};document.querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>{ui.det=r.dataset.id;render();scrollTo(0,0)});
   const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
   $('ftipo').addEventListener('change',e=>{ui.tipo=e.target.value;render()});
   $('fpessoa').addEventListener('change',e=>{ui.pessoa=e.target.value;render()});
@@ -1164,6 +1186,7 @@ function baiListaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p
   return`<div class="stack">
   <div class="listhead"><h2>Consertos Baiano</h2>${catBadge('Consertos Baiano')}</div>
   <div class="box sethead bbox"><div class="setnums"><div><b>${l.length}</b><span>registro${l.length===1?'':'s'}</span></div><div><b>${pecas}</b><span>peça${pecas===1?'':'s'}</span></div><div><b style="font-size:1rem;color:var(--bai)">${brl(tot)}</b><span>total dos consertos</span></div></div></div>
+  ${baiGrafHTML()}
   <div class="filters"><input id="busca" type="search" placeholder="Buscar código, descrição, requisitante" value="${esc(ui.busca)}"><select id="ftipo" hidden></select></div>
   <div class="filters"><select id="fpessoa" aria-label="Pessoa"><option value="">Todas as pessoas</option>${pessoas.map(p=>`<option value="${esc(p.id)}" ${p.id===ui.pessoa?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
@@ -1194,6 +1217,52 @@ function bindBaiDet(o){$('voltar').onclick=()=>{ui.det=null;render()};$('imprimi
   const n=$('delNao');if(n)n.onclick=()=>{ui.confDel=false;render()};
   const s=$('delSim');if(s)s.onclick=async()=>{s.disabled=true;const {error}=await sb.from('ocorrencias').delete().eq('id',o.id);if(error){s.disabled=false;toast(erroMsg(error));return}
     ocs=ocs.filter(x=>x.id!==o.id);ui.det=null;ui.confDel=false;toast('Conserto apagado');render()}}
+
+
+/* ---------- Consertos Baiano: gráfico semana / mês ---------- */
+const dStr=d=>d.toLocaleDateString('sv-SE'),dObj=s=>new Date(s+'T12:00:00'),addDias=(s,n)=>{const d=dObj(s);d.setDate(d.getDate()+n);return dStr(d)};
+const segDe=s=>{const d=dObj(s);return addDias(s,-((d.getDay()+6)%7))};
+const diaBai=o=>o.data_ref?String(o.data_ref).slice(0,10):dia(o.criado);
+const ddmm=s=>s.slice(8,10)+'/'+s.slice(5,7);
+const DSEM=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+function periodoBai(){const ref=ui.baiRef||hoje();
+  if(ui.baiPer==='mes'){const y=+ref.slice(0,4),m=+ref.slice(5,7),ini=ref.slice(0,8)+'01',fim=dStr(new Date(y,m,0,12));
+    const grupos=[];for(let s=segDe(ini);s<=fim;s=addDias(s,7)){const a=s<ini?ini:s,b=addDias(s,6)>fim?fim:addDias(s,6);grupos.push({de:a,ate:b,rot:'Sem '+(grupos.length+1),sub:ddmm(a)+'–'+ddmm(b)})}
+    return{de:ini,ate:fim,grupos,titulo:MESES_L[m-1][0].toUpperCase()+MESES_L[m-1].slice(1)+' de '+y,nome:'mês',art:'do'}}
+  const ini=segDe(ref),fim=addDias(ini,6);
+  return{de:ini,ate:fim,grupos:DSEM.map((d,i)=>{const s=addDias(ini,i);return{de:s,ate:s,rot:d,sub:ddmm(s)}}),titulo:'Semana de '+ddmm(ini)+' a '+ddmm(fim)+'/'+fim.slice(0,4),nome:'semana',art:'da'}}
+function dadosBai(){const P=periodoBai(),base=ocs.filter(o=>o.categoria==='Consertos Baiano'&&(!ui.pessoa||o.autor===ui.pessoa));
+  const regs=base.filter(o=>{const d=diaBai(o);return d>=P.de&&d<=P.ate});
+  P.grupos.forEach(g=>{const r=regs.filter(o=>{const d=diaBai(o);return d>=g.de&&d<=g.ate});g.valor=r.reduce((a,o)=>a+(totalBai(o)||0),0);g.pecas=r.reduce((a,o)=>a+(Number(o.qtd)||1),0)});
+  P.regs=regs;P.total=regs.reduce((a,o)=>a+(totalBai(o)||0),0);P.pecas=regs.reduce((a,o)=>a+(Number(o.qtd)||1),0);
+  P.cortadas=regs.filter(o=>Number(o.valor_conserto)===0).reduce((a,o)=>a+(Number(o.qtd)||1),0);
+  P.melhor=P.grupos.reduce((a,g)=>g.valor>(a?a.valor:0)?g:a,null);return P}
+function svgBai(P){const W=640,H=230,pl=8,pr=8,pt=26,pb=44,n=P.grupos.length,cw=(W-pl-pr)/n,bw=Math.min(54,cw*.62),mx=Math.max(1,...P.grupos.map(g=>g.valor)),ch=H-pt-pb,hj=hoje();
+  const lin=[0,.5,1].map(f=>{const y=pt+ch-ch*f;return`<line class="gl" x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}"/>`}).join('');
+  return`<svg class="bsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Valor dos consertos por ${P.nome==='mês'?'semana':'dia'}">${lin}${P.grupos.map((g,i)=>{const x=pl+cw*i+(cw-bw)/2,h=g.valor?Math.max(3,ch*g.valor/mx):2,y=pt+ch-h,eh=hj>=g.de&&hj<=g.ate;
+    return`<g><title>${g.rot} ${g.sub}: ${brl(g.valor)} · ${g.pecas} peça${g.pecas===1?'':'s'}</title><rect class="bar${g.valor?'':' zero'}" x="${x}" y="${y}" width="${bw}" height="${h}" rx="5"/>
+    ${g.valor?`<text class="vl" x="${x+bw/2}" y="${y-7}" text-anchor="middle">${brl(g.valor).replace(/\s/g,' ')}</text>`:''}
+    <text class="${eh?'hj':''}" x="${x+bw/2}" y="${H-pb+18}" text-anchor="middle">${g.rot}</text><text x="${x+bw/2}" y="${H-pb+33}" text-anchor="middle" style="font-weight:500">${g.sub}</text></g>`}).join('')}</svg>`}
+function baiGrafHTML(){const P=dadosBai(),fut=P.ate>=hoje();
+  return`<div class="box bgraf" id="bgraf"><div class="top"><div class="seg" role="group" aria-label="Período"><button type="button" data-bper="semana" aria-pressed="${ui.baiPer!=='mes'}">Semana</button><button type="button" data-bper="mes" aria-pressed="${ui.baiPer==='mes'}">Mês</button></div>
+  <div class="per"><button type="button" class="nav" data-bnav="-1" aria-label="Período anterior">‹</button><b>${P.titulo}</b><button type="button" class="nav" data-bnav="1" aria-label="Próximo período" ${fut?'disabled':''}>›</button></div></div>
+  <div class="kp"><div><b style="color:var(--bai)">${brl(P.total)}</b><span>total ${P.art} ${P.nome}</span></div><div><b>${P.pecas}</b><span>peças consertadas</span></div><div><b>${P.cortadas}</b><span>cortadas (abaixo de R$ 15)</span></div><div><b>${P.melhor?esc(P.melhor.rot):'—'}</b><span>${P.nome==='mês'?'semana':'dia'} com mais valor${P.melhor?' ('+P.melhor.sub+')':''}</span></div></div>
+  ${P.regs.length?svgBai(P):`<div class="empty" style="padding:22px">Nenhum conserto ${P.nome==='mês'?'neste mês':'nesta semana'}.</div>`}
+  <div class="acts"><button type="button" class="btn sm primary" id="bimpGraf" ${P.regs.length?'':'disabled'}>🖨 Imprimir relatório ${P.art} ${P.nome}</button>${ui.baiRef&&ui.baiRef!==hoje()?'<button type="button" class="btn sm" id="bhoje">Voltar para hoje</button>':''}</div></div>`}
+function bindBaiGraf(){if(!$('bgraf'))return;
+  document.querySelectorAll('[data-bper]').forEach(b=>b.onclick=()=>{ui.baiPer=b.dataset.bper;render()});
+  document.querySelectorAll('[data-bnav]').forEach(b=>b.onclick=()=>{const ref=ui.baiRef||hoje(),k=+b.dataset.bnav;
+    if(ui.baiPer==='mes'){const d=dObj(ref.slice(0,8)+'01');d.setMonth(d.getMonth()+k);ui.baiRef=dStr(d)}else ui.baiRef=addDias(ref,7*k);
+    if(ui.baiRef>hoje())ui.baiRef=hoje();render()});
+  const h=$('bhoje');if(h)h.onclick=()=>{ui.baiRef='';render()};
+  $('bimpGraf').onclick=()=>{const P=dadosBai();if(!P.regs.length)return;const l=[...P.regs].sort((a,b)=>diaBai(a).localeCompare(diaBai(b)));
+    let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+    a.innerHTML=`<div class="folha"><div class="relbai"><h1>CONSERTOS BAIANO</h1><div class="sub">Relatório ${P.art} ${P.nome} · ${P.titulo}</div>
+    <div class="kp"><div><b>${brl(P.total)}</b>Total ${P.art} ${P.nome}</div><div><b>${P.pecas}</b>Peças consertadas</div><div><b>${P.cortadas}</b>Cortadas (abaixo de R$ 15)</div><div><b>${P.melhor?esc(P.melhor.rot+' '+P.melhor.sub):'—'}</b>${P.nome==='mês'?'Semana':'Dia'} com mais valor</div></div>
+    <div class="rgbox">${svgBai(P)}</div></div>${folhaBai(l)}</div>`;
+    document.body.classList.add('imprimindo');
+    const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);
+    setTimeout(()=>{try{print()}catch(e){toast('Não foi possível abrir a impressão neste navegador.')}},80)}}
 
 /* ---------- Minucioso (ficha para impressão) ---------- */
 function minFormHTML(){const d=draft;const tot=(d.custo!==''&&d.falta!=='')?brl(Number(String(d.custo).replace(',','.'))*Number(d.falta)):'—';
