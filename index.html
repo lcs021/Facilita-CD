@@ -303,11 +303,53 @@ code{font-family:var(--mono);font-size:.86em;background:var(--sunken);padding:1p
   #printArea .folha{width:184mm;max-width:100%;margin:0 auto}
   html,body.imprimindo{min-width:0!important;width:auto!important}
 }
+/* Menu lateral */
+.menubtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--ink-fg);width:38px;height:38px;border-radius:10px;display:grid;place-items:center;cursor:pointer;flex:none}
+.menubtn svg{width:20px;height:20px}
+.side{position:fixed;top:calc(62px + env(safe-area-inset-top,0px));left:0;bottom:0;width:272px;background:var(--surface);border-right:1px solid var(--line);overflow-y:auto;z-index:25;padding:14px 12px calc(90px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));transform:translateX(-100%);transition:transform .2s ease;box-shadow:var(--sh2)}
+.side.open{transform:none}
+.sideback{position:fixed;inset:0;background:rgba(7,11,19,.45);z-index:24}
+.sidesec{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:6px 10px 8px}
+.sitem{width:100%;display:flex;align-items:center;gap:10px;border:0;background:none;color:var(--fg);font:700 .95rem var(--font);padding:10px 10px;border-radius:11px;cursor:pointer;text-align:left}
+.sitem:hover{background:var(--sunken)}
+.sitem .dotc{width:10px;height:10px;border-radius:3px;flex:none}
+.sitem .n{margin-left:auto;font:700 .72rem var(--mono);background:var(--sunken);color:var(--muted);border-radius:999px;padding:1px 8px}
+.sitem .chev{width:16px;height:16px;color:var(--muted);transition:transform .15s}
+.sitem.aberto .chev{transform:rotate(90deg)}
+.sitem[aria-current="true"]{background:var(--accent-soft);color:var(--accent)}
+.sitem.g[aria-current="true"]{background:var(--gar-soft);color:var(--gar)}
+.sitem.m[aria-current="true"]{background:var(--min-soft);color:var(--min)}
+.subitems{display:flex;flex-direction:column;gap:2px;margin:2px 0 8px 18px;padding-left:10px;border-left:2px solid var(--line)}
+.ssub{width:100%;display:flex;align-items:center;gap:8px;border:0;background:none;color:var(--fg);font:600 .88rem var(--font);padding:7px 10px;border-radius:9px;cursor:pointer;text-align:left;min-width:0}
+.ssub:hover{background:var(--sunken)}
+.ssub .nm{display:flex;flex-direction:column;min-width:0}
+.ssub small{font-size:.7rem;color:var(--muted);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ssub .n{margin-left:auto;font:700 .7rem var(--mono);color:var(--muted)}
+.ssub[aria-current="true"]{background:var(--min-soft);color:var(--min)}
+.listhead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.listhead h2{margin:0}
+.fhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.fhead .muted{font-size:.82rem}
+.subitems{display:none}
+.subitems.show{display:flex}
+.hoverzone{display:none}
+@media (hover:hover) and (min-width:960px){
+  body.withside .topin{max-width:none}
+  body.withside .hoverzone{display:block;position:fixed;left:0;top:calc(62px + env(safe-area-inset-top,0px));bottom:0;width:14px;z-index:23}
+  .side{width:250px;overflow:visible;padding-bottom:20px;bottom:auto;border-radius:0 0 14px 0;border-bottom:1px solid var(--line)}
+  .sideback{display:none!important}
+  .mwrap{position:relative}
+  .mwrap .subitems{display:none;position:absolute;left:calc(100% + 8px);top:-8px;width:250px;margin:0;padding:8px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--sh2)}
+  .mwrap .subitems::before{content:"";position:absolute;left:-14px;top:0;bottom:0;width:14px}
+  .mwrap:hover .subitems,.mwrap:focus-within .subitems{display:flex}
+  .mwrap:hover>.sitem .chev{transform:rotate(90deg)}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topin"><div class="brand"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Inventário CD</h1></div><div class="hdr"><div class="who" id="who"></div><button id="sair" hidden>Sair</button></div></div></header>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Inventário CD</h1></div><div class="hdr"><div class="who" id="who"></div><button id="sair" hidden>Sair</button></div></div></header>
+<div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <main id="view"><div class="center box"><p class="muted">Carregando…</p></div></main>
 </div>
@@ -548,8 +590,28 @@ async function carregar(){
 }
 $('sair').addEventListener('click',async()=>{await sb.auth.signOut();tela='login';msgLogin='';draft=null;ui={...ui,tab:'lista',det:null}});
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
+const icChev='<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+function sideHTML(){const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filter(o=>o.categoria==='Minucioso'&&o.setor===s).length;
+  const item=(c,cls,cor)=>`<button class="sitem ${cls}${c==='Minucioso'&&ui.cat==='Minucioso'?' aberto':''}" data-mcat="${c}" aria-current="${ui.cat===c&&(c!=='Minucioso'||!ui.setor)}"><span class="dotc" style="background:${cor}"></span>${c}<span class="n">${n(c)}</span>${c==='Minucioso'?icChev:''}</button>`;
+  return`<div class="sidesec">Menu</div>${item('Garantia','g','var(--gar)')}${item('Relatório','r','var(--accent)')}<div class="mwrap">${item('Minucioso','m','var(--min)')}
+  <div class="subitems${ui.cat==='Minucioso'?' show':''}">${SETORES.map(s=>`<button class="ssub" data-mset="${esc(s)}" aria-current="${ui.cat==='Minucioso'&&ui.setor===s}"><span class="nm">${esc(s)}<small>${chefeDe(s)?'Chefe: '+esc(chefeDe(s)):'Sem chefe'}</small></span><span class="n">${ns(s)}</span></button>`).join('')}</div></div>`}
+function abreMenu(on){const s=$('side'),b=$('sideBack');s.classList.toggle('open',on);b.hidden=!on||matchMedia('(hover:hover) and (min-width:960px)').matches;$('menuBtn').setAttribute('aria-expanded',String(on))}
+function renderSide(){const s=$('side');s.innerHTML=sideHTML();
+  s.querySelectorAll('[data-mcat]').forEach(b=>b.onclick=()=>escolheMenu(b.dataset.mcat,''));
+  s.querySelectorAll('[data-mset]').forEach(b=>b.onclick=()=>escolheMenu('Minucioso',b.dataset.mset))}
+function escolheMenu(cat,setor){ui={...ui,cat,setor:setor||'',gst:'',tipo:'',det:null,confDel:false};
+  if(ui.tab==='nova'){if(!draft)draft=novo();draft.cat=cat;if(cat!=='Garantia')draft.origem='';if(!(TIPOS_CAT[cat]||[]).includes(draft.tipo))draft.tipo='';
+    if(cat==='Minucioso'){draft.setor=ui.setor;draft.chefe=chefeDe(ui.setor)||''}}
+  else if(ui.tab!=='lista')ui.tab='lista';
+  abreMenu(false);render();scrollTo(0,0)}
+$('menuBtn').addEventListener('click',()=>abreMenu(!$('side').classList.contains('open')));
+const mqHover=matchMedia('(hover:hover) and (min-width:960px)');let tFecha=null;
+const hoverAbre=()=>{if(!mqHover.matches||$('side').hidden)return;clearTimeout(tFecha);abreMenu(true)};
+const hoverFecha=()=>{if(!mqHover.matches)return;clearTimeout(tFecha);tFecha=setTimeout(()=>abreMenu(false),280)};
+['menuBtn','side','hoverzone'].forEach(id=>{$(id).addEventListener('mouseenter',hoverAbre);$(id).addEventListener('mouseleave',hoverFecha)});
+$('sideBack').addEventListener('click',()=>abreMenu(false));
 function go(tab){ui={...ui,tab,det:null,confDel:false};if(tab==='nova'&&!draft)draft=novo();render();scrollTo(0,0);if(tab!=='nova')carregar()}
-const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia','Minucioso':'Contagem detalhada por setor, sistema x físico'};
+const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia','Minucioso':'Relatório de falta de produtos por setor, para o chefe assinar'};
 const SETORES=['Expedição','Shopee','Mercado Livre','Cofre','1º andar','2º andar','3º andar','Carga e descarga','Recebimento','Parachoque'];
 let chefes={};
 const chefeDe=s=>chefes[s]||'';
@@ -563,10 +625,10 @@ const gstBadge=o=>o.categoria==='Garantia'?`<span class="gst ${gstCls(o.gar_stat
 const cargoNome=c=>c;
 const catCls=c=>c==='Garantia'?'gar':c==='Minucioso'?'min':'rel';
 const catBadge=c=>`<span class="cat ${catCls(c||'Relatório')}">${esc(c||'Relatório')}</span>`;
-function novo(){return{cat:ui.cat==='Minucioso'?'Minucioso':'',setor:'',qs:'',qc:'',chefe:'',custo:'',falta:'',motivo_inventario:'',motivo_chefe:'',motivo_allan:'',origem:'',forn:'',idq:'',tipo:'',end:'',andar:'',letra:'',sku:'',produto:'',fab:'',qtd:'',obs:'',fotos:[],videos:[]}}
+function novo(){return{cat:ui.cat||'Garantia',setor:ui.cat==='Minucioso'?ui.setor:'',qs:'',qc:'',chefe:ui.cat==='Minucioso'?chefeDe(ui.setor):'',custo:'',falta:'',motivo_inventario:'',motivo_chefe:'',motivo_allan:'',origem:'',forn:'',idq:'',tipo:'',end:'',andar:'',letra:'',sku:'',produto:'',fab:'',qtd:'',obs:'',fotos:[],videos:[]}}
 
 function render(){
-  const v=$('view'),fora=()=>{$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent=''};
+  const v=$('view'),fora=()=>{$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';$('side').hidden=true;abreMenu(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
   if(!sb)return;
   document.body.classList.toggle('auth',!uid);
   if(!uid){fora();if(tela==='cadastro'){v.innerHTML=cadastroHTML();bindCadastro()}else{v.innerHTML=loginHTML();bindLogin()}return}
@@ -574,7 +636,7 @@ function render(){
   if(!eu){fora();v.innerHTML='<div class="center box stack"><h2>Perfil não encontrado</h2><p>Sua conta existe, mas o perfil não foi criado. Peça ao administrador para conferir a configuração do banco (passo do SQL).</p></div>';return}
   if(!eu.aprovado&&!eu.admin&&eu.recusado){fora();v.innerHTML=`<div class="center box stack"><h2>Acesso não liberado</h2><p>Olá, ${esc(eu.nome)}. O administrador não liberou seu acesso ao app. Se acha que é um engano, fale com ele.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
   if(!eu.aprovado&&!eu.admin){fora();v.innerHTML=`<div class="center box stack"><h2>Cadastro enviado</h2><p>Olá, ${esc(eu.nome)}. Seu cadastro foi recebido e está aguardando o administrador liberar o acesso.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
-  $('nav').hidden=false;$('sair').hidden=false;$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo);
+  $('nav').hidden=false;$('sair').hidden=false;$('side').hidden=false;$('menuBtn').hidden=false;document.body.classList.add('withside');renderSide();$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo);
   const pend=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
   $('badge').hidden=!(eu.admin&&pend);$('badge').textContent=pend;
   document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;
@@ -656,10 +718,10 @@ function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<b
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
   <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
 function listaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p.nome).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
-  const ativos=[ui.setor,ui.pessoa,ui.de,ui.ate,ui.tipo,ui.busca].filter(Boolean).length;
+  const ativos=[ui.pessoa,ui.de,ui.ate,ui.tipo,ui.busca].filter(Boolean).length;
   const rapido=(k,t,de,ate)=>`<button type="button" class="chip" data-per="${k}" aria-pressed="${ui.de===de&&ui.ate===ate}">${t}</button>`;
   return`<div class="stack">
-  <div class="seg">${[['Garantia','Garantia'],['Relatório','Relatório'],['Minucioso','Minucioso']].map(([k,t])=>`<button data-cat="${k}" aria-pressed="${ui.cat===k}">${t}</button>`).join('')}</div>
+  <div class="listhead"><h2>${ui.cat==='Garantia'?'Garantias':ui.cat==='Minucioso'?'Minucioso'+(ui.setor?' · '+esc(ui.setor):''):'Relatórios'}</h2>${catBadge(ui.cat)}</div>
   ${ui.cat==='Garantia'?`<div class="chips">${['',...GST].map(s=>`<button type="button" class="chip" data-gst="${s}" aria-pressed="${ui.gst===s}">${s||'Todas'}${s?' ('+ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')===s).length+')':''}</button>`).join('')}</div>`:''}
   ${ui.cat==='Minucioso'?setoresGridHTML():''}
   <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, fornecedor" value="${esc(ui.busca)}">
@@ -675,8 +737,7 @@ function setoresGridHTML(){
   const n=s=>base.filter(o=>!s||o.setor===s).length;
   const tab=(s,txt)=>`<button type="button" class="subtab" data-fset="${esc(s)}" aria-pressed="${ui.setor===s}">${esc(txt)}<span class="sc">${n(s)}</span></button>`;
   const l=base.filter(o=>!ui.setor||o.setor===ui.setor),pf=l.reduce((a,o)=>a+(Number(o.falta)||0),0),vt=l.reduce((a,o)=>a+(totalMin(o)||0),0),semMot=l.filter(o=>!o.motivo_chefe).length;
-  return`<div class="submenu" role="tablist" aria-label="Setores">${tab('','Todos')}${SETORES.map(s=>tab(s,s)).join('')}</div>
-  <div class="box sethead"><div class="row"><div><b>${ui.setor?esc(ui.setor):'Todos os setores'}</b><div class="muted small">${ui.setor?(chefeDe(ui.setor)?'Chefe: <b style="color:var(--fg)">'+esc(chefeDe(ui.setor))+'</b>':'Sem chefe definido · defina na aba Equipe'):'Toque num setor acima para ver só os relatórios dele'}</div></div><span class="cat min">Minucioso</span></div>
+  return`<div class="box sethead"><div class="row"><div><b>${ui.setor?esc(ui.setor):'Todos os setores'}</b><div class="muted small">${ui.setor?(chefeDe(ui.setor)?'Chefe: <b style="color:var(--fg)">'+esc(chefeDe(ui.setor))+'</b>':'Sem chefe definido · defina na aba Equipe'):'Escolha um setor no menu para ver só os relatórios dele'}</div></div><span class="cat min">Minucioso</span></div>
   <div class="setnums"><div><b>${l.length}</b><span>relatório${l.length===1?'':'s'}</span></div><div><b class="dif neg">${pf}</b><span>peças em falta</span></div><div><b style="font-size:1rem">${brl(vt)}</b><span>valor em falta</span></div><div><b class="dif pos">${semMot}</b><span>sem motivo do chefe</span></div></div></div>`}
 function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{ui.det=c.dataset.id;render();scrollTo(0,0)}))}
 function bindLista(){const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
@@ -688,7 +749,7 @@ function bindLista(){const b=$('busca');b.addEventListener('input',e=>{ui.busca=
   $('fde').addEventListener('change',e=>{ui.fano='';ui.fmes='';ui.de=e.target.value;if(ui.ate&&ui.de>ui.ate)ui.ate=ui.de;render()});
   $('fate').addEventListener('change',e=>{ui.fano='';ui.fmes='';ui.ate=e.target.value;if(ui.de&&ui.ate<ui.de)ui.de=ui.ate;render()});
   document.querySelectorAll('[data-per]').forEach(c=>c.addEventListener('click',()=>{const k=c.dataset.per;ui.fano='';ui.fmes='';ui.ate=hoje();ui.de=k==='hoje'?hoje():diasAtras(k==='7'?6:29);render()}));
-  const lf=$('limparF');if(lf)lf.onclick=()=>{Object.assign(ui,{setor:'',gst:'',fano:'',fmes:'',pessoa:'',de:'',ate:'',tipo:'',busca:''});render()};
+  const lf=$('limparF');if(lf)lf.onclick=()=>{Object.assign(ui,{gst:'',fano:'',fmes:'',pessoa:'',de:'',ate:'',tipo:'',busca:''});render()};
   document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{ui.cat=b.dataset.cat;ui.gst='';ui.setor='';ui.tipo='';render()}));
   document.querySelectorAll('[data-fset]').forEach(b=>b.addEventListener('click',()=>{ui.setor=b.dataset.fset;render();const a=document.querySelector('.subtab[aria-pressed="true"]');if(a)a.scrollIntoView({inline:'center',block:'nearest'})}));
   document.querySelectorAll('[data-gst]').forEach(b=>b.addEventListener('click',()=>{ui.gst=b.dataset.gst;render()}));
@@ -723,7 +784,7 @@ const icCam='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 const icVid='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg>';
 function formHTML(){const d=draft;return`<form class="stack" id="fnova" novalidate>
   <h2>Novo registro</h2>
-  <div class="field"><span class="lbl">Categoria *</span><div class="catpick c3">${Object.entries(CATS).map(([k,dsc])=>`<button type="button" class="${catCls(k)}" data-ncat="${k}" aria-pressed="${d.cat===k}"><b>${k}</b><small>${dsc}</small></button>`).join('')}</div></div>
+  <div class="fhead">${catBadge(d.cat)}<span class="muted">${esc(CATS[d.cat]||'')}</span><button type="button" class="btn link" data-abremenu="1" style="margin-left:auto">Trocar no menu</button></div>
   <div class="field"><span class="lbl">Fotos e vídeos</span>
   <div class="addrow">${d.fotos.length<4?`<label class="addbtn">${icCam}Foto<input id="foto" type="file" accept="image/*" capture="environment" multiple></label>`:'<span class="addbtn off">4 fotos</span>'}
   ${d.videos.length<2?`<label class="addbtn">${icVid}Vídeo<input id="video" type="file" accept="video/*" capture="environment"></label>`:'<span class="addbtn off">2 vídeos</span>'}</div>
@@ -731,7 +792,7 @@ function formHTML(){const d=draft;return`<form class="stack" id="fnova" novalida
   <span class="muted small">Até 4 fotos e 2 vídeos curtos (máximo 50 MB cada).</span></div>
   ${d.cat==='Garantia'?`<div class="field"><span class="lbl">Origem da quebra *</span><div class="catpick g4o">${Object.entries(ORIGENS).map(([k,dsc])=>`<button type="button" class="gar" data-orig="${k}" aria-pressed="${d.origem===k}"><b>${k}</b><small>${dsc}</small></button>`).join('')}</div></div>`:''}
   ${d.cat==='Minucioso'?`<div class="field"><span class="lbl">Setor *</span><div class="setgrid">${SETORES.map(s=>`<button type="button" class="setcard" data-nset="${esc(s)}" aria-pressed="${d.setor===s}"><b>${esc(s)}</b><span class="ch">${chefeDe(s)?'Chefe: '+esc(chefeDe(s)):'Sem chefe definido'}</span></button>`).join('')}</div></div>`:''}
-  <div class="field" ${d.cat==='Minucioso'?'hidden':''}><span class="lbl">Tipo *</span>${d.cat?'':'<span class="muted small">Escolha primeiro Garantia ou Relatório.</span>'}<div class="radios">${(TIPOS_CAT[d.cat]||[]).map((t,i)=>`<label><input type="radio" name="tipo" id="tp${i}" value="${t}" ${d.tipo===t?'checked':''}>${t}</label>`).join('')}</div></div>
+  <div class="field" ${d.cat==='Minucioso'?'hidden':''}><span class="lbl">Tipo *</span><div class="radios">${(TIPOS_CAT[d.cat]||[]).map((t,i)=>`<label><input type="radio" name="tipo" id="tp${i}" value="${t}" ${d.tipo===t?'checked':''}>${t}</label>`).join('')}</div></div>
   <div class="${d.cat==='Minucioso'?'stack':'two'}"><div class="field"><label class="lbl" for="sku">Código da peça</label><input id="sku" autocapitalize="characters" value="${esc(d.sku)}"></div>
   <div class="field" ${d.cat==='Minucioso'?'hidden':''}><label class="lbl" for="qtd">Quantidade</label><input id="qtd" type="number" min="0" inputmode="numeric" value="${esc(d.qtd)}"></div></div>
   ${d.cat==='Minucioso'?`<div class="box stack mbox"><b class="small">Contagem</b><div class="two"><div class="field"><label class="lbl" for="qs">Qtd no sistema</label><input id="qs" type="number" inputmode="numeric" value="${esc(d.qs)}"></div>
@@ -751,7 +812,7 @@ function ler(){draft.tipo=(document.querySelector('input[name=tipo]:checked')||{
 const caminho=ext=>`${uid}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
 async function enviar(blob,ext,tipo){const p=caminho(ext);const {error}=await sb.storage.from(BUCKET).upload(p,blob,{contentType:tipo,upsert:false});if(error)throw error;return p}
 function removerArquivos(paths){if(paths.length)sb.storage.from(BUCKET).remove(paths).catch(()=>{})}
-function bindForm(){const fm=$('fnova');fm.addEventListener('input',ler);fm.addEventListener('change',ler);
+function bindForm(){const fm=$('fnova');document.querySelectorAll('[data-abremenu]').forEach(b=>b.onclick=()=>{ler();abreMenu(true)});fm.addEventListener('input',ler);fm.addEventListener('change',ler);
   document.querySelectorAll('[data-ncat]').forEach(b=>b.addEventListener('click',()=>{ler();draft.cat=b.dataset.ncat;if(!(TIPOS_CAT[draft.cat]||[]).includes(draft.tipo))draft.tipo='';if(draft.cat!=='Minucioso')draft.setor='';if(draft.cat!=='Garantia')draft.origem='';render()}));
   document.querySelectorAll('[data-nset]').forEach(b=>b.addEventListener('click',()=>{ler();draft.setor=b.dataset.nset;render()}));
   document.querySelectorAll('[data-orig]').forEach(b=>b.addEventListener('click',()=>{ler();draft.origem=b.dataset.orig;render()}));
@@ -769,7 +830,7 @@ function bindForm(){const fm=$('fnova');fm.addEventListener('input',ler);fm.addE
   fm.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;if(enviando){toast('Aguarde as fotos e vídeos terminarem de enviar');return}ler();const er=$('ferr');
     const minu=draft.cat==='Minucioso';if(minu)draft.tipo='Minucioso';
     if(minu&&!draft.setor){er.textContent='Escolha o setor da contagem.';er.hidden=false;return}
-    if(!draft.cat||!draft.tipo||(draft.cat==='Garantia'&&!draft.origem)){er.textContent=!draft.cat?'Escolha Garantia, Relatório ou Minucioso.':(draft.cat==='Garantia'&&!draft.origem)?'Escolha a origem da quebra.':'Escolha o tipo.';er.hidden=false;return}
+    if(!draft.cat||!draft.tipo||(draft.cat==='Garantia'&&!draft.origem)){er.textContent=!draft.cat?'Escolha a categoria no menu.':(draft.cat==='Garantia'&&!draft.origem)?'Escolha a origem da quebra.':'Escolha o tipo.';er.hidden=false;return}
     const mid=[draft.fotos.length?draft.fotos.length+' foto(s)':'',draft.videos.length?draft.videos.length+' vídeo(s)':''].filter(Boolean).join(' e ');
     const gar=draft.cat==='Garantia';
     const o={setor:minu?draft.setor:null,chefe:minu?(chefeDe(draft.setor)||null):null,qtd_sistema:minu&&draft.qs!==''?+draft.qs:null,qtd_contada:minu&&draft.qc!==''?+draft.qc:null,categoria:draft.cat,fornecedor:gar&&draft.forn||null,id_quebra:gar&&draft.idq||null,gar_status:gar?'Pendente':null,origem:gar?draft.origem:null,tipo:draft.tipo,endereco:'',sku:draft.sku||null,produto:draft.produto||null,fab:draft.fab||null,qtd:draft.qtd?+draft.qtd:null,obs:draft.obs||null,
@@ -787,9 +848,9 @@ function comprimir(file){return new Promise((res,rej)=>{const r=new FileReader()
 function minFormHTML(){const d=draft;const tot=(d.custo!==''&&d.falta!=='')?brl(Number(String(d.custo).replace(',','.'))*Number(d.falta)):'—';
   return`<form class="stack" id="fmin" novalidate>
   <h2>Novo registro</h2>
-  <div class="field"><span class="lbl">Categoria *</span><div class="catpick c3">${Object.entries(CATS).map(([k,dsc])=>`<button type="button" class="${catCls(k)}" data-ncat="${k}" aria-pressed="${d.cat===k}"><b>${k}</b><small>${dsc}</small></button>`).join('')}</div></div>
+  <div class="fhead">${catBadge(d.cat)}<span class="muted">${esc(CATS[d.cat]||'')}</span><button type="button" class="btn link" data-abremenu="1" style="margin-left:auto">Trocar no menu</button></div>
   <div class="box stack mbox"><div><b>Relatório minucioso de falta de produtos</b><div class="muted small">Preencha e imprima para o chefe do setor assinar.</div></div>
-  <div class="field"><span class="lbl">Setor *</span><div class="submenu">${SETORES.map(s=>`<button type="button" class="subtab" data-nset="${esc(s)}" aria-pressed="${d.setor===s}">${esc(s)}</button>`).join('')}</div></div>
+  <div class="field"><span class="lbl">Setor *</span>${d.setor?`<div class="row"><b style="font-size:1.1rem;color:var(--min)">${esc(d.setor)}</b><button type="button" class="btn sm" data-abremenu="1">Trocar setor</button></div>`:`<button type="button" class="btn" data-abremenu="1" style="border-style:dashed">☰ Escolher o setor no menu</button>`}</div>
   <div class="field"><label class="lbl" for="mchefe">Chefe do setor</label><input id="mchefe" list="chefList" value="${esc(d.chefe)}" placeholder="${d.setor?'Defina o chefe na aba Equipe ou digite aqui':'Escolha o setor primeiro'}"><datalist id="chefList">${[...new Set([...Object.values(chefes),...Object.values(perfis).map(p=>p.nome)].filter(Boolean))].map(n=>`<option value="${esc(n)}">`).join('')}</datalist></div></div>
   <div class="two"><div class="field"><label class="lbl" for="msku">Produto (código) *</label><input id="msku" autocapitalize="characters" class="mono" value="${esc(d.sku)}"></div>
   <div class="field"><label class="lbl" for="mfab">Fabricante</label><input id="mfab" value="${esc(d.fab)}"></div></div>
@@ -809,14 +870,14 @@ function lerMin(){const g=id=>$(id).value.trim();draft.chefe=g('mchefe');draft.s
   draft.motivo_inventario=g('mminv');draft.motivo_chefe=g('mmchefe');draft.motivo_allan=g('mmallan');
   const c=Number(String(draft.custo).replace(/\./g,'').replace(',','.')),f=Number(draft.falta);$('mtotal').textContent=(draft.custo!==''&&draft.falta!==''&&!isNaN(c))?brl(c*f):'—'}
 const numBR=s=>{if(s===''||s==null)return null;const t=String(s).trim();const n=Number(/,/.test(t)?t.replace(/\./g,'').replace(',','.'):t);return isNaN(n)?null:n};
-function bindMinForm(){const fm=$('fmin');fm.addEventListener('input',lerMin);
+function bindMinForm(){const fm=$('fmin');document.querySelectorAll('[data-abremenu]').forEach(b=>b.onclick=()=>{lerMin();abreMenu(true)});fm.addEventListener('input',lerMin);
   document.querySelectorAll('[data-ncat]').forEach(b=>b.addEventListener('click',()=>{lerMin();draft.cat=b.dataset.ncat;render()}));
   document.querySelectorAll('[data-nset]').forEach(b=>b.addEventListener('click',()=>{lerMin();draft.setor=b.dataset.nset;draft.chefe=chefeDe(draft.setor)||draft.chefe;render()}));
   $('limpar').onclick=()=>{draft=novo();draft.cat='Minucioso';render()};
   let imp=true;fm.querySelectorAll('[data-imp]').forEach(b=>b.addEventListener('click',()=>{imp=b.dataset.imp==='1'}));
   fm.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;lerMin();const er=$('ferr');
     const falta=numBR(draft.falta),custo=numBR(draft.custo);
-    const m=!draft.setor?'Escolha o setor.':!draft.sku?'Informe o código do produto.':falta==null?'Informe a quantidade em falta.':(draft.custo!==''&&custo==null)?'O custo está em formato inválido. Use, por exemplo, 12,50.':'';
+    const m=!draft.setor?'Escolha o setor no menu à esquerda.':!draft.sku?'Informe o código do produto.':falta==null?'Informe a quantidade em falta.':(draft.custo!==''&&custo==null)?'O custo está em formato inválido. Use, por exemplo, 12,50.':'';
     if(m){er.textContent=m;er.hidden=false;return}
     const o={categoria:'Minucioso',tipo:'Minucioso',endereco:'',setor:draft.setor,chefe:draft.chefe||null,sku:draft.sku,produto:draft.produto||null,fab:draft.fab||null,custo,falta,qtd:falta,
       motivo_inventario:draft.motivo_inventario||null,motivo_chefe:draft.motivo_chefe||null,motivo_allan:draft.motivo_allan||null,fotos:[],videos:[],autor:uid,status:'registrada',hist:[{t:new Date().toISOString(),por:uid,txt:'Registrado'}]};
