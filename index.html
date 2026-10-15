@@ -446,7 +446,7 @@ function filtrar(){const q=ui.busca.trim().toLowerCase();
 function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<button class="card" data-id="${esc(o.id)}">
   <div class="thumb">${f?`<img data-path="${esc(f)}" alt="">`:nv?'▶ vídeo':'sem foto'}${f&&nv?'<span class="vb">▶</span>':''}</div>
   <div class="b"><div class="row"><span class="t">${esc(o.tipo)}</span>${catBadge(o.categoria)}</div>${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}
-  <div class="line"><span class="addr">${esc(o.endereco)}</span> ${esc(o.sku)}</div>
+  ${o.endereco||o.sku?`<div class="line">${o.endereco?`<span class="addr">${esc(o.endereco)}</span> `:''}${esc(o.sku||'')}</div>`:''}
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
   <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
 function listaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p.nome).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
@@ -455,7 +455,7 @@ function listaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p
   return`<div class="stack">
   <div class="seg">${[['Garantia','Garantia'],['Relatório','Relatório']].map(([k,t])=>`<button data-cat="${k}" aria-pressed="${ui.cat===k}">${t}</button>`).join('')}</div>
   ${ui.cat==='Garantia'?`<div class="chips">${['',...GST].map(s=>`<button type="button" class="chip" data-gst="${s}" aria-pressed="${ui.gst===s}">${s||'Todas'}${s?' ('+ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')===s).length+')':''}</button>`).join('')}</div>`:''}
-  <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, endereço" value="${esc(ui.busca)}">
+  <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, fornecedor" value="${esc(ui.busca)}">
   <select id="ftipo" aria-label="Tipo"><option value="">Todos os tipos</option>${TIPOS.map(t=>`<option ${t===ui.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
   <div class="filters"><select id="fpessoa" aria-label="Pessoa"><option value="">Todas as pessoas</option>${pessoas.map(p=>`<option value="${esc(p.id)}" ${p.id===ui.pessoa?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}" max="${hoje()}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}" max="${hoje()}"></label></div></div>
@@ -486,9 +486,6 @@ function formHTML(){const d=draft;return`<form class="stack" id="fnova" novalida
   ${d.fotos.length||d.videos.length||enviando?`<div class="photos">${d.fotos.map((f,i)=>`<div class="ph"><img src="${f.prev}" alt="Foto ${i+1}"><button type="button" data-rm="${i}" aria-label="Remover foto">×</button></div>`).join('')}${d.videos.map((v,i)=>`<div class="ph"><video src="${v.prev}" muted playsinline preload="metadata"></video><span class="vb">▶</span><button type="button" data-rmv="${i}" aria-label="Remover vídeo">×</button></div>`).join('')}${enviando?'<div class="ph">Enviando…</div>':''}</div>`:''}
   <span class="muted small">Até 4 fotos e 2 vídeos curtos (máximo 50 MB cada).</span></div>
   <div class="field"><span class="lbl">Tipo *</span><div class="radios">${TIPOS.map((t,i)=>`<label><input type="radio" name="tipo" id="tp${i}" value="${t}" ${d.tipo===t?'checked':''}>${t}</label>`).join('')}</div></div>
-  <div class="field"><span class="lbl">Andar</span><div class="pick">${Object.entries(ANDARES).map(([k,t])=>`<button type="button" data-andar="${k}" aria-pressed="${d.andar===k}"><b>${k}</b><small>${t}</small></button>`).join('')}</div></div>
-  <div class="field"><span class="lbl">Letra</span><div class="pick l">${LETRAS.map(l=>`<button type="button" data-letra="${l}" aria-pressed="${d.letra===l}"><b>${l}</b></button>`).join('')}</div></div>
-  <div class="field"><label class="lbl" for="endr">Endereçamento *</label><input id="endr" class="mono" autocapitalize="characters" value="${esc(d.end)}" placeholder="Bipe o cartão ou escolha andar e letra"><span class="muted small">Com leitor, clique aqui e bipe o cartão do endereço.</span></div>
   <div class="two"><div class="field"><label class="lbl" for="sku">Código da peça</label><input id="sku" autocapitalize="characters" value="${esc(d.sku)}"></div>
   <div class="field"><label class="lbl" for="qtd">Quantidade</label><input id="qtd" type="number" min="0" inputmode="numeric" value="${esc(d.qtd)}"></div></div>
   <div class="field"><label class="lbl" for="produto">Peça</label><input id="produto" value="${esc(d.produto)}" placeholder="Ex.: Amortecedor traseiro"></div>
@@ -501,15 +498,12 @@ function formHTML(){const d=draft;return`<form class="stack" id="fnova" novalida
   <button class="btn primary" type="submit">Salvar ocorrência</button>
   <button class="btn" type="button" id="limpar">Limpar</button></form>`}
 function ler(){draft.tipo=(document.querySelector('input[name=tipo]:checked')||{}).value||'';
-  draft.end=$('endr').value.trim();['sku','produto','fab','qtd','obs'].forEach(k=>draft[k]=$(k).value.trim());if($('forn')){draft.forn=$('forn').value.trim();draft.idq=$('idq').value.trim()}}
+  ['sku','produto','fab','qtd','obs'].forEach(k=>draft[k]=$(k).value.trim());if($('forn')){draft.forn=$('forn').value.trim();draft.idq=$('idq').value.trim()}}
 const caminho=ext=>`${uid}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
 async function enviar(blob,ext,tipo){const p=caminho(ext);const {error}=await sb.storage.from(BUCKET).upload(p,blob,{contentType:tipo,upsert:false});if(error)throw error;return p}
 function removerArquivos(paths){if(paths.length)sb.storage.from(BUCKET).remove(paths).catch(()=>{})}
 function bindForm(){const fm=$('fnova');fm.addEventListener('input',ler);fm.addEventListener('change',ler);
   document.querySelectorAll('[data-ncat]').forEach(b=>b.addEventListener('click',()=>{ler();draft.cat=b.dataset.ncat;render()}));
-  const monta=()=>{if(draft.andar&&draft.letra)draft.end=draft.andar+'-'+draft.letra;else if(draft.andar)draft.end=draft.andar;render()};
-  document.querySelectorAll('[data-andar]').forEach(b=>b.addEventListener('click',()=>{ler();draft.andar=b.dataset.andar;monta()}));
-  document.querySelectorAll('[data-letra]').forEach(b=>b.addEventListener('click',()=>{ler();draft.letra=b.dataset.letra;monta()}));
   const fi=$('foto');if(fi)fi.addEventListener('change',async e=>{ler();const files=[...e.target.files].slice(0,4-draft.fotos.length);const d=draft;
     for(const f of files){enviando++;render();try{const {blob,prev}=await comprimir(f);const path=await enviar(blob,'jpg','image/jpeg');d.fotos.push({path,prev})}catch(x){toast(x&&x.message?erroMsg(x):'Não foi possível ler essa imagem')}enviando--}
     if(draft===d&&ui.tab==='nova')render()});
@@ -522,10 +516,10 @@ function bindForm(){const fm=$('fnova');fm.addEventListener('input',ler);fm.addE
   document.querySelectorAll('[data-rmv]').forEach(b=>b.addEventListener('click',()=>{ler();const [v]=draft.videos.splice(+b.dataset.rmv,1);if(v)removerArquivos([v.path]);render()}));
   $('limpar').addEventListener('click',()=>{removerArquivos([...draft.fotos,...draft.videos].map(x=>x.path));draft=novo();render()});
   fm.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;if(enviando){toast('Aguarde as fotos e vídeos terminarem de enviar');return}ler();const er=$('ferr');
-    if(!draft.cat||!draft.tipo||!draft.end){er.textContent=!draft.cat?'Escolha se é Garantia ou Relatório.':'Escolha o tipo e informe o endereçamento.';er.hidden=false;return}
+    if(!draft.cat||!draft.tipo){er.textContent=!draft.cat?'Escolha se é Garantia ou Relatório.':'Escolha o tipo.';er.hidden=false;return}
     const mid=[draft.fotos.length?draft.fotos.length+' foto(s)':'',draft.videos.length?draft.videos.length+' vídeo(s)':''].filter(Boolean).join(' e ');
     const gar=draft.cat==='Garantia';
-    const o={categoria:draft.cat,fornecedor:gar&&draft.forn||null,id_quebra:gar&&draft.idq||null,gar_status:gar?'Pendente':null,tipo:draft.tipo,endereco:draft.end,sku:draft.sku||null,produto:draft.produto||null,fab:draft.fab||null,qtd:draft.qtd?+draft.qtd:null,obs:draft.obs||null,
+    const o={categoria:draft.cat,fornecedor:gar&&draft.forn||null,id_quebra:gar&&draft.idq||null,gar_status:gar?'Pendente':null,tipo:draft.tipo,endereco:'',sku:draft.sku||null,produto:draft.produto||null,fab:draft.fab||null,qtd:draft.qtd?+draft.qtd:null,obs:draft.obs||null,
       fotos:draft.fotos.map(f=>f.path),videos:draft.videos.map(v=>v.path),autor:uid,status:'registrada',hist:[{t:new Date().toISOString(),por:uid,txt:'Registrada'+(mid?' com '+mid:'')}]};
     saving=true;const {error}=await sb.from('ocorrencias').insert(o);saving=false;
     if(error){er.textContent=erroMsg(error);er.hidden=false;return}
@@ -547,7 +541,7 @@ function detHTML(){const o=ocs.find(x=>x.id===ui.det);if(!o){ui.det=null;return 
   ${pode('garantia')?`<div class="field"><span class="lbl">Atualizar situação</span><div class="chips">${GST.filter(s=>s!==(o.gar_status||'Pendente')).map(s=>`<button type="button" class="chip" data-novo="${s}">${s}</button>`).join('')}</div>
   <input id="gnota" placeholder="Observação (opcional): ex. nº do protocolo, data da coleta"></div>`:'<p class="muted small" style="margin:0">A situação da garantia é atualizada pelo líder, analista ou supervisor.</p>'}
   ${(o.hist||[]).length>1?`<ul class="hist">${o.hist.slice(1).map(h=>`<li><span class="muted small">${fData(h.t)} · ${esc(nome(h.por))}</span><br>${esc(h.txt)}</li>`).join('')}</ul>`:''}</div>`:''}
-  <div class="box"><dl class="facts"><dt>Endereçamento</dt><dd><span class="addr">${esc(o.endereco)}</span></dd><dt>Código</dt><dd class="mono">${esc(o.sku||'—')}</dd>
+  <div class="box"><dl class="facts">${o.endereco?`<dt>Endereçamento</dt><dd><span class="addr">${esc(o.endereco)}</span></dd>`:''}<dt>Código</dt><dd class="mono">${esc(o.sku||'—')}</dd>
   <dt>Peça</dt><dd>${esc(o.produto||'—')}</dd><dt>Fabricante</dt><dd>${esc(o.fab||'—')}</dd><dt>Quantidade</dt><dd>${esc(o.qtd??'—')}</dd>
   <dt>Registrado</dt><dd>${esc(nome(o.autor))} · ${fData(o.criado)}</dd>${o.obs?`<dt>Observação</dt><dd>${esc(o.obs)}</dd>`:''}</dl></div>
   ${pode('apagar')?(ui.confDel?`<div class="box stack"><b>Apagar esta ocorrência e as fotos e vídeos dela?</b><div class="actions"><button class="btn danger" id="delSim">Apagar</button><button class="btn" id="delNao">Cancelar</button></div></div>`:'<button class="btn sm danger" id="del" style="align-self:flex-start">Apagar ocorrência</button>'):''}</div>`}
@@ -603,8 +597,6 @@ function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{c
     <span class="lbl">Garantias por fornecedor</span><div class="box stack" style="gap:8px">${bars(Object.entries(pf).sort((a,b)=>b[1]-a[1]).slice(0,8))}</div>`})()}
   <span class="lbl">Garantia x Relatório</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.categoria||'Relatório'))}</div>
   <span class="lbl">Por tipo</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.tipo))}</div>
-  <span class="lbl">Por andar</span><div class="box stack" style="gap:8px">${bars(cont(o=>{const a=andarDe(o.endereco);return a?a+' · '+ANDARES[a]:'Outro'}))}</div>
-  <span class="lbl">Endereços com mais ocorrências</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.endereco||'?'))}</div>
   <span class="lbl">Por pessoa</span><div class="box stack" style="gap:8px">${bars(cont(o=>nome(o.autor)))}</div></div>`}
 
 /* ---------- Equipe ---------- */
