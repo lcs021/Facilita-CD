@@ -13,6 +13,7 @@
   --fg:#111827; --muted:#667085; --ink:#0e1525; --ink-fg:#f5f7fb;
   --accent:#2457d6; --accent-ink:#ffffff; --accent-soft:#e8eefc;
   --gar:#e2621b; --gar-soft:#fdeee4; --gar-ink:#9a3b07;
+  --min:#15803d; --min-soft:#e3f6e9; --min-ink:#14532d;
   --alta:#d43d30; --baixa:#1f8a4c;
   --sh1:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.06);
   --sh2:0 4px 16px rgba(16,24,40,.08),0 1px 3px rgba(16,24,40,.06);
@@ -26,6 +27,7 @@
   --fg:#e9edf5; --muted:#94a0b4; --ink:#070b13; --ink-fg:#f5f7fb;
   --accent:#6f9bff; --accent-ink:#0b1220; --accent-soft:#1a2747;
   --gar:#ff8a45; --gar-soft:#3a2216; --gar-ink:#ffc39d;
+  --min:#4ade80; --min-soft:#13301f; --min-ink:#a7f3c0;
   --alta:#ff6b5e; --baixa:#4cc785;
   --sh1:0 1px 2px rgba(0,0,0,.3); --sh2:0 6px 20px rgba(0,0,0,.35);
   color-scheme:dark}}
@@ -211,6 +213,29 @@ details summary{cursor:pointer;list-style-position:inside}
 .cat{font-size:.7rem;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap;display:inline-block;letter-spacing:.02em}
 .cat.gar{background:var(--gar-soft);color:var(--gar-ink)}
 .cat.rel{background:var(--accent-soft);color:var(--accent)}
+.cat.min{background:var(--min-soft);color:var(--min-ink)}
+.catpick.c3{grid-template-columns:repeat(3,1fr)}
+@media (max-width:520px){.catpick.c3 small{display:none}.catpick.c3 button{padding:12px 8px;text-align:center}}
+.catpick button.min[aria-pressed="true"]{border-color:var(--min);background:var(--min-soft);box-shadow:0 0 0 3px color-mix(in srgb,var(--min) 15%,transparent)}
+.catpick button.min[aria-pressed="true"] b{color:var(--min)}
+.seg button[data-cat="Minucioso"][aria-pressed="true"]{color:var(--min)}
+.setgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.setcard{border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:12px;padding:11px 12px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px;font:inherit;box-shadow:var(--sh1);transition:border-color .15s,background .15s;min-width:0}
+.setcard:hover{border-color:var(--line2)}
+.setcard b{font-size:.95rem;font-weight:800}
+.setcard .ch{font-size:.76rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.setcard .nm{font-size:.78rem;font-weight:700;color:var(--muted);margin-top:4px;font-family:var(--mono)}
+.setcard[aria-pressed="true"]{border-color:var(--min);background:var(--min-soft)}
+.setcard[aria-pressed="true"] b{color:var(--min)}
+.setcard.todos{justify-content:center;align-items:center;text-align:center}
+.dif{font-family:var(--mono);font-weight:800}
+.dif.pos{color:#c27803}.dif.neg{color:var(--alta)}.dif.zero{color:var(--min)}
+.mbox{border-color:color-mix(in srgb,var(--min) 35%,var(--line));background:linear-gradient(180deg,var(--min-soft),var(--surface) 60%)}
+.mchart .bm{fill:var(--min)} .dot.bm{background:var(--min)}
+.chefrow{display:grid;grid-template-columns:minmax(0,9rem) minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.chefrow:last-child{border-bottom:0}
+.chefrow b{font-size:.9rem}
+@media (max-width:420px){.chefrow{grid-template-columns:1fr auto}.chefrow b{grid-column:1/-1}}
 .gst{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
 .gst.p{background:#fdf2c7;color:#7a5600}.gst.e{background:#dcfce7;color:#166534}
 @media (prefers-color-scheme: dark){.gst.p{background:#45370c;color:#f5d36e}.gst.e{background:#123a24;color:#86e0a9}}
@@ -377,6 +402,29 @@ end
 $$;
 revoke all on function public.excluir_usuario(uuid) from public, anon;
 grant execute on function public.excluir_usuario(uuid) to authenticated;
+
+-- Minucioso: setores e contagem
+alter table public.ocorrencias add column if not exists setor text;
+alter table public.ocorrencias add column if not exists chefe text;
+alter table public.ocorrencias add column if not exists qtd_sistema integer;
+alter table public.ocorrencias add column if not exists qtd_contada integer;
+
+create table if not exists public.setores (
+  nome text primary key,
+  chefe text,
+  ordem integer not null default 0
+);
+alter table public.setores enable row level security;
+drop policy if exists "ver setores" on public.setores;
+create policy "ver setores" on public.setores for select to authenticated using (public.is_aprovado());
+drop policy if exists "admin edita setores" on public.setores;
+create policy "admin edita setores" on public.setores for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+insert into public.setores (nome, ordem) values
+  ('Expedição',0),('Shopee',1),('Mercado Livre',2),('Cofre',3),('1º andar',4),
+  ('2º andar',5),('3º andar',6),('Carga e descarga',7),('Recebimento',8),('Parachoque',9)
+on conflict (nome) do nothing;
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
@@ -396,7 +444,7 @@ const BUCKET='midias',H=3600e3,MAX_VIDEO=50*1024*1024;
 
 let sb=null,uid=null,eu=null,perfis={},ocs=[],carregou=false;
 let tela='login',msgLogin='';
-let ui={tab:'lista',mes:'',fano:'',fmes:'',cat:'Garantia',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
+let ui={tab:'lista',setor:'',mes:'',fano:'',fmes:'',cat:'Garantia',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
 let draft=null,saving=false,enviando=0;
 const urls={},pedindo=new Set();
 
@@ -406,11 +454,11 @@ const ts=t=>new Date(t).getTime();
 const fData=t=>{const d=new Date(t);return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};
 const idade=t=>{const h=Math.floor((Date.now()-ts(t))/H);return h<1?'agora':h<24?h+'h':Math.floor(h/24)+'d'};
 const nome=id=>perfis[id]?.nome||'Alguém';
-const pode=a=>!!eu&&(eu.admin||(CARGOS[eu.cargo]||[]).includes(a));
+const pode=a=>!!eu&&(eu.admin||(CARGOS[cargoNome(eu.cargo)]||[]).includes(a));
 const andarDe=e=>{const m=String(e||'').match(/^(1[123])/);return m?m[1]:''};
 let tt;function toast(m){const e=$('toast');e.textContent=m;e.hidden=false;clearTimeout(tt);tt=setTimeout(()=>e.hidden=true,3200)}
 function erroMsg(e){const m=(e&&(e.message||e.error_description))||'';
-  if(/categoria|fornecedor|id_quebra|gar_status|origem|recusado/i.test(m))return'O banco precisa de uma atualização (coluna categoria). Peça ao administrador para rodar o comando de atualização no SQL Editor do Supabase.';
+  if(/categoria|fornecedor|id_quebra|gar_status|origem|recusado|setor|chefe|qtd_sistema|qtd_contada/i.test(m))return'O banco precisa de uma atualização (coluna categoria). Peça ao administrador para rodar o comando de atualização no SQL Editor do Supabase.';
   if(/Invalid login credentials/i.test(m))return'E-mail ou senha incorretos.';
   if(/Email not confirmed/i.test(m))return'Confirme seu e-mail antes de entrar. Veja a mensagem que chegou na sua caixa de entrada.';
   if(/already registered|already been registered/i.test(m))return'Este e-mail já tem cadastro. Use a tela Entrar.';
@@ -445,19 +493,26 @@ async function carregar(){
     if(p.data){perfis={};p.data.forEach(x=>perfis[x.id]=x)}
     if(o.data)ocs=o.data.map(x=>x.gar_status==='Enviado ao fornecedor'?{...x,gar_status:'Enviado à garantia da loja'}:x);
     if(o.error)toast(erroMsg(o.error));
+    const st=await sb.from('setores').select('*');if(st.data){chefes={};st.data.forEach(x=>chefes[x.nome]=x.chefe||'')}
   }
   carregou=true;render();
 }
 $('sair').addEventListener('click',async()=>{await sb.auth.signOut();tela='login';msgLogin='';draft=null;ui={...ui,tab:'lista',det:null}});
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
 function go(tab){ui={...ui,tab,det:null,confDel:false};if(tab==='nova'&&!draft)draft=novo();render();scrollTo(0,0);if(tab!=='nova')carregar()}
-const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia'};
+const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia','Minucioso':'Contagem detalhada por setor, sistema x físico'};
+const SETORES=['Expedição','Shopee','Mercado Livre','Cofre','1º andar','2º andar','3º andar','Carga e descarga','Recebimento','Parachoque'];
+let chefes={};
+const chefeDe=s=>chefes[s]||'';
+const difDe=o=>(o.qtd_sistema==null||o.qtd_contada==null)?null:o.qtd_contada-o.qtd_sistema;
+const difHTML=v=>v==null?'—':`<span class="dif ${v>0?'pos':v<0?'neg':'zero'}">${v>0?'+':''}${v}</span>`;
 const GST=['Pendente','Enviado à garantia da loja'];
 const gstCls=s=>({'Pendente':'p','Enviado à garantia da loja':'e','Crédito recebido':'c','Recusada':'r'})[s]||'p';
 const gstBadge=o=>o.categoria==='Garantia'?`<span class="gst ${gstCls(o.gar_status)}">${esc(o.gar_status||'Pendente')}</span>`:'';
-const catCls=c=>c==='Garantia'?'gar':'rel';
+const cargoNome=c=>c;
+const catCls=c=>c==='Garantia'?'gar':c==='Minucioso'?'min':'rel';
 const catBadge=c=>`<span class="cat ${catCls(c||'Relatório')}">${esc(c||'Relatório')}</span>`;
-function novo(){return{cat:'',origem:'',forn:'',idq:'',tipo:'',end:'',andar:'',letra:'',sku:'',produto:'',fab:'',qtd:'',obs:'',fotos:[],videos:[]}}
+function novo(){return{cat:ui.cat==='Minucioso'?'Minucioso':'',setor:'',qs:'',qc:'',origem:'',forn:'',idq:'',tipo:'',end:'',andar:'',letra:'',sku:'',produto:'',fab:'',qtd:'',obs:'',fotos:[],videos:[]}}
 
 function render(){
   const v=$('view'),fora=()=>{$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent=''};
@@ -468,7 +523,7 @@ function render(){
   if(!eu){fora();v.innerHTML='<div class="center box stack"><h2>Perfil não encontrado</h2><p>Sua conta existe, mas o perfil não foi criado. Peça ao administrador para conferir a configuração do banco (passo do SQL).</p></div>';return}
   if(!eu.aprovado&&!eu.admin&&eu.recusado){fora();v.innerHTML=`<div class="center box stack"><h2>Acesso não liberado</h2><p>Olá, ${esc(eu.nome)}. O administrador não liberou seu acesso ao app. Se acha que é um engano, fale com ele.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
   if(!eu.aprovado&&!eu.admin){fora();v.innerHTML=`<div class="center box stack"><h2>Cadastro enviado</h2><p>Olá, ${esc(eu.nome)}. Seu cadastro foi recebido e está aguardando o administrador liberar o acesso.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
-  $('nav').hidden=false;$('sair').hidden=false;$('who').textContent=eu.nome+' · '+(eu.admin&&eu.cargo!=='Supervisor'?'Admin':eu.cargo);
+  $('nav').hidden=false;$('sair').hidden=false;$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo);
   const pend=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
   $('badge').hidden=!(eu.admin&&pend);$('badge').textContent=pend;
   document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;
@@ -538,30 +593,37 @@ function filtrar(){const q=ui.busca.trim().toLowerCase();
     if(ui.cat&&(o.categoria||'Relatório')!==ui.cat)return false;
     if(ui.cat==='Garantia'&&ui.gst&&(o.gar_status||'Pendente')!==ui.gst)return false;
     if(ui.tipo&&o.tipo!==ui.tipo)return false;
+    if(ui.cat==='Minucioso'&&ui.setor&&o.setor!==ui.setor)return false;
     if(ui.pessoa&&o.autor!==ui.pessoa&&!(o.hist||[]).some(h=>h.por===ui.pessoa))return false;
     const d=dia(o.criado);if(ui.de&&d<ui.de)return false;if(ui.ate&&d>ui.ate)return false;
-    if(q&&![o.sku,o.produto,o.fab,o.origem,o.fornecedor,o.id_quebra,o.endereco,nome(o.autor),o.obs].join(' ').toLowerCase().includes(q))return false;return true})
+    if(q&&![o.sku,o.produto,o.fab,o.setor,o.chefe,o.origem,o.fornecedor,o.id_quebra,o.endereco,nome(o.autor),o.obs].join(' ').toLowerCase().includes(q))return false;return true})
   .sort((a,b)=>ts(b.criado)-ts(a.criado))}
 function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<button class="card" data-id="${esc(o.id)}">
   <div class="thumb">${f?`<img data-path="${esc(f)}" alt="">`:nv?'▶ vídeo':'sem foto'}${f&&nv?'<span class="vb">▶</span>':''}</div>
-  <div class="b"><div class="row"><span class="t">${esc(o.tipo)}</span>${catBadge(o.categoria)}</div>${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.origem?' · Origem: '+esc(o.origem):''}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}
+  <div class="b"><div class="row"><span class="t">${esc(o.categoria==='Minucioso'?(o.produto||o.sku||'Contagem'):o.tipo)}</span>${catBadge(o.categoria)}</div>${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.origem?' · Origem: '+esc(o.origem):''}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}${o.categoria==='Minucioso'?`<div class="line"><b style="color:var(--min)">${esc(o.setor||'Sem setor')}</b>${o.chefe?' · Chefe: '+esc(o.chefe):''} · Dif: ${difHTML(difDe(o))}</div>`:''}
   ${o.endereco||o.sku?`<div class="line">${o.endereco?`<span class="addr">${esc(o.endereco)}</span> `:''}${esc(o.sku||'')}</div>`:''}
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
   <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
 function listaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p.nome).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
-  const ativos=[ui.pessoa,ui.de,ui.ate,ui.tipo,ui.busca].filter(Boolean).length;
+  const ativos=[ui.setor,ui.pessoa,ui.de,ui.ate,ui.tipo,ui.busca].filter(Boolean).length;
   const rapido=(k,t,de,ate)=>`<button type="button" class="chip" data-per="${k}" aria-pressed="${ui.de===de&&ui.ate===ate}">${t}</button>`;
   return`<div class="stack">
-  <div class="seg">${[['Garantia','Garantia'],['Relatório','Relatório']].map(([k,t])=>`<button data-cat="${k}" aria-pressed="${ui.cat===k}">${t}</button>`).join('')}</div>
+  <div class="seg">${[['Garantia','Garantia'],['Relatório','Relatório'],['Minucioso','Minucioso']].map(([k,t])=>`<button data-cat="${k}" aria-pressed="${ui.cat===k}">${t}</button>`).join('')}</div>
   ${ui.cat==='Garantia'?`<div class="chips">${['',...GST].map(s=>`<button type="button" class="chip" data-gst="${s}" aria-pressed="${ui.gst===s}">${s||'Todas'}${s?' ('+ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')===s).length+')':''}</button>`).join('')}</div>`:''}
+  ${ui.cat==='Minucioso'?setoresGridHTML():''}
   <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, fornecedor" value="${esc(ui.busca)}">
-  <select id="ftipo" aria-label="Tipo"><option value="">Todos os tipos</option>${[...new Set([...(TIPOS_CAT[ui.cat]||TIPOS),...ocs.filter(o=>(o.categoria||'Relatório')===ui.cat).map(o=>o.tipo)])].map(t=>`<option ${t===ui.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
+  <select id="ftipo" aria-label="Tipo" ${ui.cat==='Minucioso'?'hidden':''}><option value="">Todos os tipos</option>${[...new Set([...(TIPOS_CAT[ui.cat]||TIPOS),...ocs.filter(o=>(o.categoria||'Relatório')===ui.cat).map(o=>o.tipo)])].map(t=>`<option ${t===ui.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
   <div class="filters"><select id="fpessoa" aria-label="Pessoa"><option value="">Todas as pessoas</option>${pessoas.map(p=>`<option value="${esc(p.id)}" ${p.id===ui.pessoa?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
   <div class="datas"><label class="dt"><span>Ano</span><select id="fano"><option value="">Todos os anos</option>${ANOS.map(a=>`<option ${String(a)===ui.fano?'selected':''}>${a}</option>`).join('')}</select></label><label class="dt"><span>Mês</span><select id="fmesl" ${ui.fano?'':'disabled'}><option value="">Ano inteiro</option>${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.fmes?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></label></div>
   <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
-  <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div><button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button></div>
+  <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):ui.cat==='Minucioso'?(l.length===1?'contagem':'contagens')+(ui.setor?' em '+esc(ui.setor):''):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div><button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button></div>
   <div class="list">${l.length?l.map(cardHTML).join(''):`<div class="empty">${ocs.length?'Nenhuma ocorrência com esses filtros.':'Nenhuma ocorrência registrada ainda.<br>Toque em <b>+ Registrar</b> para criar a primeira.'}</div>`}</div></div>`}
+function setoresGridHTML(){
+  const base=ocs.filter(o=>o.categoria==='Minucioso'&&(!ui.de||dia(o.criado)>=ui.de)&&(!ui.ate||dia(o.criado)<=ui.ate)&&(!ui.pessoa||o.autor===ui.pessoa));
+  const card=s=>{const l=base.filter(o=>o.setor===s),d=l.reduce((a,o)=>a+(difDe(o)||0),0);
+    return`<button type="button" class="setcard" data-fset="${esc(s)}" aria-pressed="${ui.setor===s}"><b>${esc(s)}</b><span class="ch">${chefeDe(s)?'Chefe: '+esc(chefeDe(s)):'Sem chefe definido'}</span><span class="nm">${l.length} contage${l.length===1?'m':'ns'} · dif ${d>0?'+':''}${d}</span></button>`};
+  return`<div class="field"><span class="lbl">Setores</span><div class="setgrid"><button type="button" class="setcard todos" data-fset="" aria-pressed="${!ui.setor}"><b>Todos os setores</b><span class="nm">${base.length} no total</span></button>${SETORES.map(card).join('')}</div></div>`}
 function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{ui.det=c.dataset.id;render();scrollTo(0,0)}))}
 function bindLista(){const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
   $('ftipo').addEventListener('change',e=>{ui.tipo=e.target.value;render()});
@@ -572,8 +634,9 @@ function bindLista(){const b=$('busca');b.addEventListener('input',e=>{ui.busca=
   $('fde').addEventListener('change',e=>{ui.fano='';ui.fmes='';ui.de=e.target.value;if(ui.ate&&ui.de>ui.ate)ui.ate=ui.de;render()});
   $('fate').addEventListener('change',e=>{ui.fano='';ui.fmes='';ui.ate=e.target.value;if(ui.de&&ui.ate<ui.de)ui.de=ui.ate;render()});
   document.querySelectorAll('[data-per]').forEach(c=>c.addEventListener('click',()=>{const k=c.dataset.per;ui.fano='';ui.fmes='';ui.ate=hoje();ui.de=k==='hoje'?hoje():diasAtras(k==='7'?6:29);render()}));
-  const lf=$('limparF');if(lf)lf.onclick=()=>{Object.assign(ui,{gst:'',fano:'',fmes:'',pessoa:'',de:'',ate:'',tipo:'',busca:''});render()};
-  document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{ui.cat=b.dataset.cat;ui.gst='';render()}));
+  const lf=$('limparF');if(lf)lf.onclick=()=>{Object.assign(ui,{setor:'',gst:'',fano:'',fmes:'',pessoa:'',de:'',ate:'',tipo:'',busca:''});render()};
+  document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{ui.cat=b.dataset.cat;ui.gst='';ui.setor='';ui.tipo='';render()}));
+  document.querySelectorAll('[data-fset]').forEach(b=>b.addEventListener('click',()=>{ui.setor=b.dataset.fset;render()}));
   document.querySelectorAll('[data-gst]').forEach(b=>b.addEventListener('click',()=>{ui.gst=b.dataset.gst;render()}));
   $('exportar').onclick=()=>exportarExcel(filtrar());
   bindCards()}
@@ -588,13 +651,14 @@ async function exportarExcel(lista){
     'Data':d.toLocaleDateString('pt-BR'),'Hora':d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
     'Categoria':o.categoria||'Relatório','Tipo':o.tipo||'','Origem da quebra':o.origem||'',
     'Situação da garantia':o.categoria==='Garantia'?(o.gar_status||'Pendente'):'','Enviado à garantia em':o.categoria==='Garantia'?enviadoEm(o):'',
+    'Setor':o.setor||'','Chefe do setor':o.chefe||'','Qtd no sistema':o.qtd_sistema??'','Qtd contada':o.qtd_contada??'','Diferença':difDe(o)??'',
     'Fornecedor':o.fornecedor||'','ID da quebra':o.id_quebra||'','Código da peça':o.sku||'','Peça':o.produto||'','Fabricante':o.fab||'',
     'Quantidade':o.qtd??'','Observação':o.obs||'','Registrado por':nome(o.autor),'Fotos':(o.fotos||[]).length,'Vídeos':(o.videos||[]).length}});
   const ws=XLSX.utils.json_to_sheet(linhas);
   const cols=Object.keys(linhas[0]||{Data:''});ws['!cols']=cols.map(c=>({wch:Math.min(45,Math.max(c.length+2,...linhas.map(r=>String(r[c]??'').length+2)))}));
   if(linhas.length)ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:linhas.length,c:cols.length-1}})};
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,ui.cat==='Garantia'?'Garantias':'Relatórios');
-  const partes=['inventario',ui.cat==='Garantia'?'garantias':'relatorios'];if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,ui.cat==='Garantia'?'Garantias':ui.cat==='Minucioso'?'Minucioso':'Relatórios');
+  const partes=['inventario',ui.cat==='Garantia'?'garantias':ui.cat==='Minucioso'?'minucioso':'relatorios'];if(ui.cat==='Minucioso'&&ui.setor)partes.push(ui.setor.toLowerCase().replace(/[^a-z0-9]+/gi,'-'));if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
   if(ui.pessoa)partes.push(nome(ui.pessoa).split(' ')[0].toLowerCase());partes.push(ui.de||ui.ate?(ui.de||'inicio')+'_a_'+(ui.ate||hoje()):hoje());
   XLSX.writeFile(wb,partes.join('-').normalize('NFD').replace(/[\u0300-\u036f]/g,'')+'.xlsx');
   toast(lista.length+(lista.length===1?' linha exportada':' linhas exportadas'));if(b){b.disabled=false;b.textContent='⬇ Exportar Excel'}}
@@ -604,16 +668,20 @@ const icCam='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 const icVid='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg>';
 function formHTML(){const d=draft;return`<form class="stack" id="fnova" novalidate>
   <h2>Novo registro</h2>
-  <div class="field"><span class="lbl">Categoria *</span><div class="catpick">${Object.entries(CATS).map(([k,dsc])=>`<button type="button" class="${catCls(k)}" data-ncat="${k}" aria-pressed="${d.cat===k}"><b>${k}</b><small>${dsc}</small></button>`).join('')}</div></div>
+  <div class="field"><span class="lbl">Categoria *</span><div class="catpick c3">${Object.entries(CATS).map(([k,dsc])=>`<button type="button" class="${catCls(k)}" data-ncat="${k}" aria-pressed="${d.cat===k}"><b>${k}</b><small>${dsc}</small></button>`).join('')}</div></div>
   <div class="field"><span class="lbl">Fotos e vídeos</span>
   <div class="addrow">${d.fotos.length<4?`<label class="addbtn">${icCam}Foto<input id="foto" type="file" accept="image/*" capture="environment" multiple></label>`:'<span class="addbtn off">4 fotos</span>'}
   ${d.videos.length<2?`<label class="addbtn">${icVid}Vídeo<input id="video" type="file" accept="video/*" capture="environment"></label>`:'<span class="addbtn off">2 vídeos</span>'}</div>
   ${d.fotos.length||d.videos.length||enviando?`<div class="photos">${d.fotos.map((f,i)=>`<div class="ph"><img src="${f.prev}" alt="Foto ${i+1}"><button type="button" data-rm="${i}" aria-label="Remover foto">×</button></div>`).join('')}${d.videos.map((v,i)=>`<div class="ph"><video src="${v.prev}" muted playsinline preload="metadata"></video><span class="vb">▶</span><button type="button" data-rmv="${i}" aria-label="Remover vídeo">×</button></div>`).join('')}${enviando?'<div class="ph">Enviando…</div>':''}</div>`:''}
   <span class="muted small">Até 4 fotos e 2 vídeos curtos (máximo 50 MB cada).</span></div>
   ${d.cat==='Garantia'?`<div class="field"><span class="lbl">Origem da quebra *</span><div class="catpick g4o">${Object.entries(ORIGENS).map(([k,dsc])=>`<button type="button" class="gar" data-orig="${k}" aria-pressed="${d.origem===k}"><b>${k}</b><small>${dsc}</small></button>`).join('')}</div></div>`:''}
-  <div class="field"><span class="lbl">Tipo *</span>${d.cat?'':'<span class="muted small">Escolha primeiro Garantia ou Relatório.</span>'}<div class="radios">${(TIPOS_CAT[d.cat]||[]).map((t,i)=>`<label><input type="radio" name="tipo" id="tp${i}" value="${t}" ${d.tipo===t?'checked':''}>${t}</label>`).join('')}</div></div>
-  <div class="two"><div class="field"><label class="lbl" for="sku">Código da peça</label><input id="sku" autocapitalize="characters" value="${esc(d.sku)}"></div>
-  <div class="field"><label class="lbl" for="qtd">Quantidade</label><input id="qtd" type="number" min="0" inputmode="numeric" value="${esc(d.qtd)}"></div></div>
+  ${d.cat==='Minucioso'?`<div class="field"><span class="lbl">Setor *</span><div class="setgrid">${SETORES.map(s=>`<button type="button" class="setcard" data-nset="${esc(s)}" aria-pressed="${d.setor===s}"><b>${esc(s)}</b><span class="ch">${chefeDe(s)?'Chefe: '+esc(chefeDe(s)):'Sem chefe definido'}</span></button>`).join('')}</div></div>`:''}
+  <div class="field" ${d.cat==='Minucioso'?'hidden':''}><span class="lbl">Tipo *</span>${d.cat?'':'<span class="muted small">Escolha primeiro Garantia ou Relatório.</span>'}<div class="radios">${(TIPOS_CAT[d.cat]||[]).map((t,i)=>`<label><input type="radio" name="tipo" id="tp${i}" value="${t}" ${d.tipo===t?'checked':''}>${t}</label>`).join('')}</div></div>
+  <div class="${d.cat==='Minucioso'?'stack':'two'}"><div class="field"><label class="lbl" for="sku">Código da peça</label><input id="sku" autocapitalize="characters" value="${esc(d.sku)}"></div>
+  <div class="field" ${d.cat==='Minucioso'?'hidden':''}><label class="lbl" for="qtd">Quantidade</label><input id="qtd" type="number" min="0" inputmode="numeric" value="${esc(d.qtd)}"></div></div>
+  ${d.cat==='Minucioso'?`<div class="box stack mbox"><b class="small">Contagem</b><div class="two"><div class="field"><label class="lbl" for="qs">Qtd no sistema</label><input id="qs" type="number" inputmode="numeric" value="${esc(d.qs)}"></div>
+  <div class="field"><label class="lbl" for="qc">Qtd contada</label><input id="qc" type="number" min="0" inputmode="numeric" value="${esc(d.qc)}"></div></div>
+  <div class="small">Diferença: <span id="difview">${difHTML(d.qs!==''&&d.qc!==''?(+d.qc)-(+d.qs):null)}</span></div></div>`:''}
   <div class="field"><label class="lbl" for="produto">Peça</label><input id="produto" value="${esc(d.produto)}" placeholder="Ex.: Amortecedor traseiro"></div>
   ${d.cat==='Garantia'?`<div class="box stack gbox"><b class="small">Dados da garantia</b>
   <div class="two"><div class="field"><label class="lbl" for="forn">Fornecedor</label><input id="forn" list="fornList" value="${esc(d.forn)}" placeholder="Para quem vai a garantia"><datalist id="fornList">${[...new Set(ocs.map(o=>o.fornecedor).filter(Boolean))].map(f=>`<option value="${esc(f)}">`).join('')}</datalist></div>
@@ -624,12 +692,13 @@ function formHTML(){const d=draft;return`<form class="stack" id="fnova" novalida
   <button class="btn primary" type="submit">Salvar ocorrência</button>
   <button class="btn" type="button" id="limpar">Limpar</button></form>`}
 function ler(){draft.tipo=(document.querySelector('input[name=tipo]:checked')||{}).value||'';
-  ['sku','produto','fab','qtd','obs'].forEach(k=>draft[k]=$(k).value.trim());if($('forn')){draft.forn=$('forn').value.trim();draft.idq=$('idq').value.trim()}}
+  ['sku','produto','fab','qtd','obs'].forEach(k=>draft[k]=$(k).value.trim());if($('qs')){draft.qs=$('qs').value.trim();draft.qc=$('qc').value.trim();$('difview').innerHTML=difHTML(draft.qs!==''&&draft.qc!==''?(+draft.qc)-(+draft.qs):null)}if($('forn')){draft.forn=$('forn').value.trim();draft.idq=$('idq').value.trim()}}
 const caminho=ext=>`${uid}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
 async function enviar(blob,ext,tipo){const p=caminho(ext);const {error}=await sb.storage.from(BUCKET).upload(p,blob,{contentType:tipo,upsert:false});if(error)throw error;return p}
 function removerArquivos(paths){if(paths.length)sb.storage.from(BUCKET).remove(paths).catch(()=>{})}
 function bindForm(){const fm=$('fnova');fm.addEventListener('input',ler);fm.addEventListener('change',ler);
-  document.querySelectorAll('[data-ncat]').forEach(b=>b.addEventListener('click',()=>{ler();draft.cat=b.dataset.ncat;if(!(TIPOS_CAT[draft.cat]||[]).includes(draft.tipo))draft.tipo='';if(draft.cat!=='Garantia')draft.origem='';render()}));
+  document.querySelectorAll('[data-ncat]').forEach(b=>b.addEventListener('click',()=>{ler();draft.cat=b.dataset.ncat;if(!(TIPOS_CAT[draft.cat]||[]).includes(draft.tipo))draft.tipo='';if(draft.cat!=='Minucioso')draft.setor='';if(draft.cat!=='Garantia')draft.origem='';render()}));
+  document.querySelectorAll('[data-nset]').forEach(b=>b.addEventListener('click',()=>{ler();draft.setor=b.dataset.nset;render()}));
   document.querySelectorAll('[data-orig]').forEach(b=>b.addEventListener('click',()=>{ler();draft.origem=b.dataset.orig;render()}));
   const fi=$('foto');if(fi)fi.addEventListener('change',async e=>{ler();const files=[...e.target.files].slice(0,4-draft.fotos.length);const d=draft;
     for(const f of files){enviando++;render();try{const {blob,prev}=await comprimir(f);const path=await enviar(blob,'jpg','image/jpeg');d.fotos.push({path,prev})}catch(x){toast(x&&x.message?erroMsg(x):'Não foi possível ler essa imagem')}enviando--}
@@ -643,15 +712,17 @@ function bindForm(){const fm=$('fnova');fm.addEventListener('input',ler);fm.addE
   document.querySelectorAll('[data-rmv]').forEach(b=>b.addEventListener('click',()=>{ler();const [v]=draft.videos.splice(+b.dataset.rmv,1);if(v)removerArquivos([v.path]);render()}));
   $('limpar').addEventListener('click',()=>{removerArquivos([...draft.fotos,...draft.videos].map(x=>x.path));draft=novo();render()});
   fm.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;if(enviando){toast('Aguarde as fotos e vídeos terminarem de enviar');return}ler();const er=$('ferr');
-    if(!draft.cat||!draft.tipo||(draft.cat==='Garantia'&&!draft.origem)){er.textContent=!draft.cat?'Escolha se é Garantia ou Relatório.':(draft.cat==='Garantia'&&!draft.origem)?'Escolha a origem da quebra.':'Escolha o tipo.';er.hidden=false;return}
+    const minu=draft.cat==='Minucioso';if(minu)draft.tipo='Minucioso';
+    if(minu&&!draft.setor){er.textContent='Escolha o setor da contagem.';er.hidden=false;return}
+    if(!draft.cat||!draft.tipo||(draft.cat==='Garantia'&&!draft.origem)){er.textContent=!draft.cat?'Escolha Garantia, Relatório ou Minucioso.':(draft.cat==='Garantia'&&!draft.origem)?'Escolha a origem da quebra.':'Escolha o tipo.';er.hidden=false;return}
     const mid=[draft.fotos.length?draft.fotos.length+' foto(s)':'',draft.videos.length?draft.videos.length+' vídeo(s)':''].filter(Boolean).join(' e ');
     const gar=draft.cat==='Garantia';
-    const o={categoria:draft.cat,fornecedor:gar&&draft.forn||null,id_quebra:gar&&draft.idq||null,gar_status:gar?'Pendente':null,origem:gar?draft.origem:null,tipo:draft.tipo,endereco:'',sku:draft.sku||null,produto:draft.produto||null,fab:draft.fab||null,qtd:draft.qtd?+draft.qtd:null,obs:draft.obs||null,
+    const o={setor:minu?draft.setor:null,chefe:minu?(chefeDe(draft.setor)||null):null,qtd_sistema:minu&&draft.qs!==''?+draft.qs:null,qtd_contada:minu&&draft.qc!==''?+draft.qc:null,categoria:draft.cat,fornecedor:gar&&draft.forn||null,id_quebra:gar&&draft.idq||null,gar_status:gar?'Pendente':null,origem:gar?draft.origem:null,tipo:draft.tipo,endereco:'',sku:draft.sku||null,produto:draft.produto||null,fab:draft.fab||null,qtd:draft.qtd?+draft.qtd:null,obs:draft.obs||null,
       fotos:draft.fotos.map(f=>f.path),videos:draft.videos.map(v=>v.path),autor:uid,status:'registrada',hist:[{t:new Date().toISOString(),por:uid,txt:'Registrada'+(mid?' com '+mid:'')}]};
     saving=true;const {error}=await sb.from('ocorrencias').insert(o);saving=false;
     if(error){er.textContent=erroMsg(error);er.hidden=false;return}
     draft.fotos.forEach(f=>{urls[f.path]={url:f.prev,ate:Date.now()+50*60e3}});
-    const msgOk=draft.cat==='Garantia'?'Garantia registrada':'Relatório registrado';draft=null;toast(msgOk);go('lista')})}
+    const msgOk=draft.cat==='Garantia'?'Garantia registrada':draft.cat==='Minucioso'?'Contagem registrada':'Relatório registrado';draft=null;toast(msgOk);go('lista')})}
 function comprimir(file){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=rej;r.onload=()=>{const img=new Image();img.onerror=rej;img.onload=()=>{
   const s=Math.min(1,1280/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
   const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,c.height-28,c.width,28);x.fillStyle='#fff';x.font='16px monospace';x.fillText(fData(Date.now()),10,c.height-9);
@@ -660,7 +731,7 @@ function comprimir(file){return new Promise((res,rej)=>{const r=new FileReader()
 /* ---------- Detalhe ---------- */
 function detHTML(){const o=ocs.find(x=>x.id===ui.det);if(!o){ui.det=null;return listaHTML()}
   return`<div class="stack"><button class="btn sm" id="voltar" style="align-self:flex-start">← Voltar</button>
-  <div>${catBadge(o.categoria)}<h2 style="margin-top:6px">${esc(o.tipo)}</h2><div class="muted small">Registrado por <b>${esc(nome(o.autor))}</b> em ${fData(o.criado)}</div></div>
+  <div>${catBadge(o.categoria)}<h2 style="margin-top:6px">${esc(o.categoria==='Minucioso'?'Contagem · '+(o.setor||'Sem setor'):o.tipo)}</h2><div class="muted small">Registrado por <b>${esc(nome(o.autor))}</b> em ${fData(o.criado)}</div></div>
   ${(o.fotos||[]).length?`<div class="gallery">${o.fotos.map((f,i)=>`<img data-path="${esc(f)}" alt="Foto ${i+1}">`).join('')}</div>`:''}
   ${(o.videos||[]).map(v=>`<video class="vplay" data-path="${esc(v)}" controls playsinline preload="metadata"></video>`).join('')}
   ${o.categoria==='Garantia'?`<div class="box stack gbox"><div class="row"><b>Garantia</b>${gstBadge(o)}</div>
@@ -668,8 +739,9 @@ function detHTML(){const o=ocs.find(x=>x.id===ui.det);if(!o){ui.det=null;return 
   ${pode('garantia')?`<div class="field"><span class="lbl">Atualizar situação</span><div class="chips">${GST.filter(s=>s!==(o.gar_status||'Pendente')).map(s=>`<button type="button" class="chip" data-novo="${s}">${s}</button>`).join('')}</div>
   <input id="gnota" placeholder="Observação (opcional): ex. nº do protocolo, data da coleta"></div>`:'<p class="muted small" style="margin:0">A situação da garantia é atualizada pelo líder, analista ou supervisor.</p>'}
   ${(o.hist||[]).length>1?`<ul class="hist">${o.hist.slice(1).map(h=>`<li><span class="muted small">${fData(h.t)} · ${esc(nome(h.por))}</span><br>${esc(h.txt)}</li>`).join('')}</ul>`:''}</div>`:''}
+  ${o.categoria==='Minucioso'?`<div class="box stack mbox"><b>Minucioso</b><dl class="facts"><dt>Setor</dt><dd>${esc(o.setor||'—')}</dd><dt>Chefe do setor</dt><dd>${esc(o.chefe||'—')}</dd><dt>Qtd no sistema</dt><dd class="mono">${esc(o.qtd_sistema??'—')}</dd><dt>Qtd contada</dt><dd class="mono">${esc(o.qtd_contada??'—')}</dd><dt>Diferença</dt><dd>${difHTML(difDe(o))}</dd></dl></div>`:''}
   <div class="box"><dl class="facts">${o.endereco?`<dt>Endereçamento</dt><dd><span class="addr">${esc(o.endereco)}</span></dd>`:''}<dt>Código</dt><dd class="mono">${esc(o.sku||'—')}</dd>
-  <dt>Peça</dt><dd>${esc(o.produto||'—')}</dd><dt>Fabricante</dt><dd>${esc(o.fab||'—')}</dd><dt>Quantidade</dt><dd>${esc(o.qtd??'—')}</dd>
+  <dt>Peça</dt><dd>${esc(o.produto||'—')}</dd><dt>Fabricante</dt><dd>${esc(o.fab||'—')}</dd>${o.categoria==='Minucioso'?'':`<dt>Quantidade</dt><dd>${esc(o.qtd??'—')}</dd>`}
   <dt>Registrado</dt><dd>${esc(nome(o.autor))} · ${fData(o.criado)}</dd>${o.obs?`<dt>Observação</dt><dd>${esc(o.obs)}</dd>`:''}</dl></div>
   ${pode('apagar')?(ui.confDel?`<div class="box stack"><b>Apagar esta ocorrência e as fotos e vídeos dela?</b><div class="actions"><button class="btn danger" id="delSim">Apagar</button><button class="btn" id="delNao">Cancelar</button></div></div>`:'<button class="btn sm danger" id="del" style="align-self:flex-start">Apagar ocorrência</button>'):''}</div>`}
 function bindDet(){const o=ocs.find(x=>x.id===ui.det);$('voltar').onclick=()=>{ui.det=null;render()};
@@ -692,25 +764,25 @@ const mesLongo=k=>{const [y,m]=k.split('-');return MESES_L[+m-1]+' de '+y};
 function ultimosMeses(n){const d=new Date(),r=[];for(let i=n-1;i>=0;i--)r.push(mesKey(new Date(d.getFullYear(),d.getMonth()-i,1)));return r}
 function mensalHTML(){
   const atual=mesKey(Date.now());if(!ui.mes)ui.mes=atual;
-  const conta=k=>{const r={g:0,r:0,gp:0};ocs.forEach(o=>{if(mesKey(o.criado)!==k)return;if(o.categoria==='Garantia'){r.g++;if((o.gar_status||'Pendente')==='Pendente')r.gp++}else r.r++});return r};
+  const conta=k=>{const r={g:0,r:0,m:0,gp:0};ocs.forEach(o=>{if(mesKey(o.criado)!==k)return;if(o.categoria==='Garantia'){r.g++;if((o.gar_status||'Pendente')==='Pendente')r.gp++}else if(o.categoria==='Minucioso')r.m++;else r.r++});return r};
   const ano=ui.mes.slice(0,4),meses=Array.from({length:12},(_,i)=>ano+'-'+String(i+1).padStart(2,'0')),dados=meses.map(k=>({k,...conta(k)}));
-  const totAno=dados.reduce((a,d)=>({g:a.g+d.g,r:a.r+d.r}),{g:0,r:0});
+  const totAno=dados.reduce((a,d)=>({g:a.g+d.g,r:a.r+d.r,m:a.m+d.m}),{g:0,r:0,m:0});
   const sel=conta(ui.mes);
-  const mx=Math.max(1,...dados.map(d=>Math.max(d.g,d.r)));const passo=mx<=5?1:mx<=10?2:mx<=25?5:mx<=50?10:Math.ceil(mx/50)*10;const top=Math.ceil(mx/passo)*passo;
-  const W=innerWidth<520?360:600,H=innerWidth<520?220:230,L=28,R=6,T=18,B=34,ph=H-T-B,gw=(W-L-R)/dados.length,bw=Math.min(24,gw*0.32);
+  const mx=Math.max(1,...dados.map(d=>Math.max(d.g,d.r,d.m)));const passo=mx<=5?1:mx<=10?2:mx<=25?5:mx<=50?10:Math.ceil(mx/50)*10;const top=Math.ceil(mx/passo)*passo;
+  const W=innerWidth<520?360:600,H=innerWidth<520?220:230,L=28,R=6,T=18,B=34,ph=H-T-B,gw=(W-L-R)/dados.length,bw=Math.min(18,gw*0.26);
   const y=v=>T+ph-(v/top)*ph;
   let svg='';for(let v=0;v<=top;v+=passo){svg+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="gl"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end" class="ax">${v}</text>`}
   dados.forEach((d,i)=>{const cx=L+gw*i+gw/2,on=d.k===ui.mes;
     svg+=`<g class="mg" data-mes="${d.k}" role="button" tabindex="0" aria-label="${mesLongo(d.k)}: ${d.g} garantias, ${d.r} relatórios">`;
     svg+=`<rect x="${L+gw*i+2}" y="${T}" width="${gw-4}" height="${ph+B-4}" rx="6" class="${on?'sel':'hit'}"/>`;
-    [[d.g,'bg',-bw-2],[d.r,'br',2]].forEach(([v,c,dx])=>{const h=(v/top)*ph;svg+=`<rect x="${cx+dx}" y="${y(v)}" width="${bw}" height="${Math.max(h,v?2:0)}" rx="3" class="${c}"/>`;if(v)svg+=`<text x="${cx+dx+bw/2}" y="${y(v)-5}" text-anchor="middle" class="vl${gw<40?' mini':''}">${v}</text>`});
+    [[d.g,'bg',-bw*1.5-2],[d.r,'br',-bw/2],[d.m,'bm',bw/2+2]].forEach(([v,c,dx])=>{const h=(v/top)*ph;svg+=`<rect x="${cx+dx}" y="${y(v)}" width="${bw}" height="${Math.max(h,v?2:0)}" rx="3" class="${c}"/>`;if(v)svg+=`<text x="${cx+dx+bw/2}" y="${y(v)-5}" text-anchor="middle" class="vl${gw<40?' mini':''}">${v}</text>`});
     svg+=`<text x="${cx}" y="${H-12}" text-anchor="middle" class="ax${on?' on':''}">${MESES[+d.k.slice(5)-1]}</text></g>`});
-  return`<span class="lbl">Garantias e relatórios por mês</span>
+  return`<span class="lbl">Registros por mês</span>
   <div class="box stack" style="gap:12px">
    <div class="mesrow"><select id="rano" aria-label="Ano">${ANOS.map(a=>`<option ${String(a)===ano?'selected':''}>${a}</option>`).join('')}</select><select id="rmes" aria-label="Mês">${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.mes.slice(5)?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></div>
-   <div class="mesnum"><div><span class="dot bg"></span><b>${sel.g}</b> ${sel.g===1?'garantia':'garantias'}${sel.g?`<div class="muted small">${sel.gp} pendente${sel.gp===1?'':'s'} · ${sel.g-sel.gp} enviada${sel.g-sel.gp===1?'':'s'}</div>`:''}</div><div><span class="dot br"></span><b>${sel.r}</b> ${sel.r===1?'relatório':'relatórios'}</div><div><b>${sel.g+sel.r}</b> no total em ${MESES_L[+ui.mes.slice(5)-1]}</div></div>
+   <div class="mesnum"><div><span class="dot bg"></span><b>${sel.g}</b> ${sel.g===1?'garantia':'garantias'}${sel.g?`<div class="muted small">${sel.gp} pendente${sel.gp===1?'':'s'} · ${sel.g-sel.gp} enviada${sel.g-sel.gp===1?'':'s'}</div>`:''}</div><div><span class="dot br"></span><b>${sel.r}</b> ${sel.r===1?'relatório':'relatórios'}</div><div><span class="dot bm"></span><b>${sel.m}</b> ${sel.m===1?'contagem':'contagens'}</div><div><b>${sel.g+sel.r+sel.m}</b> no total em ${MESES_L[+ui.mes.slice(5)-1]}</div></div>
    <div class="chartwrap"><svg viewBox="0 0 ${W} ${H}" class="mchart" role="img" aria-label="Gráfico mês a mês do ano">${svg}</svg></div>
-   <div class="legend"><span><span class="dot bg"></span>Garantia</span><span><span class="dot br"></span>Relatório</span><span class="muted">Ano de ${ano}: ${totAno.g} garantias e ${totAno.r} relatórios</span></div>
+   <div class="legend"><span><span class="dot bg"></span>Garantia</span><span><span class="dot br"></span>Relatório</span><span><span class="dot bm"></span>Minucioso</span><span class="muted">Ano de ${ano}: ${totAno.g} garantias, ${totAno.r} relatórios e ${totAno.m} contagens</span></div>
   </div>`}
 function bindResumo(){const a=$('rano'),m=$('rmes');if(a)a.onchange=()=>{ui.mes=a.value+'-'+ui.mes.slice(5);render()};if(m)m.onchange=()=>{ui.mes=ui.mes.slice(0,4)+'-'+m.value;render()};
   document.querySelectorAll('.mg').forEach(g=>{const f=()=>{ui.mes=g.dataset.mes;render()};g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}})})}
@@ -724,8 +796,11 @@ function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{c
     return`<span class="lbl">Garantias</span><div class="stats g4">${GST.map(s=>`<div class="stat"><div class="v">${k[s]}</div><div class="muted small">${s}</div></div>`).join('')}</div>
     <span class="lbl">Garantias por origem da quebra</span><div class="box stack" style="gap:8px">${bars(Object.entries(g.reduce((m,o)=>{const k=o.origem||'Não informada';m[k]=(m[k]||0)+1;return m},{})).sort((a,b)=>b[1]-a[1]))}</div>
     <span class="lbl">Garantias por fornecedor</span><div class="box stack" style="gap:8px">${bars(Object.entries(pf).sort((a,b)=>b[1]-a[1]).slice(0,8))}</div>`})()}
-  <span class="lbl">Garantia x Relatório</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.categoria||'Relatório'))}</div>
-  <span class="lbl">Por tipo</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.tipo))}</div>
+  ${(()=>{const m=ocs.filter(o=>o.categoria==='Minucioso');if(!m.length)return'';const c={},dd={};m.forEach(o=>{const s=o.setor||'Sem setor';c[s]=(c[s]||0)+1;dd[s]=(dd[s]||0)+Math.abs(difDe(o)||0)});
+    return`<span class="lbl">Minucioso: contagens por setor</span><div class="box stack" style="gap:8px">${bars(Object.entries(c).sort((a,b)=>b[1]-a[1]))}</div>
+    <span class="lbl">Minucioso: peças de diferença por setor</span><div class="box stack" style="gap:8px">${bars(Object.entries(dd).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]))}</div>`})()}
+  <span class="lbl">Por categoria</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.categoria||'Relatório'))}</div>
+  <span class="lbl">Por tipo</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.categoria==='Minucioso'?null:o.tipo).filter(x=>x[0]!=='null'))}</div>
   <span class="lbl">Por pessoa</span><div class="box stack" style="gap:8px">${bars(cont(o=>nome(o.autor)))}</div></div>`}
 
 /* ---------- Equipe ---------- */
@@ -735,7 +810,7 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   const info=(p,linha2)=>`<div class="info"><b>${esc(p.nome||'Sem nome')}</b>${p.id===uid?' <span class="muted small">(você)</span>':''}<div class="muted small">${esc(p.email||'')}</div><div class="muted small">${linha2} · ${fData(p.criado)}</div></div>`;
   const lPend=p=>`<div class="person">${info(p,'Novo cadastro')}<div class="ctl"><select data-cg="${esc(p.id)}" aria-label="Cargo de ${esc(p.nome)}">${opcoes(p,'Conferente')}</select>
     <div class="ctl2"><button class="btn sm primary" data-ok="${esc(p.id)}">Liberar</button><button class="btn sm danger" data-nao="${esc(p.id)}">Não liberar</button></div></div></div>`;
-  const lAtivo=p=>`<div class="person">${info(p,esc(p.cargo)+(p.admin?' · administrador':''))}${p.id!==uid&&!p.admin?`<div class="ctl"><select data-cg="${esc(p.id)}" data-ativo="1" aria-label="Cargo de ${esc(p.nome)}">${opcoes(p,p.cargo)}</select><button class="btn sm" data-rev="${esc(p.id)}">Remover acesso</button></div>`:`<span class="pill">${p.admin?'Admin':esc(p.cargo)}</span>`}</div>`;
+  const lAtivo=p=>`<div class="person">${info(p,esc(cargoNome(p.cargo))+(p.admin?' · administrador':''))}${p.id!==uid&&!p.admin?`<div class="ctl"><select data-cg="${esc(p.id)}" data-ativo="1" aria-label="Cargo de ${esc(p.nome)}">${opcoes(p,cargoNome(p.cargo))}</select><button class="btn sm" data-rev="${esc(p.id)}">Remover acesso</button></div>`:`<span class="pill">${p.admin?'Admin':esc(cargoNome(p.cargo))}</span>`}</div>`;
   const lRec=p=>`<div class="person">${info(p,'<span class="nao">Não liberado</span>')}<div class="ctl">${ui.confExcl===p.id?`<span class="small" style="font-weight:700">Excluir de vez?</span><div class="ctl2"><button class="btn sm danger" data-exsim="${esc(p.id)}">Excluir</button><button class="btn sm" data-exnao="1">Cancelar</button></div>`:`<div class="ctl2"><button class="btn sm" data-rec="${esc(p.id)}">Reconsiderar</button><button class="btn sm danger" data-excl="${esc(p.id)}">Excluir</button></div>`}</div></div>`;
   return`<div class="stack">
   <div class="box"><div class="row"><b>${pend.length?pend.length+(pend.length>1?' cadastros aguardando':' cadastro aguardando'):'Nenhum cadastro aguardando'}</b>${pend.length?'<span class="pill new">Novo</span>':''}</div>
@@ -743,9 +818,16 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   ${pend.length?`<div style="margin-top:12px">${pend.map(lPend).join('')}</div>`:''}</div>
   <span class="lbl">Com acesso (${ativos.length})</span><div class="box">${ativos.map(lAtivo).join('')||'<span class="muted">Ninguém.</span>'}</div>
   ${recus.length?`<span class="lbl">Não liberados (${recus.length})</span><div class="box">${recus.map(lRec).join('')}<p class="muted small" style="margin:12px 0 0">Excluir apaga o cadastro e o login da pessoa. Ela poderá se cadastrar de novo com o mesmo e-mail, se quiser.</p></div>`:''}
+  <span class="lbl">Chefes dos setores</span><div class="box"><datalist id="pessoasList">${ativos.map(p=>`<option value="${esc(p.nome)}">`).join('')}</datalist>
+  ${SETORES.map((s,i)=>`<div class="chefrow"><b>${esc(s)}</b><input id="chef${i}" list="pessoasList" value="${esc(chefeDe(s))}" placeholder="Nome do chefe"><button class="btn sm" data-chef="${i}">Salvar</button></div>`).join('')}
+  <p class="muted small" style="margin:10px 0 0">O chefe aparece no Minucioso e fica gravado em cada contagem do setor.</p></div>
   <details class="box small"><summary><b>O que cada cargo pode fazer</b></summary><ul style="margin:10px 0 0;padding-left:18px">${Object.entries(CARGO_DESC).map(([c,d])=>`<li><b>${c}</b>: ${d}</li>`).join('')}</ul></details></div>`}
 async function mudaPerfil(id,campos,msg){const {error}=await sb.from('perfis').update(campos).eq('id',id);if(error){toast(erroMsg(error));return}Object.assign(perfis[id],campos);toast(msg);render()}
 function bindEquipe(){
+  document.querySelectorAll('[data-chef]').forEach(b=>b.addEventListener('click',async()=>{const i=+b.dataset.chef,s=SETORES[i],v=$('chef'+i).value.trim();b.disabled=true;
+    const {error}=await sb.from('setores').upsert({nome:s,chefe:v||null,ordem:i});b.disabled=false;
+    if(error){toast(/setores|schema cache|relation/i.test(error.message)?'O banco precisa de uma atualização (tabela setores). Rode o comando novo no SQL Editor.':erroMsg(error));return}
+    chefes[s]=v;toast(v?'Chefe de '+s+': '+v:'Chefe de '+s+' removido')}));
   document.querySelectorAll('select[data-ativo]').forEach(s=>s.addEventListener('change',()=>mudaPerfil(s.dataset.cg,{cargo:s.value},'Cargo alterado para '+s.value)));
   document.querySelectorAll('[data-ok]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;const cg=document.querySelector(`select[data-cg="${b.dataset.ok}"]`).value;mudaPerfil(b.dataset.ok,{aprovado:true,recusado:false,cargo:cg},'Acesso liberado como '+cg)}));
   document.querySelectorAll('[data-nao]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;mudaPerfil(b.dataset.nao,{aprovado:false,recusado:true},'Cadastro não liberado')}));
