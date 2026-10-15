@@ -281,13 +281,13 @@ code{font-family:var(--mono);font-size:.86em;background:var(--sunken);padding:1p
 .ficha{width:100%;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;color:#000;font-size:12px}
 .ficha th,.ficha td{border:1px solid #000;padding:3px 6px;vertical-align:middle}
 .ficha th{width:19%;text-align:center;font-weight:700;font-size:11.5px}
-.ficha td{font-size:12px}
+.ficha td{font-size:12px;text-align:center}
 .ficha td.tit{text-align:center;font-weight:700;font-size:15px;line-height:1.35}
 .ficha td.vazio{height:10px;padding:0}
 .ficha td.cinza{background:#f3f3f3}
 .ficha td.amarelo{background:#ffff00;height:12px;padding:0}
 .ficha tr.mot th{height:175px;font-size:11px}
-.ficha tr.mot td{vertical-align:top;white-space:pre-wrap;padding:8px}
+.ficha tr.mot td{vertical-align:middle;text-align:center;white-space:pre-wrap;padding:10px 14px}
 .assin{display:grid;grid-template-columns:2fr 1fr;gap:30px;margin-top:34px;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#000;text-align:center}
 .assin span{display:block;border-top:1px solid #000;margin-bottom:4px}
 .rodape{margin-top:12px;font-family:Arial,Helvetica,sans-serif;font-size:9px;color:#555;text-align:right}
@@ -298,9 +298,10 @@ code{font-family:var(--mono);font-size:.86em;background:var(--sunken);padding:1p
   body.imprimindo #printArea{display:block!important}
   #printArea .folha{page-break-after:always;break-after:page}
   #printArea .folha:last-child{page-break-after:auto;break-after:auto}
-  #printArea .ficha tr.mot th{height:57mm}
+  #printArea .ficha tr.mot th{height:63mm}
   #printArea .assin{margin-top:22px}
-  #printArea .folha{overflow:hidden}
+  #printArea .folha{width:184mm;max-width:100%;margin:0 auto}
+  html,body.imprimindo{min-width:0!important;width:auto!important}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
