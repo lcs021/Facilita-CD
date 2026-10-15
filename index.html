@@ -395,6 +395,20 @@ code{font-family:var(--mono);font-size:.86em;background:var(--sunken);padding:1p
   .side.open{opacity:1}
   .mwrap .subitems{width:290px;max-height:calc(100vh - 140px);overflow-y:auto;padding:10px}
 }
+nav#nav{display:none!important}
+.wrap{padding-block:18px 48px}
+.toast{bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+.side{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.snav{width:100%;display:flex;align-items:center;gap:12px;border:0;background:none;color:var(--fg);font:700 .92rem var(--font);padding:9px 12px;border-radius:11px;cursor:pointer;text-align:left;transition:background .15s,transform .12s;position:relative}
+.snav svg{width:20px;height:20px;color:var(--muted);flex:none}
+.snav:hover{background:var(--sunken);transform:translateX(2px)}
+.snav[aria-current="true"]{background:var(--sunken);color:var(--fg)}
+.snav[aria-current="true"] svg{color:var(--accent)}
+.snav[aria-current="true"]::before{content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:4px;border-radius:0 4px 4px 0;background:var(--accent)}
+.snav .nb{margin-left:auto;background:var(--alta);color:#fff;font:800 .7rem var(--font);border-radius:999px;padding:1px 7px}
+.sidenew.ativo{outline:3px solid var(--gar-soft)}
+.menubtn{position:relative}
+.menubtn .mb{position:absolute;top:-5px;right:-5px;background:var(--alta);color:#fff;font:800 .62rem var(--font);border-radius:999px;padding:1px 5px;border:2px solid var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -648,7 +662,9 @@ const icMod={Garantia:'<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6
 const svgI=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const iniciais=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'?';
 const corNome=n=>{let h=0;for(const c of String(n||''))h=(h*31+c.charCodeAt(0))%360;return`hsl(${h} 62% 46%)`};
-function sideHTML(){const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filter(o=>o.categoria==='Minucioso'&&o.setor===s).length;
+function sideHTML(){const pendEq=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
+  const navItem=(tab,txt,ic,badge)=>`<button class="snav" data-goto="${tab}" aria-current="${ui.tab===tab&&!ui.det}">${svgI(ic)}<span>${txt}</span>${badge?`<span class="nb">${badge}</span>`:''}</button>`;
+const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filter(o=>o.categoria==='Minucioso'&&o.setor===s).length;
   const pend=ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')==='Pendente').length,mesAt=mesKey(Date.now());
   const relMes=ocs.filter(o=>(o.categoria||'Relatório')==='Relatório'&&mesKey(o.criado)===mesAt).length;
   const setAt=SETORES.filter(s=>ns(s)).length;
@@ -657,7 +673,8 @@ function sideHTML(){const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).le
   const item=c=>`<button class="sitem ${cls[c]}${c==='Minucioso'&&ui.cat==='Minucioso'?' aberto':''}" data-mcat="${c}" aria-current="${ui.cat===c&&(c!=='Minucioso'||!ui.setor)}" style="--c:${cor[c]}">
     <span class="ico">${svgI(icMod[c])}</span><span class="tx"><b>${c}</b><small>${sub[c]}</small></span><span class="n">${n(c)}</span>${c==='Minucioso'?icChev:''}</button>`;
   return`<div class="sidehead"><span class="av" style="background:${corNome(eu&&eu.nome)}">${esc(iniciais(eu&&eu.nome))}</span><div class="tx"><b>${esc(eu?eu.nome:'')}</b><small>${esc(eu?cargoNome(eu.cargo):'')}</small></div></div>
-  <button class="sidenew" data-snew="1">${svgI('<path d="M12 5v14M5 12h14"/>')}Novo registro${ui.cat?` <span>· ${esc(ui.cat)}</span>`:''}</button>
+  <button class="sidenew${ui.tab==='nova'?' ativo':''}" data-snew="1">${svgI('<path d="M12 5v14M5 12h14"/>')}Novo registro${ui.cat?` <span>· ${esc(ui.cat)}</span>`:''}</button>
+  <div class="sidesec">Navegação</div>${navItem('lista','Registros','<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/>')}${pode('resumo')?navItem('resumo','Resumo','<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'):''}${eu&&eu.admin?navItem('equipe','Equipe','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/>',pendEq):''}
   <div class="sidesec">Módulos</div>${item('Garantia')}${item('Relatório')}<div class="mwrap">${item('Minucioso')}
   <div class="subitems${ui.cat==='Minucioso'?' show':''}"><div class="subhead"><b>Setores</b><span>${SETORES.length}</span></div>
   <label class="subsearch">${svgI('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')}<input id="buscaSetor" placeholder="Buscar setor ou chefe" autocomplete="off"></label>
@@ -666,6 +683,7 @@ function sideHTML(){const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).le
   <div class="subvazio" hidden>Nenhum setor encontrado</div></div></div>`}
 function abreMenu(on){const s=$('side'),b=$('sideBack');s.classList.toggle('open',on);b.hidden=!on||matchMedia('(hover:hover) and (min-width:960px)').matches;$('menuBtn').setAttribute('aria-expanded',String(on))}
 function renderSide(){const s=$('side');s.innerHTML=sideHTML();
+  s.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{abreMenu(false);go(b.dataset.goto)});
   const nb=s.querySelector('[data-snew]');if(nb)nb.onclick=()=>{abreMenu(false);if(ui.tab!=='nova'){draft=null;go('nova')}};
   const bs=$('buscaSetor');if(bs){bs.addEventListener('click',e=>e.stopPropagation());bs.addEventListener('input',()=>{const q=bs.value.trim().toLowerCase();let vis=0;
     s.querySelectorAll('.ssub[data-busca]').forEach(b=>{const ok=!q||b.dataset.busca.includes(q);b.hidden=!ok;if(ok)vis++});s.querySelector('.ssub.todos').hidden=!!q;s.querySelector('.subvazio').hidden=vis>0})}
@@ -710,7 +728,7 @@ function render(){
   if(!eu.aprovado&&!eu.admin){fora();v.innerHTML=`<div class="center box stack"><h2>Cadastro enviado</h2><p>Olá, ${esc(eu.nome)}. Seu cadastro foi recebido e está aguardando o administrador liberar o acesso.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
   $('nav').hidden=false;$('sair').hidden=false;$('side').hidden=false;$('menuBtn').hidden=false;document.body.classList.add('withside');renderSide();$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo);
   const pend=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
-  $('badge').hidden=!(eu.admin&&pend);$('badge').textContent=pend;
+  $('badge').hidden=!(eu.admin&&pend);$('badge').textContent=pend;{let mb=$('menuBtn').querySelector('.mb');if(eu.admin&&pend){if(!mb){mb=document.createElement('span');mb.className='mb';$('menuBtn').appendChild(mb)}mb.textContent=pend}else if(mb)mb.remove()}
   document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;
   $('nav').style.gridTemplateColumns=`repeat(${document.querySelectorAll('nav button:not([hidden])').length},1fr)`;
   if((ui.tab==='resumo'&&!pode('resumo'))||(ui.tab==='equipe'&&!eu.admin))ui.tab='lista';
