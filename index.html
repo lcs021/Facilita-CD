@@ -292,7 +292,7 @@ const SUPABASE_URL='';const SUPABASE_KEY='';
 /* =============================================================== */
 
 const ORIGINAL='<!doctype html>\n'+document.documentElement.outerHTML;
-const TIPOS=['Avaria / peça quebrada','Embalagem violada','Sem etiqueta / ilegível','Código divergente (peça trocada)','Kit incompleto','Peça com sinal de uso','Oxidação / ferrugem','Falta no endereço','Sobra no endereço'];
+const TIPOS=['Avaria / peça quebrada','Embalagem violada','Sem etiqueta / ilegível','Código divergente (peça trocada)','Kit incompleto','Material retirado como quebrado de loja','Quebrado de fábrica'];
 const CARGOS={'Conferente':['registrar'],'Operador':['registrar'],'Líder':['registrar','resumo','garantia'],'Analista de inventário':['registrar','resumo','garantia'],'Supervisor':['registrar','resumo','garantia','apagar']};
 const CARGO_DESC={'Conferente':'registra','Operador':'registra','Líder':'registra, vê o resumo e atualiza garantias','Analista de inventário':'registra, vê o resumo e atualiza garantias','Supervisor':'tudo, inclusive apagar registros'};
 const ANDARES={'11':'1º andar','12':'2º andar','13':'3º andar'},LETRAS='ABCDEFGHI'.split('');
@@ -300,7 +300,7 @@ const BUCKET='midias',H=3600e3,MAX_VIDEO=50*1024*1024;
 
 let sb=null,uid=null,eu=null,perfis={},ocs=[],carregou=false;
 let tela='login',msgLogin='';
-let ui={tab:'lista',mes:'',cat:'',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
+let ui={tab:'lista',mes:'',cat:'Garantia',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
 let draft=null,saving=false,enviando=0;
 const urls={},pedindo=new Set();
 
@@ -450,10 +450,10 @@ function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<b
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
   <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
 function listaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p.nome).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
-  const ativos=[ui.cat,ui.pessoa,ui.de,ui.ate,ui.tipo,ui.busca].filter(Boolean).length;
+  const ativos=[ui.pessoa,ui.de,ui.ate,ui.tipo,ui.busca].filter(Boolean).length;
   const rapido=(k,t,de,ate)=>`<button type="button" class="chip" data-per="${k}" aria-pressed="${ui.de===de&&ui.ate===ate}">${t}</button>`;
   return`<div class="stack">
-  <div class="seg">${[['','Todos'],['Garantia','Garantia'],['Relatório','Relatório']].map(([k,t])=>`<button data-cat="${k}" aria-pressed="${ui.cat===k}">${t}</button>`).join('')}</div>
+  <div class="seg">${[['Garantia','Garantia'],['Relatório','Relatório']].map(([k,t])=>`<button data-cat="${k}" aria-pressed="${ui.cat===k}">${t}</button>`).join('')}</div>
   ${ui.cat==='Garantia'?`<div class="chips">${['',...GST].map(s=>`<button type="button" class="chip" data-gst="${s}" aria-pressed="${ui.gst===s}">${s||'Todas'}${s?' ('+ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')===s).length+')':''}</button>`).join('')}</div>`:''}
   <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, endereço" value="${esc(ui.busca)}">
   <select id="ftipo" aria-label="Tipo"><option value="">Todos os tipos</option>${TIPOS.map(t=>`<option ${t===ui.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
@@ -469,7 +469,7 @@ function bindLista(){const b=$('busca');b.addEventListener('input',e=>{ui.busca=
   $('fde').addEventListener('change',e=>{ui.de=e.target.value;if(ui.ate&&ui.de>ui.ate)ui.ate=ui.de;render()});
   $('fate').addEventListener('change',e=>{ui.ate=e.target.value;if(ui.de&&ui.ate<ui.de)ui.de=ui.ate;render()});
   document.querySelectorAll('[data-per]').forEach(c=>c.addEventListener('click',()=>{const k=c.dataset.per;ui.ate=hoje();ui.de=k==='hoje'?hoje():diasAtras(k==='7'?6:29);render()}));
-  const lf=$('limparF');if(lf)lf.onclick=()=>{Object.assign(ui,{cat:'',gst:'',pessoa:'',de:'',ate:'',tipo:'',busca:''});render()};
+  const lf=$('limparF');if(lf)lf.onclick=()=>{Object.assign(ui,{gst:'',pessoa:'',de:'',ate:'',tipo:'',busca:''});render()};
   document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{ui.cat=b.dataset.cat;ui.gst='';render()}));
   document.querySelectorAll('[data-gst]').forEach(b=>b.addEventListener('click',()=>{ui.gst=b.dataset.gst;render()}));
   bindCards()}
