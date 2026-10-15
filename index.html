@@ -94,12 +94,46 @@ textarea{min-height:84px;resize:vertical}
 .ok{color:var(--baixa);font-size:.88rem;font-weight:600;background:color-mix(in srgb,var(--baixa) 10%,transparent);padding:9px 12px;border-radius:10px}
 
 /* Telas de acesso */
+body.auth{background:var(--bg)}
 .hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;margin:36px auto 22px}
 .hero .logo{width:62px;height:62px;border-radius:18px}
 .hero .logo svg{width:34px;height:34px}
 .hero h1{font-size:1.6rem;white-space:normal}
 .hero p{margin:0;color:var(--muted)}
-body.auth{background:radial-gradient(1200px 500px at 50% -10%,var(--gar-soft),transparent 70%),var(--bg)}
+.authshell{position:fixed;inset:0;z-index:30;overflow:auto;display:flex;align-items:center;justify-content:center;padding:24px 16px;
+  background:radial-gradient(600px 320px at 50% 0%,var(--gar-soft),transparent 70%),var(--bg)}
+.acard{width:100%;max-width:400px;margin:auto;animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+.acard.shake{animation:shake .4s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+.alogo{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:22px;text-align:center}
+.alogo .logo{width:56px;height:56px;border-radius:17px}
+.alogo .logo svg{width:30px;height:30px}
+.alogo h1{font-size:1.5rem;letter-spacing:-.02em;white-space:normal}
+.alogo p{margin:0;color:var(--muted);font-size:.95rem}
+.apanel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px 24px;box-shadow:var(--sh2)}
+.apanel form{gap:16px}
+.inp{position:relative}
+.inp>svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none;transition:color .15s}
+.inp input{padding:13px 14px 13px 43px;border-radius:12px}
+.inp.pw input{padding-right:46px}
+.inp:focus-within>svg{color:var(--accent)}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;background:none;color:var(--muted);border-radius:10px;cursor:pointer;display:grid;place-items:center}
+.eye:hover{background:var(--sunken);color:var(--fg)}
+.eye svg{width:18px;height:18px}
+.caps{display:flex;align-items:center;gap:7px;font-size:.8rem;font-weight:600;color:var(--gar-ink);background:var(--gar-soft);padding:6px 10px;border-radius:9px;width:fit-content}
+.caps svg{width:14px;height:14px}
+.lembrar{display:flex;align-items:center;gap:9px;font-size:.88rem;color:var(--muted);cursor:pointer;user-select:none}
+.lembrar input{width:18px;height:18px;padding:0;accent-color:var(--accent);flex:none}
+.btn.go{display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 18px;border-radius:12px;font-size:1rem}
+.btn.go svg{width:18px;height:18px;transition:transform .2s}
+.btn.go:hover svg{transform:translateX(3px)}
+.btn.go.busy{pointer-events:none;opacity:.85}
+.btn.go.busy svg{display:none}
+.btn.go.busy::before{content:"";width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.atroca{text-align:center;margin:20px 0 0;font-size:.92rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.acard{animation:none!important}}
 
 /* Lista */
 .filters{display:flex;gap:10px;flex-wrap:wrap}
@@ -795,40 +829,62 @@ function pedirUrls(){
 }
 
 /* ---------- Login e cadastro ---------- */
-const heroHTML=()=>`<div class="hero"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Inventário CD</h1><p>Garantias e relatórios do CD</p></div>`;
-function loginHTML(){return heroHTML()+`<form class="center box stack" id="flogin" novalidate>
-  <div><h2>Entrar</h2><p class="muted small">Use o e-mail e a senha do seu cadastro.</p></div>
-  <div class="field"><label class="lbl" for="lemail">E-mail</label><input id="lemail" type="email" autocomplete="username"></div>
-  <div class="field"><label class="lbl" for="lsenha">Senha</label><input id="lsenha" type="password" autocomplete="current-password"></div>
+const IC={
+ mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 8 9 6 9-6"/></svg>',
+ lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+ user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>',
+ eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+ arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+ cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+ shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 8 8 9 4.6-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>',
+ doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>',
+ warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/></svg>',
+ box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>'};
+const lerLembrado=()=>{try{return localStorage.getItem('inv_email')||''}catch(e){return''}};
+const gravaLembrado=v=>{try{v?localStorage.setItem('inv_email',v):localStorage.removeItem('inv_email')}catch(e){}};
+const authShell=(mode,titulo,sub,form)=>`<div class="authshell"><div class="acard" id="acard">
+  <div class="alogo"><span class="logo">${IC.box}</span><div><h1>${titulo}</h1><p>${sub}</p></div></div>
+  <div class="apanel">${form}</div>
+  <p class="atroca">${mode==='login'?'Ainda não tem cadastro? <button class="btn link" type="button" id="irCad">Criar cadastro</button>':'Já tem cadastro? <button class="btn link" type="button" id="irLogin">Entrar</button>'}</p>
+  </div></div>`;
+const campo=(id,rot,tipo,ac,ico,extra='')=>`<div class="field"><label class="lbl" for="${id}">${rot}</label><div class="inp${tipo==='password'?' pw':''}">${IC[ico]}<input id="${id}" type="${tipo}" autocomplete="${ac}" ${extra}>${tipo==='password'?`<button type="button" class="eye" data-eye="${id}" aria-label="Mostrar senha" tabindex="-1">${IC.eye}</button>`:''}</div></div>`;
+function authErr(er,msg){er.textContent=msg;er.hidden=false;const c=$('acard');if(c){c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}}
+function authFx(f){
+  f.querySelectorAll('[data-eye]').forEach(b=>b.onclick=()=>{const i=$(b.dataset.eye),m=i.type==='password';i.type=m?'text':'password';b.setAttribute('aria-label',m?'Ocultar senha':'Mostrar senha');b.style.color=m?'var(--accent)':''});
+  f.querySelectorAll('input[type=password]').forEach(i=>{const chk=e=>{const on=e.getModifierState&&e.getModifierState('CapsLock');let w=i.closest('.field').querySelector('.caps');
+    if(on&&!w){i.closest('.field').insertAdjacentHTML('beforeend',`<div class="caps">${IC.warn}Caps Lock ligado</div>`)}else if(!on&&w)w.remove()};
+    i.addEventListener('keydown',chk);i.addEventListener('keyup',chk);i.addEventListener('blur',()=>{const w=i.closest('.field').querySelector('.caps');if(w)w.remove()})});
+}
+function loginHTML(){const lem=lerLembrado();return authShell('login','Inventário CD','Entre com o e-mail e a senha do seu cadastro.',`<form class="stack" id="flogin" novalidate>
+  ${campo('lemail','E-mail','email','username','mail',`value="${esc(lem)}" placeholder="voce@empresa.com"`)}
+  ${campo('lsenha','Senha','password','current-password','lock','placeholder="Sua senha"')}
+  <label class="lembrar"><input type="checkbox" id="lembrar" ${lem?'checked':''}>Lembrar meu e-mail neste computador</label>
   <div class="${msgLogin.startsWith('✓')?'ok':'err'}" id="lerr" ${msgLogin?'':'hidden'}>${esc(msgLogin.replace(/^✓ /,''))}</div>
-  <button class="btn primary" type="submit">Entrar</button>
-  <p class="small" style="text-align:center;margin:0">Ainda não tem cadastro? <button class="btn link" type="button" id="irCad">Criar cadastro</button></p>
-  <p class="muted small" style="text-align:center;margin:0">Esqueceu a senha? Peça ao administrador para redefinir.</p></form>`}
-function bindLogin(){const f=$('flogin');$('lemail').focus();
+  <button class="btn primary go" type="submit"><span>Entrar</span>${IC.arrow}</button>
+  <p class="muted small" style="text-align:center;margin:0">Esqueceu a senha? Peça ao administrador para redefinir.</p></form>`)}
+function bindLogin(){const f=$('flogin');($('lemail').value?$('lsenha'):$('lemail')).focus();authFx(f);
   $('irCad').onclick=()=>{tela='cadastro';msgLogin='';render()};
   f.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;const er=$('lerr');er.className='err';
-    const email=$('lemail').value.trim(),senha=$('lsenha').value;if(!email||!senha){er.textContent='Preencha e-mail e senha.';er.hidden=false;return}
-    saving=true;f.querySelector('[type=submit]').disabled=true;
+    const email=$('lemail').value.trim(),senha=$('lsenha').value;if(!email||!senha){authErr(er,'Preencha e-mail e senha.');return}
+    saving=true;const bt=f.querySelector('[type=submit]');bt.disabled=true;bt.classList.add('busy');
+    gravaLembrado($('lembrar').checked?email:'');
     const {error}=await sb.auth.signInWithPassword({email,password:senha});saving=false;
-    if(error){er.textContent=erroMsg(error);er.hidden=false;f.querySelector('[type=submit]').disabled=false}})}
-function cadastroHTML(){return heroHTML()+`<form class="center box stack" id="fcad" novalidate>
-  <div><h2>Criar cadastro</h2><p class="muted small">Depois de criar, o administrador libera seu acesso.</p></div>
-  <div class="field"><label class="lbl" for="cnome">Nome completo</label><input id="cnome" autocomplete="name" placeholder="Ex.: Lucas Carvalho"></div>
-  <div class="field"><label class="lbl" for="cemail">E-mail</label><input id="cemail" type="email" autocomplete="email"></div>
-  <div class="two"><div class="field"><label class="lbl" for="csenha">Senha (mín. 6)</label><input id="csenha" type="password" autocomplete="new-password"></div>
-  <div class="field"><label class="lbl" for="csenha2">Repita a senha</label><input id="csenha2" type="password" autocomplete="new-password"></div></div>
+    if(error){authErr(er,erroMsg(error));bt.disabled=false;bt.classList.remove('busy')}})}
+function cadastroHTML(){return authShell('cad','Criar cadastro','Depois de criar, o administrador libera seu acesso.',`<form class="stack" id="fcad" novalidate>
+  ${campo('cnome','Nome completo','text','name','user','placeholder="Ex.: Lucas Carvalho"')}
+  ${campo('cemail','E-mail','email','email','mail','placeholder="voce@empresa.com"')}
+  <div class="two">${campo('csenha','Senha (mín. 6)','password','new-password','lock')}${campo('csenha2','Repita a senha','password','new-password','lock')}</div>
   <div class="err" id="cerr" hidden></div>
-  <button class="btn primary" type="submit">Criar cadastro</button>
-  <p class="small" style="text-align:center;margin:0">Já tem cadastro? <button class="btn link" type="button" id="irLogin">Entrar</button></p></form>`}
-function bindCadastro(){const f=$('fcad');$('cnome').focus();
+  <button class="btn primary go" type="submit"><span>Criar cadastro</span>${IC.arrow}</button></form>`)}
+function bindCadastro(){const f=$('fcad');$('cnome').focus();authFx(f);
   $('irLogin').onclick=()=>{tela='login';msgLogin='';render()};
   f.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;const er=$('cerr');
     const n=$('cnome').value.trim(),email=$('cemail').value.trim(),s=$('csenha').value,s2=$('csenha2').value;
     const m=!n?'Preencha seu nome.':!/^\S+@\S+\.\S+$/.test(email)?'Informe um e-mail válido.':s.length<6?'A senha precisa ter pelo menos 6 caracteres.':s!==s2?'As senhas não são iguais.':'';
-    if(m){er.textContent=m;er.hidden=false;return}
-    saving=true;f.querySelector('[type=submit]').disabled=true;
+    if(m){authErr(er,m);return}
+    saving=true;const bt=f.querySelector('[type=submit]');bt.disabled=true;bt.classList.add('busy');
     const {data,error}=await sb.auth.signUp({email,password:s,options:{data:{nome:n}}});saving=false;
-    if(error){er.textContent=erroMsg(error);er.hidden=false;f.querySelector('[type=submit]').disabled=false;return}
+    if(error){authErr(er,erroMsg(error));bt.disabled=false;bt.classList.remove('busy');return}
     if(!data.session){tela='login';msgLogin='✓ Cadastro criado. Abra o e-mail de confirmação que enviamos para '+email+' e depois entre aqui.';render()}})}
 
 /* ---------- Lista ---------- */
