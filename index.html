@@ -308,11 +308,12 @@ details summary{cursor:pointer;list-style-position:inside}
 .bsvg .gl{stroke:var(--line);stroke-width:1}.bsvg text{font:600 11px var(--font);fill:var(--muted)}.bsvg .vl{fill:var(--fg);font-weight:800}
 .bsvg .hj{fill:var(--bai);font-weight:800}
 .bgraf .acts{display:flex;gap:8px;flex-wrap:wrap}
+.exgeral{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-color:color-mix(in srgb,#0ea5e9 35%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,#0ea5e9 9%,var(--surface)),var(--surface) 70%)}
 .relbai{font-family:Arial,Helvetica,sans-serif;color:#000}
-.relbai h1{font-size:15pt;margin:0 0 2pt;text-align:center}.relbai .sub{text-align:center;font-size:10pt;margin-bottom:10pt}
-.relbai .kp{display:flex;border:1px solid #000;margin-bottom:10pt}.relbai .kp div{flex:1;padding:5pt;border-right:1px solid #000;text-align:center;font-size:9pt}.relbai .kp div:last-child{border-right:0}.relbai .kp b{display:block;font-size:13pt}
+.relbai h1{font-size:17pt;margin:0;padding:12pt 14pt 2pt;background:#0e1525;color:#fff;border-top:5pt solid #7c3aed;text-align:left}.relbai .sub{font-size:9.5pt;padding:0 14pt 10pt;background:#0e1525;color:#b8c2d6;margin-bottom:12pt;text-align:left}
+.relbai .kp{display:flex;gap:8pt;margin-bottom:12pt}.relbai .kp div{flex:1;padding:8pt 10pt;border:1px solid #e3e7ee;border-top:3pt solid #7c3aed;background:#fff;text-align:left;font-size:8.5pt;color:#667085}.relbai .kp b{display:block;font-size:13pt;color:#7c3aed;margin-bottom:2pt;white-space:nowrap}.relbai .kp div{min-width:0;box-sizing:border-box}.relbai,.relbai *{box-sizing:border-box}
 .relbai .bsvg .bar{fill:#6d28d9}.relbai .bsvg .bar.zero{fill:#ccc}.relbai .bsvg text{fill:#333;font-family:Arial,sans-serif}.relbai .bsvg .vl,.relbai .bsvg .hj{fill:#000}.relbai .bsvg .gl{stroke:#ccc}
-.relbai .rgbox{border:1px solid #000;padding:8pt;margin-bottom:12pt}
+.relbai .rgbox{border-radius:6pt;border:1px solid #e3e7ee;padding:8pt;margin-bottom:12pt}
 .relbai,.relbai *{print-color-adjust:exact;-webkit-print-color-adjust:exact}
 .sethead.bbox{border-color:color-mix(in srgb,var(--bai) 35%,var(--line));background:linear-gradient(180deg,var(--bai-soft),var(--surface) 70%)}
 .btab{font-size:.84rem}.btab td{padding:9px 8px}.btab th{padding:8px}.btab .nw{white-space:nowrap}.btab .ds{min-width:170px}
@@ -376,8 +377,8 @@ details summary{cursor:pointer;list-style-position:inside}
 .chip.limpar{color:var(--alta);border-color:transparent;background:transparent}
 .exprow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .exprow .muted{font-weight:600}
-#exportar{color:var(--baixa);border-color:color-mix(in srgb,var(--baixa) 35%,var(--line))}
-#exportar:hover{background:color-mix(in srgb,var(--baixa) 8%,var(--surface))}
+#exportar:not(.primary),#bxls{color:var(--baixa);border-color:color-mix(in srgb,var(--baixa) 35%,var(--line))}
+#exportar:not(.primary):hover,#bxls:hover{background:color-mix(in srgb,var(--baixa) 8%,var(--surface))}
 
 .steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px}
 .steps li{padding-left:4px}
@@ -1135,25 +1136,270 @@ function bindLista(){bindBaiGraf();const pb=$('imprBai');if(pb)pb.onclick=()=>{c
 
 /* ---------- Exportar Excel ---------- */
 function carregarXlsx(){return window.XLSX?Promise.resolve():new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
-async function exportarExcel(lista){
-  const b=$('exportar');if(b){b.disabled=true;b.textContent='Gerando…'}
-  try{await carregarXlsx()}catch(e){toast('Não foi possível carregar o gerador de Excel. Verifique a internet.');if(b){b.disabled=false;b.textContent='⬇ Exportar Excel'}return}
+/* ---------- Relatório em Excel (gerado no navegador, com gráficos nativos) ---------- */
+const XL=(()=>{
+  const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+  const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+  function zip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
+    const u16=v=>[v&255,(v>>>8)&255],u32=v=>[v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255];
+    for(const [name,txt] of files){const nb=enc.encode(name),data=enc.encode(txt),c=crc32(data);
+      const lh=new Uint8Array([...u32(0x04034b50),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0x21),...u32(c),...u32(data.length),...u32(data.length),...u16(nb.length),...u16(0)]);
+      parts.push(lh,nb,data);
+      cen.push(new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0x21),...u32(c),...u32(data.length),...u32(data.length),...u16(nb.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off)]),nb);
+      off+=lh.length+nb.length+data.length}
+    const cs=cen.reduce((a,x)=>a+x.length,0);
+    const end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(cs),...u32(off),...u16(0)]);
+    return new Blob([...parts,...cen,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})}
+  const x=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'');
+  const col=n=>{let s='';n++;while(n){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s};
+  const ref=(c,r)=>col(c)+(r+1);
+  const absr=(sh,c1,r1,c2,r2)=>`'${sh}'!$${col(c1)}$${r1+1}:$${col(c2)}$${r2+1}`;
+  return{zip,x,col,ref,absr}})();
+
+function estilosXL(cor){
+  const F=(sz,c,b)=>`<font>${b?'<b/>':''}<sz val="${sz}"/><color rgb="FF${c}"/><name val="Calibri"/><family val="2"/></font>`;
+  const fonts=[F(10,'1F2937'),F(22,'FFFFFF',1),F(10,'B8C2D6'),F(9,'667085',1),F(24,cor,1),F(13,'111827',1),F(10,'FFFFFF',1),F(10,'111827',1),F(9,'667085'),F(10,'374151'),F(11,cor,1)];
+  const S=c=>`<fill><patternFill patternType="solid"><fgColor rgb="FF${c}"/><bgColor indexed="64"/></patternFill></fill>`;
+  const fills=['<fill><patternFill patternType="none"/></fill>','<fill><patternFill patternType="gray125"/></fill>',S('0E1525'),S('F3F5F9'),S(cor),S('F8FAFC'),S('1F2937'),S('FFFFFF')];
+  const L=(c,s)=>s?`<${c} style="${s[0]}"><color rgb="FF${s[1]}"/></${c}>`:`<${c}/>`,ln=['thin','E3E7EE'];
+  const B=(l,r,tp,bt)=>`<border>${L('left',l)}${L('right',r)}${L('top',tp)}${L('bottom',bt)}<diagonal/></border>`;
+  const borders=[B(),B(ln,ln,ln,ln),B(0,0,['thick',cor],0),B(0,0,['medium','1F2937'],0),B(0,0,0,ln),B(ln,ln,['thick',cor],0),B(ln,ln,0,0),B(ln,ln,0,ln),B(0,0,0,['medium','D3D9E3'])];
+  const A=(h,v,w)=>`<alignment horizontal="${h}" vertical="${v||'center'}"${w?' wrapText="1"':''} indent="${h==='left'?1:0}"/>`;
+  const xf=(f,fi,b,n,al)=>`<xf numFmtId="${n}" fontId="${f}" fillId="${fi}" borderId="${b}" xfId="0"${n?' applyNumberFormat="1"':''} applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1">${al}</xf>`;
+  const R=164;
+  const xfs=[
+    xf(0,0,0,0,A('general')),            //0
+    xf(1,2,0,0,A('left','bottom')),      //1 título
+    xf(2,2,0,0,A('left','top')),         //2 subtítulo
+    xf(3,3,2,0,A('left','bottom')),      //3
+    xf(4,3,0,0,A('left','top')),         //4
+    xf(4,3,0,R,A('left','top')),         //5
+    xf(5,0,0,0,A('left','bottom')),      //6
+    xf(6,6,1,0,A('center','center',1)),  //7 cabeçalho dados
+    xf(0,0,1,0,A('left','center',1)),    //8
+    xf(0,5,1,0,A('left','center',1)),    //9
+    xf(0,0,1,R,A('right')),              //10
+    xf(0,5,1,R,A('right')),              //11
+    xf(0,0,1,3,A('center')),             //12
+    xf(0,5,1,3,A('center')),             //13
+    xf(8,0,0,0,A('left')),               //14
+    xf(7,3,3,0,A('left')),               //15 total
+    xf(7,3,3,R,A('right')),              //16
+    xf(7,3,3,3,A('center')),             //17
+    xf(0,4,0,0,A('left')),               //18 faixa cor
+    xf(7,3,1,0,A('left')),               //19
+    xf(0,0,1,R,A('right')),              //20
+    xf(8,3,0,0,A('left','top',1)),       //21
+    xf(0,3,0,0,A('left')),               //22 fundo cinza
+    xf(3,7,5,0,A('left','bottom')),      //23 cartão rótulo
+    xf(4,7,6,0,A('left','center')),      //24 cartão número
+    xf(4,7,6,R,A('left','center')),      //25 cartão R$
+    xf(8,7,7,0,A('left','top',1)),       //26 cartão detalhe
+    xf(5,3,0,0,A('left','bottom')),      //27 seção no cinza
+    xf(10,7,4,0,A('center')),            //28 ranking #
+    xf(9,7,4,0,A('left')),               //29 ranking nome
+    xf(7,7,4,3,A('right')),              //30 ranking valor
+    xf(7,7,4,R,A('right')),              //31 ranking R$
+    xf(3,7,8,0,A('left','bottom')),      //32 ranking cabeçalho
+    xf(8,3,0,0,A('left','center',1)),    //33 nota no cinza
+    xf(5,7,0,0,A('left','bottom')),      //34 título do bloco branco
+    xf(0,7,0,0,A('left')),               //35 branco vazio
+    xf(3,7,8,0,A('right','bottom'))];    //36 ranking cabeçalho direita
+  const dx=(fc,bg,b)=>`<dxf><font>${b?'<b/>':''}<color rgb="FF${fc}"/></font>${bg?`<fill><patternFill patternType="solid"><bgColor rgb="FF${bg}"/></patternFill></fill>`:''}</dxf>`;
+  const dxfs=[dx('92400E','FEF3C7',1),dx('166534','DCFCE7',1),dx('D40000',0,1),dx('94A3B8',0,0)];
+  return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="&quot;R$&quot;\\ #,##0.00"/></numFmts>
+<fonts count="${fonts.length}">${fonts.join('')}</fonts><fills count="${fills.length}">${fills.join('')}</fills><borders count="${borders.length}">${borders.join('')}</borders>
+<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="${xfs.length}">${xfs.join('')}</cellXfs>
+<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles><dxfs count="${dxfs.length}">${dxfs.join('')}</dxfs></styleSheet>`}
+
+function planilhaXL(o){ // o:{rows,cols,merges,grid,freeze,filtro,drawing,tab,cor,cf:[xml],fit}
+  const rows=[...o.rows].sort((a,b)=>a.r-b.r);let maxC=0,maxR=0;
+  const sd=rows.map(rw=>{maxR=Math.max(maxR,rw.r);const vis=new Set();const cs=[...rw.cells].sort((a,b)=>a[0]-b[0]).filter(c=>{if(vis.has(c[0]))return false;vis.add(c[0]);return true}).map(([c,v,s])=>{maxC=Math.max(maxC,c);const rf=XL.ref(c,rw.r);
+      if(v===null||v===undefined||v==='')return`<c r="${rf}" s="${s||0}"/>`;
+      if(typeof v==='number'&&isFinite(v))return`<c r="${rf}" s="${s||0}"><v>${v}</v></c>`;
+      return`<c r="${rf}" s="${s||0}" t="inlineStr"><is><t xml:space="preserve">${XL.x(v)}</t></is></c>`}).join('');
+    return`<row r="${rw.r+1}"${rw.h?` ht="${rw.h}" customHeight="1"`:''}>${cs}</row>`}).join('');
+  const pane=o.freeze?`<pane ySplit="${o.freeze}" topLeftCell="A${o.freeze+1}" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft" activeCell="A${o.freeze+1}" sqref="A${o.freeze+1}"/>`:'';
+  return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<sheetPr>${o.cor?`<tabColor rgb="FF${o.cor}"/>`:''}<pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="A1:${XL.ref(Math.max(maxC,0),Math.max(maxR,0))}"/><sheetViews><sheetView workbookViewId="0"${o.grid===false?' showGridLines="0"':''}${o.tab?' tabSelected="1"':''}>${pane}</sheetView></sheetViews>
+<sheetFormatPr defaultRowHeight="15"/><cols>${o.cols.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('')}</cols>
+<sheetData>${sd}</sheetData>${o.filtro?`<autoFilter ref="${o.filtro}"/>`:''}${o.merges&&o.merges.length?`<mergeCells count="${o.merges.length}">${o.merges.map(m=>`<mergeCell ref="${m}"/>`).join('')}</mergeCells>`:''}${(o.cf||[]).join('')}
+<pageMargins left="0.3" right="0.3" top="0.4" bottom="0.4" header="0.2" footer="0.2"/><pageSetup paperSize="9" orientation="${o.retrato?'portrait':'landscape'}" fitToWidth="1" fitToHeight="${o.fit1?1:0}"/>${o.drawing?'<drawing r:id="rId1"/>':''}</worksheet>`}
+
+function graficoXL(g){ // g:{tipo:'col'|'bar'|'rosca', titulo, cats:[], vals:[], fCat, fVal, cor, cores:[], moeda}
+  const fmt=g.moeda?'&quot;R$&quot;\\ #,##0.00':'General';
+  const strCache=`<c:strCache><c:ptCount val="${g.cats.length}"/>${g.cats.map((c,i)=>`<c:pt idx="${i}"><c:v>${XL.x(c)}</c:v></c:pt>`).join('')}</c:strCache>`;
+  const numCache=`<c:numCache><c:formatCode>${fmt}</c:formatCode><c:ptCount val="${g.vals.length}"/>${g.vals.map((v,i)=>`<c:pt idx="${i}"><c:v>${v}</c:v></c:pt>`).join('')}</c:numCache>`;
+  const txt=(sz,cor,b)=>`<c:txPr><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="${sz}"${b?' b="1"':''}><a:solidFill><a:srgbClr val="${cor}"/></a:solidFill><a:latin typeface="Calibri"/></a:defRPr></a:pPr><a:endParaRPr lang="pt-BR"/></a:p></c:txPr>`;
+  const titulo=`<c:title><c:tx><c:rich><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="1200" b="1"/></a:pPr><a:r><a:rPr lang="pt-BR" sz="1200" b="1"><a:solidFill><a:srgbClr val="111827"/></a:solidFill><a:latin typeface="Calibri"/></a:rPr><a:t>${XL.x(g.titulo)}</a:t></a:r></a:p></c:rich></c:tx><c:overlay val="0"/></c:title>`;
+  const fill=c=>`<c:spPr><a:solidFill><a:srgbClr val="${c}"/></a:solidFill><a:ln><a:noFill/></a:ln></c:spPr>`;
+  const dl=pos=>`<c:dLbls><c:numFmt formatCode="${fmt}" sourceLinked="0"/><c:spPr><a:noFill/><a:ln><a:noFill/></a:ln></c:spPr>${txt(900,'374151',1)}${pos?`<c:dLblPos val="${pos}"/>`:''}<c:showLegendKey val="0"/><c:showVal val="1"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="0"/><c:showBubbleSize val="0"/></c:dLbls>`;
+  const ser=extra=>`<c:ser><c:idx val="0"/><c:order val="0"/><c:tx><c:v>${XL.x(g.titulo)}</c:v></c:tx>${extra}<c:cat><c:strRef><c:f>${g.fCat}</c:f>${strCache}</c:strRef></c:cat><c:val><c:numRef><c:f>${g.fVal}</c:f>${numCache}</c:numRef></c:val></c:ser>`;
+  const linha='<c:spPr><a:ln w="9525"><a:solidFill><a:srgbClr val="E3E7EE"/></a:solidFill></a:ln></c:spPr>';
+  let plot;
+  if(g.tipo==='rosca'){
+    const dpts=g.cats.map((_,i)=>`<c:dPt><c:idx val="${i}"/><c:bubble3D val="0"/><c:spPr><a:solidFill><a:srgbClr val="${g.cores[i%g.cores.length]}"/></a:solidFill><a:ln w="19050"><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill></a:ln></c:spPr></c:dPt>`).join('');
+    const dlr=`<c:dLbls><c:numFmt formatCode="0%" sourceLinked="0"/><c:spPr><a:noFill/><a:ln><a:noFill/></a:ln></c:spPr>${txt(1000,'FFFFFF',1)}<c:showLegendKey val="0"/><c:showVal val="0"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="1"/><c:showBubbleSize val="0"/><c:showLeaderLines val="0"/></c:dLbls>`;
+    plot=`<c:doughnutChart><c:varyColors val="1"/>${ser(dpts+dlr)}<c:firstSliceAng val="0"/><c:holeSize val="55"/></c:doughnutChart>`;
+    return wrap(plot,true)}
+  const horiz=g.tipo==='bar',mx=Math.max(0,...g.vals.map(Number).filter(isFinite)),teto=mx>0?(()=>{const alvo=mx*(horiz?1.25:1.15),p=Math.pow(10,Math.floor(Math.log10(alvo))),f=alvo/p;return(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p})():0;
+  plot=`<c:barChart><c:barDir val="${horiz?'bar':'col'}"/><c:grouping val="clustered"/><c:varyColors val="0"/>${ser(fill(g.cor)+'<c:invertIfNegative val="0"/>'+dl('outEnd'))}<c:gapWidth val="${horiz?50:70}"/><c:axId val="500"/><c:axId val="600"/></c:barChart>
+<c:catAx><c:axId val="500"/><c:scaling><c:orientation val="${horiz?'maxMin':'minMax'}"/></c:scaling><c:delete val="0"/><c:axPos val="${horiz?'l':'b'}"/><c:numFmt formatCode="General" sourceLinked="0"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/>${linha}${txt(900,'4B5563')}<c:crossAx val="600"/><c:crosses val="autoZero"/><c:auto val="1"/><c:lblAlgn val="ctr"/><c:lblOffset val="100"/><c:noMultiLvlLbl val="0"/></c:catAx>
+<c:valAx><c:axId val="600"/><c:scaling><c:orientation val="minMax"/>${teto?`<c:max val="${teto}"/>`:''}<c:min val="0"/></c:scaling><c:delete val="1"/><c:axPos val="${horiz?'t':'l'}"/><c:numFmt formatCode="${fmt}" sourceLinked="0"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:spPr><a:ln><a:noFill/></a:ln></c:spPr>${txt(800,'9AA4B5')}<c:crossAx val="500"/><c:crosses val="${horiz?'max':'autoZero'}"/><c:crossBetween val="between"/></c:valAx>`;
+  return wrap(plot,false);
+  function wrap(p,leg){return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<c:chartSpace xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><c:lang val="pt-BR"/><c:roundedCorners val="0"/>
+<c:chart>${titulo}<c:autoTitleDeleted val="0"/><c:plotArea><c:layout/>${p}<c:spPr><a:noFill/><a:ln><a:noFill/></a:ln></c:spPr></c:plotArea>${leg?`<c:legend><c:legendPos val="b"/><c:overlay val="0"/>${txt(900,'374151')}</c:legend>`:''}<c:plotVisOnly val="1"/><c:dispBlanksAs val="gap"/></c:chart>
+<c:spPr><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill><a:ln w="9525"><a:solidFill><a:srgbClr val="E3E7EE"/></a:solidFill></a:ln></c:spPr>${txt(900,'374151')}</c:chartSpace>`}}
+
+function desenhoXL(ancoras){ // [{c1,r1,c2,r2}]
+  return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">${ancoras.map((a,i)=>`<xdr:twoCellAnchor editAs="oneCell"><xdr:from><xdr:col>${a.c1}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>${a.r1}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from><xdr:to><xdr:col>${a.c2}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>${a.r2}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to><xdr:graphicFrame macro=""><xdr:nvGraphicFramePr><xdr:cNvPr id="${i+2}" name="Gráfico ${i+1}"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/></xdr:xfrm><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/chart"><c:chart xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:id="rId${i+1}"/></a:graphicData></a:graphic></xdr:graphicFrame><xdr:clientData/></xdr:twoCellAnchor>`).join('')}</xdr:wsDr>`}
+
+function montaRelatorioXL(cfg){ // cfg:{titulo,sub,cor,kpis,graficos(2),rankings(2):[{titulo,cabNome,cabVal,itens,moeda}],colunas,linhas,cfDados:[fn(ref)]}
+  const R='Resumo',D='Dados',BS='Base',NC=17,W=[2,11,11,11,2,11,11,11,2,11,11,11,2,11,11,11,2];
+  const rows=[],merges=[],cf=[];
+  const row=(r,h,cells)=>{const ex=rows.find(x=>x.r===r);if(ex){cells.forEach(c=>{const i=ex.cells.findIndex(y=>y[0]===c[0]);if(i>=0)ex.cells[i]=c;else ex.cells.push(c)});if(h)ex.h=h}else rows.push({r,h,cells:[...cells]})};
+  const fundo=(r,h,s)=>row(r,h,Array.from({length:NC},(_,c)=>[c,'',s??22]));
+  const blocos=[[1,3],[5,7],[9,11],[13,15]];
+  // cabeçalho escuro
+  fundo(0,6,18);fundo(1,40,1);fundo(2,22,2);fundo(3,8,1);
+  row(1,40,[[1,cfg.titulo,1]]);merges.push('B2:P2');row(2,22,[[1,cfg.sub,2]]);merges.push('B3:P3');
+  // cartões
+  fundo(4,16);fundo(5,24);fundo(6,40);fundo(7,24);fundo(8,16);
+  cfg.kpis.slice(0,4).forEach((q,i)=>{const [c1,c2]=blocos[i];
+    for(let c=c1;c<=c2;c++){row(5,24,[[c,c===c1?q.rot.toUpperCase():'',23]]);row(6,40,[[c,c===c1?q.val:'',q.moeda?25:24]]);row(7,24,[[c,c===c1?(q.det||''):'',26]])}
+    [5,6,7].forEach(r=>merges.push(`${XL.col(c1)}${r+1}:${XL.col(c2)}${r+1}`))});
+  // gráficos
+  fundo(9,24);row(9,24,[[1,'Visão geral',27]]);
+  for(let r=10;r<=30;r++)fundo(r,null);
+  fundo(31,16);
+  // destaques (rankings)
+  fundo(32,24);row(32,24,[[1,'Destaques',27]]);fundo(33,8);
+  const RK=cfg.rankings.slice(0,2),lados=[[1,7],[9,15]];let fim=34;
+  RK.forEach((rk,ri)=>{const [c1,c2]=lados[ri],its=rk.itens.length?rk.itens:[['Sem dados',0]];
+    for(let c=c1;c<=c2;c++)row(34,26,[[c,c===c1?rk.titulo:'',34]]);merges.push(`${XL.col(c1)}35:${XL.col(c2)}35`);
+    row(35,20,[[c1,'#',32],[c1+1,rk.cabNome,32],[c1+2,'',32],[c1+3,'',32],[c1+4,'',32],[c1+5,rk.cabVal,36],[c1+6,'',36]]);merges.push(`${XL.col(c1+1)}36:${XL.col(c1+4)}36`,`${XL.col(c1+5)}36:${XL.col(c1+6)}36`);
+    its.forEach((it,i)=>{const r=36+i;row(r,20,[[c1,i+1,28],[c1+1,it[0],29],[c1+2,'',29],[c1+3,'',29],[c1+4,'',29],[c1+5,it[1],rk.moeda?31:30],[c1+6,'',rk.moeda?31:30]]);
+      merges.push(`${XL.col(c1+1)}${r+1}:${XL.col(c1+4)}${r+1}`,`${XL.col(c1+5)}${r+1}:${XL.col(c1+6)}${r+1}`)});
+    const last=36+its.length-1;row(last+1,null,Array.from({length:7},(_,k)=>[c1+k,'',35]));
+    cf.push(`<conditionalFormatting sqref="${XL.col(c1+5)}37:${XL.col(c1+5)}${last+1}"><cfRule type="dataBar" priority="${ri+1}"><dataBar><cfvo type="num" val="0"/><cfvo type="max"/><color rgb="FF${cfg.cor}"/></dataBar></cfRule></conditionalFormatting>`);
+    fim=Math.max(fim,last+1)});
+  for(let r=34;r<=fim;r++){const ex=rows.find(x=>x.r===r);for(let c=0;c<NC;c++){if(!ex||!ex.cells.some(y=>y[0]===c))row(r,null,[[c,'',22]])}}
+  fundo(fim+1,14);fundo(fim+2,18);row(fim+2,18,[[1,'Gerado pelo Facilita CD. Os números dos gráficos ficam na aba "Base" (oculta) e a lista completa na aba "Dados".',33]]);merges.push(`B${fim+3}:P${fim+3}`);fundo(fim+3,10);
+  // base dos gráficos (aba oculta)
+  const G=cfg.graficos.slice(0,2),brow=[],fontes=[];let br=0;
+  G.forEach(g=>{const its=g.itens.length?g.itens:[['Sem dados',0]];brow.push({r:br,cells:[[0,g.titulo,7],[1,g.moeda?'Valor':'Quantidade',7]]});
+    its.forEach((it,i)=>brow.push({r:br+1+i,cells:[[0,it[0],8],[1,it[1],g.moeda?10:12]]}));
+    fontes.push({fCat:XL.absr(BS,0,br+1,0,br+its.length),fVal:XL.absr(BS,1,br+1,1,br+its.length),cats:its.map(x=>x[0]),vals:its.map(x=>x[1])});br+=its.length+2});
+  const base=planilhaXL({rows:brow,cols:[34,16]});
+  const ancoras=[{c1:1,r1:10,c2:8,r2:31},{c1:9,r1:10,c2:16,r2:31}].slice(0,G.length);
+  const charts=G.map((g,i)=>graficoXL({...g,...fontes[i],cor:cfg.cor,cores:g.cores||[cfg.cor]}));
+  const resumo=planilhaXL({rows,cols:W,merges,grid:false,drawing:true,tab:true,cor:cfg.cor,cf,retrato:true,fit1:true});
+  // dados
+  const cols=cfg.colunas,hdr=3,drow=[],dm=[],dcf=[];
+  drow.push({r:0,h:34,cells:cols.map((_,i)=>[i,i?'':cfg.titulo,1])});dm.push(`A1:${XL.col(cols.length-1)}1`);
+  drow.push({r:1,h:20,cells:cols.map((_,i)=>[i,i?'':cfg.sub,2])});dm.push(`A2:${XL.col(cols.length-1)}2`);
+  drow.push({r:2,h:6,cells:cols.map((_,i)=>[i,'',18])});
+  drow.push({r:hdr,h:30,cells:cols.map((c,i)=>[i,c.t,7])});
+  cfg.linhas.forEach((l,i)=>{const z=i%2===1;drow.push({r:hdr+1+i,h:18,cells:cols.map((c,j)=>{const v=l[c.k];
+    const s=c.tipo==='moeda'?(z?11:10):c.tipo==='int'?(z?13:12):(z?9:8);return[j,(c.tipo==='moeda'||c.tipo==='int')?(v===''||v==null||isNaN(v)?'':Number(v)):v,s]})})});
+  const ult=hdr+cfg.linhas.length;
+  if(cfg.linhas.length&&cols.some(c=>c.soma)){drow.push({r:ult+1,h:22,cells:cols.map((c,j)=>[j,j===0?'TOTAL':c.soma?cfg.linhas.reduce((a,l)=>a+(Number(l[c.k])||0),0):'',j===0?15:c.tipo==='moeda'?16:c.soma?17:15])})}
+  if(cfg.linhas.length){let pr=1;cols.forEach((c,j)=>{const rg=`${XL.col(j)}${hdr+2}:${XL.col(j)}${ult+1}`,cl=XL.col(j)+(hdr+2);
+    if(c.cf==='situacao')dcf.push(`<conditionalFormatting sqref="${rg}"><cfRule type="cellIs" dxfId="0" priority="${pr++}" operator="equal"><formula>"Pendente"</formula></cfRule><cfRule type="cellIs" dxfId="1" priority="${pr++}" operator="notEqual"><formula>"Pendente"</formula></cfRule></conditionalFormatting>`);
+    if(c.cf==='vermelho')dcf.push(`<conditionalFormatting sqref="${rg}"><cfRule type="cellIs" dxfId="2" priority="${pr++}" operator="greaterThan"><formula>0</formula></cfRule></conditionalFormatting>`);
+    if(c.cf==='zero')dcf.push(`<conditionalFormatting sqref="${rg}"><cfRule type="cellIs" dxfId="3" priority="${pr++}" operator="equal"><formula>0</formula></cfRule></conditionalFormatting>`);
+    if(c.cf==='barra')dcf.push(`<conditionalFormatting sqref="${rg}"><cfRule type="dataBar" priority="${pr++}"><dataBar><cfvo type="num" val="0"/><cfvo type="max"/><color rgb="FF${cfg.cor}"/></dataBar></cfRule></conditionalFormatting>`)})}
+  const dados=planilhaXL({rows:drow,cols:cols.map(c=>c.w),merges:dm,freeze:hdr+1,filtro:cfg.linhas.length?`A${hdr+1}:${XL.col(cols.length-1)}${ult+1}`:null,cf:dcf,cor:'1F2937'});
+  // pacote
+  const ns='http://schemas.openxmlformats.org/package/2006/relationships',od='http://schemas.openxmlformats.org/officeDocument/2006/relationships',ws='application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml';
+  const files=[
+    ['[Content_Types].xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="${ws}"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="${ws}"/><Override PartName="/xl/worksheets/sheet3.xml" ContentType="${ws}"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/><Override PartName="/xl/drawings/drawing1.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>${charts.map((_,i)=>`<Override PartName="/xl/charts/chart${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>`).join('')}<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`],
+    ['_rels/.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${ns}"><Relationship Id="rId1" Type="${od}/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`],
+    ['docProps/core.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${XL.x(cfg.titulo)}</dc:title><dc:creator>Facilita CD</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString().slice(0,19)}Z</dcterms:created></cp:coreProperties>`],
+    ['xl/workbook.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="${od}"><bookViews><workbookView activeTab="0"/></bookViews><sheets><sheet name="${R}" sheetId="1" r:id="rId1"/><sheet name="${D}" sheetId="2" r:id="rId2"/><sheet name="${BS}" sheetId="3" state="hidden" r:id="rId4"/></sheets>${cfg.linhas.length?`<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="1" hidden="1">'${D}'!$A$${hdr+1}:$${XL.col(cols.length-1)}$${ult+1}</definedName></definedNames>`:''}</workbook>`],
+    ['xl/_rels/workbook.xml.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${ns}"><Relationship Id="rId1" Type="${od}/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="${od}/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId4" Type="${od}/worksheet" Target="worksheets/sheet3.xml"/><Relationship Id="rId3" Type="${od}/styles" Target="styles.xml"/></Relationships>`],
+    ['xl/styles.xml',estilosXL(cfg.cor)],
+    ['xl/worksheets/sheet1.xml',resumo],
+    ['xl/worksheets/_rels/sheet1.xml.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${ns}"><Relationship Id="rId1" Type="${od}/drawing" Target="../drawings/drawing1.xml"/></Relationships>`],
+    ['xl/worksheets/sheet2.xml',dados],
+    ['xl/worksheets/sheet3.xml',base],
+    ['xl/drawings/drawing1.xml',desenhoXL(ancoras)],
+    ['xl/drawings/_rels/drawing1.xml.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${ns}">${charts.map((_,i)=>`<Relationship Id="rId${i+1}" Type="${od}/chart" Target="../charts/chart${i+1}.xml"/>`).join('')}</Relationships>`],
+    ...charts.map((c,i)=>[`xl/charts/chart${i+1}.xml`,c])];
+  return XL.zip(files)}
+
+function contaPor(lista,fn,peso){const m=new Map();lista.forEach(o=>{const k=fn(o);if(k==null||k==='')return;m.set(k,(m.get(k)||0)+(peso?peso(o):1))});return[...m.entries()].sort((a,b)=>b[1]-a[1])}
+function topN(arr,n){if(arr.length<=n)return arr;const r=arr.slice(0,n-1);r.push(['Outros',arr.slice(n-1).reduce((a,x)=>a+x[1],0)]);return r}
+function porMesXL(lista,peso){const m=new Map();lista.forEach(o=>{const d=o.categoria==='Consertos Baiano'&&o.data_ref?String(o.data_ref).slice(0,7):mesKey(o.criado);m.set(d,(m.get(d)||0)+(peso?peso(o):1))});
+  return[...m.entries()].sort((a,b)=>a[0].localeCompare(b[0])).slice(-12).map(([k,v])=>[mesCurto(k),Math.round(v*100)/100])}
+
+async function exportarExcel(lista,op={}){
+  const b=$(op.btn||'exportar'),txt0=b?b.textContent:'';if(b){b.disabled=true;b.textContent='Gerando…'}
+  try{
+  const cat=op.cat||ui.cat||'Relatório',d=o=>new Date(o.criado),qt=o=>Number(o.qtd)||0;
   const enviadoEm=o=>{const h=[...(o.hist||[])].reverse().find(x=>/^Enviado (ao fornecedor|à garantia)/.test(x.txt||''));return h?fData(h.t):''};
-  const linhas=lista.map(o=>{const d=new Date(o.criado);return{
-    'Data':d.toLocaleDateString('pt-BR'),'Hora':d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
-    'Categoria':o.categoria||'Relatório','Tipo':o.tipo||'','Origem da quebra':o.origem||'',
-    'Situação da garantia':o.categoria==='Garantia'?(o.gar_status||'Pendente'):'','Enviado à garantia em':o.categoria==='Garantia'?enviadoEm(o):'',
-    'Setor':o.setor||'','Chefe do setor':o.chefe||'','Custo':o.custo??'','Falta':o.falta??'','Total':totalMin(o)??'','Motivo chefe setor':o.motivo_chefe||'','Motivo inventário':o.motivo_inventario||'','Motivo Allan':o.motivo_allan||'',...(o.categoria==='Consertos Baiano'?{'Preço de custo':o.custo??'','Requisitante':o.requisitante||'','Valor conserto':o.valor_conserto??'','Total conserto':totalBai(o)??'','Data conserto':dataBai(o)}:{}),
-    'Fornecedor':o.fornecedor||'','ID da quebra':o.id_quebra||'','Código da peça':o.sku||'','Peça':o.produto||'','Fabricante':o.fab||'',
-    'Quantidade':o.qtd??'','Observação':o.obs||'','Registrado por':nome(o.autor),'Fotos':(o.fotos||[]).length,'Vídeos':(o.videos||[]).length}});
-  const ws=XLSX.utils.json_to_sheet(linhas);
-  const cols=Object.keys(linhas[0]||{Data:''});ws['!cols']=cols.map(c=>({wch:Math.min(45,Math.max(c.length+2,...linhas.map(r=>String(r[c]??'').length+2)))}));
-  if(linhas.length)ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:0,c:0},e:{r:linhas.length,c:cols.length-1}})};
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,ui.cat==='Garantia'?'Garantias':ui.cat==='Minucioso'?'Minucioso':ui.cat==='Consertos Baiano'?'Consertos Baiano':'Relatórios');
-  const partes=['inventario',ui.cat==='Garantia'?'garantias':ui.cat==='Minucioso'?'minucioso':ui.cat==='Consertos Baiano'?'consertos-baiano':'relatorios'];if(ui.cat==='Minucioso'&&ui.setor)partes.push(ui.setor.toLowerCase().replace(/[^a-z0-9]+/gi,'-'));if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
-  if(ui.pessoa)partes.push(nome(ui.pessoa).split(' ')[0].toLowerCase());partes.push(ui.de||ui.ate?(ui.de||'inicio')+'_a_'+(ui.ate||hoje()):hoje());
-  XLSX.writeFile(wb,partes.join('-').normalize('NFD').replace(/[\u0300-\u036f]/g,'')+'.xlsx');
-  toast(lista.length+(lista.length===1?' linha exportada':' linhas exportadas'));if(b){b.disabled=false;b.textContent='⬇ Exportar Excel'}}
+  const periodo=op.periodo?op.periodo:ui.de||ui.ate?(ui.de===ui.ate?ui.de.split('-').reverse().join('/'):(ui.de?ui.de.split('-').reverse().join('/'):'início')+' a '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):'Todo o período';
+  const filtros=op.periodo||op.cat==='Geral'?[]:[ui.gst&&'Situação: '+ui.gst,ui.setor&&'Setor: '+ui.setor,ui.tipo&&'Tipo: '+ui.tipo,ui.pessoa&&'Pessoa: '+nome(ui.pessoa),ui.busca&&'Busca: "'+ui.busca+'"'].filter(Boolean);
+  const agora=new Date();
+  const nomeCat={'Garantia':'Garantias','Relatório':'Relatórios','Minucioso':'Minucioso','Consertos Baiano':'Consertos Baiano','Geral':'todos os módulos'}[cat]||cat;
+  const sub=[`${lista.length} registro${lista.length===1?'':'s'}`,'Período: '+periodo,...filtros,'Gerado em '+agora.toLocaleDateString('pt-BR')+' às '+agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+(eu&&eu.nome?' por '+eu.nome:'')].join('   ·   ');
+  const cor={'Garantia':'E2621B','Relatório':'2457D6','Minucioso':'15803D','Consertos Baiano':'7C3AED','Geral':'0EA5E9'}[cat]||'2457D6';
+  const pessoa=contaPor(lista,o=>nome(o.autor));
+  let kpis,graficos,colunas,linhas,rankings=[];
+  const top=(fn,peso,n)=>contaPor(lista,fn,peso).slice(0,n||8).map(([a,v])=>[a,Math.round(v*100)/100]);
+  const peca=o=>(o.produto||o.sku||'Sem descrição').trim().toUpperCase();
+  const base=o=>({data:d(o).toLocaleDateString('pt-BR'),hora:d(o).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),por:nome(o.autor),sku:o.sku||'',prod:o.produto||'',fab:o.fab||'',qtd:o.qtd??'',obs:o.obs||'',fotos:(o.fotos||[]).length,videos:(o.videos||[]).length,tipo:o.tipo||''});
+  if(cat==='Geral'){
+    const nc=c=>lista.filter(o=>(o.categoria||'Relatório')===c),mesAt=mesKey(Date.now());
+    const g=nc('Garantia'),r=nc('Relatório'),m=nc('Minucioso'),bz=nc('Consertos Baiano');
+    kpis=[{rot:'Garantias',val:g.length,det:g.filter(o=>(o.gar_status||'Pendente')==='Pendente').length+' pendentes'},{rot:'Relatórios',val:r.length,det:r.filter(o=>mesKey(o.criado)===mesAt).length+' este mês'},{rot:'Minucioso',val:m.length,det:'falta de '+brl(m.reduce((a,o)=>a+(totalMin(o)||0),0))},{rot:'Consertos Baiano',val:bz.length,det:'total de '+brl(bz.reduce((a,o)=>a+(totalBai(o)||0),0))}];
+    graficos=[{tipo:'col',titulo:'Registros por mês',itens:porMesXL(lista)},{tipo:'bar',titulo:'Registros por módulo',itens:[['Garantia',g.length],['Relatório',r.length],['Minucioso',m.length],['Consertos Baiano',bz.length]].filter(x=>x[1])}];
+    rankings=[{titulo:'Quem mais registrou',cabNome:'Pessoa',cabVal:'Registros',itens:pessoa.slice(0,8)},{titulo:'Peças que mais aparecem',cabNome:'Peça',cabVal:'Registros',itens:top(peca)}];
+    colunas=[{t:'Data',k:'data',w:12},{t:'Hora',k:'hora',w:8},{t:'Módulo',k:'mod',w:16},{t:'Tipo',k:'tipo',w:22},{t:'Situação',k:'sit',w:22},{t:'Setor',k:'setor',w:14},{t:'Código',k:'sku',w:14},{t:'Peça',k:'prod',w:30},{t:'Fabricante',k:'fab',w:16},{t:'Qtd',k:'qtd',tipo:'int',w:8,soma:1},{t:'Valor',k:'val',tipo:'moeda',w:15,soma:1,cf:'barra'},{t:'Registrado por',k:'por',w:18}];
+    linhas=lista.map(o=>({...base(o),mod:o.categoria||'Relatório',sit:o.categoria==='Garantia'?(o.gar_status||'Pendente'):'',setor:o.setor||'',val:o.categoria==='Minucioso'?totalMin(o)??'':o.categoria==='Consertos Baiano'?totalBai(o)??'':''}));
+  }else if(cat==='Garantia'){
+    const pend=lista.filter(o=>(o.gar_status||'Pendente')==='Pendente').length;
+    kpis=[{rot:'Garantias',val:lista.length,det:'registradas no período'},{rot:'Pendentes',val:pend,det:'aguardando envio'},{rot:'Enviadas à loja',val:lista.length-pend,det:lista.length?Math.round((lista.length-pend)/lista.length*100)+'% do total':''},{rot:'Peças',val:lista.reduce((a,o)=>a+qt(o),0),det:'quantidade somada'}];
+    graficos=[{tipo:'col',titulo:'Garantias por mês',itens:porMesXL(lista)},{tipo:'bar',titulo:'Por tipo',itens:topN(contaPor(lista,o=>o.tipo),8)},{tipo:'rosca',titulo:'Situação',itens:contaPor(lista,o=>o.gar_status||'Pendente'),cores:['F59E0B','22C55E','94A3B8']}];
+    colunas=[{t:'Data',k:'data',w:12},{t:'Hora',k:'hora',w:8},{t:'Tipo',k:'tipo',w:20},{t:'Situação',k:'sit',w:24,cf:'situacao'},{t:'Enviado em',k:'env',w:16},{t:'Origem',k:'orig',w:14},{t:'Fornecedor',k:'forn',w:20},{t:'ID da quebra',k:'idq',w:14},{t:'Código',k:'sku',w:14},{t:'Peça',k:'prod',w:30},{t:'Fabricante',k:'fab',w:16},{t:'Qtd',k:'qtd',tipo:'int',w:8,soma:1},{t:'Observação',k:'obs',w:36},{t:'Registrado por',k:'por',w:18},{t:'Fotos',k:'fotos',tipo:'int',w:8},{t:'Vídeos',k:'videos',tipo:'int',w:8}];
+    rankings=[{titulo:'Peças com mais garantias',cabNome:'Peça',cabVal:'Qtd',itens:top(peca,o=>Number(o.qtd)||1)},{titulo:'Quem mais registrou',cabNome:'Pessoa',cabVal:'Garantias',itens:pessoa.slice(0,8)}];
+    linhas=lista.map(o=>({...base(o),sit:o.gar_status||'Pendente',env:enviadoEm(o),orig:o.origem||'',forn:o.fornecedor||'',idq:o.id_quebra||''}));
+  }else if(cat==='Minucioso'){
+    const vf=lista.reduce((a,o)=>a+(totalMin(o)||0),0),pf=lista.reduce((a,o)=>a+(Number(o.falta)||0),0);
+    kpis=[{rot:'Relatórios',val:lista.length,det:'fichas no período'},{rot:'Peças em falta',val:pf,det:'quantidade somada'},{rot:'Valor em falta',val:Math.round(vf*100)/100,moeda:1,det:'custo × falta'},{rot:'Setores',val:new Set(lista.map(o=>o.setor).filter(Boolean)).size,det:'com relatório'}];
+    graficos=[{tipo:'col',titulo:'Relatórios por mês',itens:porMesXL(lista)},{tipo:'bar',titulo:'Valor em falta por setor',moeda:1,itens:topN(contaPor(lista,o=>o.setor||'Sem setor',o=>totalMin(o)||0).map(([a,v])=>[a,Math.round(v*100)/100]),10)},{tipo:'bar',titulo:'Relatórios por setor',itens:topN(contaPor(lista,o=>o.setor||'Sem setor'),10)},{tipo:'rosca',titulo:'Motivo do chefe',itens:[['Com motivo',lista.filter(o=>o.motivo_chefe).length],['Sem motivo',lista.filter(o=>!o.motivo_chefe).length]].filter(x=>x[1]),cores:['22C55E','EF4444']}];
+    colunas=[{t:'Data',k:'data',w:12},{t:'Setor',k:'setor',w:16},{t:'Chefe do setor',k:'chefe',w:18},{t:'Código',k:'sku',w:14},{t:'Descrição',k:'prod',w:30},{t:'Fabricante',k:'fab',w:16},{t:'Custo',k:'custo',tipo:'moeda',w:13},{t:'Falta',k:'falta',tipo:'int',w:9,soma:1,cf:'vermelho'},{t:'Total',k:'tot',tipo:'moeda',w:16,soma:1,cf:'barra'},{t:'Motivo chefe setor',k:'m1',w:30},{t:'Motivo inventário',k:'m2',w:30},{t:'Motivo Allan',k:'m3',w:30},{t:'Registrado por',k:'por',w:18}];
+    rankings=[{titulo:'Maiores faltas em valor',cabNome:'Peça · setor',cabVal:'Valor',moeda:1,itens:top(o=>peca(o)+(o.setor?' · '+o.setor:''),o=>totalMin(o)||0)},{titulo:'Relatórios por chefe',cabNome:'Chefe do setor',cabVal:'Relatórios',itens:top(o=>o.chefe||'Sem chefe')}];
+    linhas=lista.map(o=>({...base(o),setor:o.setor||'',chefe:o.chefe||'',custo:o.custo??'',falta:o.falta??'',tot:totalMin(o)??'',m1:o.motivo_chefe||'',m2:o.motivo_inventario||'',m3:o.motivo_allan||''}));
+  }else if(cat==='Consertos Baiano'){
+    const tot=lista.reduce((a,o)=>a+(totalBai(o)||0),0),pc=lista.reduce((a,o)=>a+(Number(o.qtd)||1),0),cort=lista.filter(o=>Number(o.valor_conserto)===0).length;
+    const faixa=o=>{const c=Number(o.custo);return isNaN(c)?null:c<15?'Abaixo de R$ 15':c<30?'R$ 15 a 30':c<=70?'R$ 30 a 70':'Acima de R$ 70'};
+    const ordem=['Abaixo de R$ 15','R$ 15 a 30','R$ 30 a 70','Acima de R$ 70'],fx=contaPor(lista,faixa).sort((a,b)=>ordem.indexOf(a[0])-ordem.indexOf(b[0]));
+    kpis=[{rot:'Consertos',val:lista.length,det:'registros no período'},{rot:'Peças',val:pc,det:'quantidade somada'},{rot:'Total dos consertos',val:Math.round(tot*100)/100,moeda:1,det:'valor a pagar'},{rot:'Cortadas',val:cort,det:'abaixo de R$ 15 (R$ 0)'}];
+    graficos=[{tipo:'col',titulo:'Valor dos consertos por mês',moeda:1,itens:porMesXL(lista,o=>totalBai(o)||0)},{tipo:'bar',titulo:'Peças por faixa de custo',itens:fx},{tipo:'rosca',titulo:'Faixas de custo',itens:fx,cores:['94A3B8','A78BFA','7C3AED','4C1D95']}];
+    colunas=[{t:'Data',k:'dc',w:12},{t:'Código',k:'sku',w:12},{t:'Descrição do produto',k:'prod',w:34},{t:'Qtde',k:'q',tipo:'int',w:8,soma:1},{t:'Preço de custo',k:'custo',tipo:'moeda',w:15},{t:'Requisitante',k:'req',w:20},{t:'Valor',k:'val',tipo:'moeda',w:12,cf:'zero'},{t:'Total',k:'tot',tipo:'moeda',w:16,soma:1,cf:'barra'},{t:'Registrado por',k:'por',w:18}];
+    rankings=[{titulo:'Peças mais consertadas',cabNome:'Peça',cabVal:'Qtd',itens:top(peca,o=>Number(o.qtd)||1)},{titulo:'Valor por requisitante',cabNome:'Requisitante',cabVal:'Valor',moeda:1,itens:top(o=>o.requisitante||'Sem requisitante',o=>totalBai(o)||0)}];
+    linhas=lista.map(o=>({...base(o),dc:dataBai(o),q:Number(o.qtd)||1,custo:o.custo??'',req:o.requisitante||'',val:o.valor_conserto??'',tot:totalBai(o)??''}));
+  }else{
+    kpis=[{rot:'Relatórios',val:lista.length,det:'registrados no período'},{rot:'Peças',val:lista.reduce((a,o)=>a+qt(o),0),det:'quantidade somada'},{rot:'Tipos',val:new Set(lista.map(o=>o.tipo)).size,det:'tipos diferentes'},{rot:'Pessoas',val:pessoa.length,det:'que registraram'}];
+    graficos=[{tipo:'col',titulo:'Relatórios por mês',itens:porMesXL(lista)},{tipo:'bar',titulo:'Por tipo',itens:topN(contaPor(lista,o=>o.tipo),8)},{tipo:'bar',titulo:'Por pessoa',itens:topN(pessoa,8)},{tipo:'rosca',titulo:'Com foto ou vídeo',itens:[['Com foto/vídeo',lista.filter(o=>(o.fotos||[]).length||(o.videos||[]).length).length],['Sem foto/vídeo',lista.filter(o=>!(o.fotos||[]).length&&!(o.videos||[]).length).length]].filter(x=>x[1]),cores:['2457D6','CBD5E1']}];
+    colunas=[{t:'Data',k:'data',w:12},{t:'Hora',k:'hora',w:8},{t:'Tipo',k:'tipo',w:26},{t:'Código',k:'sku',w:14},{t:'Peça',k:'prod',w:30},{t:'Fabricante',k:'fab',w:16},{t:'Qtd',k:'qtd',tipo:'int',w:8,soma:1},{t:'Observação',k:'obs',w:40},{t:'Registrado por',k:'por',w:18},{t:'Fotos',k:'fotos',tipo:'int',w:8},{t:'Vídeos',k:'videos',tipo:'int',w:8}];
+    rankings=[{titulo:'Peças mais registradas',cabNome:'Peça',cabVal:'Qtd',itens:top(peca,o=>Number(o.qtd)||1)},{titulo:'Quem mais registrou',cabNome:'Pessoa',cabVal:'Relatórios',itens:pessoa.slice(0,8)}];
+    linhas=lista.map(base);
+  }
+  const blob=montaRelatorioXL({titulo:'Facilita CD  ·  '+(op.titulo||'Relatório de '+nomeCat),sub,cor,kpis,graficos:(op.g1?[op.g1,...graficos.slice(1)]:graficos).slice(0,2),rankings,colunas,linhas});
+  const partes=['facilita-cd',{'Garantia':'garantias','Minucioso':'minucioso','Consertos Baiano':'consertos-baiano','Geral':'relatorio-geral'}[cat]||'relatorios'];if(op.arquivo)partes.push(op.arquivo);if(cat==='Minucioso'&&ui.setor)partes.push(ui.setor.toLowerCase().replace(/[^a-z0-9]+/gi,'-'));if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
+  if(ui.pessoa)partes.push(nome(ui.pessoa).split(' ')[0].toLowerCase());if(!op.arquivo)partes.push(ui.de||ui.ate?(ui.de||'inicio')+'_a_'+(ui.ate||hoje()):hoje());
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=partes.join('-').normalize('NFD').replace(/[̀-ͯ]/g,'')+'.xlsx';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);
+  toast('Relatório em Excel gerado ('+lista.length+(lista.length===1?' registro)':' registros)'));
+  }catch(e){console.error(e);toast('Não foi possível gerar o Excel: '+(e&&e.message||e))}
+  if(b){b.disabled=false;b.textContent=txt0}}
 
 /* ---------- Registrar ---------- */
 const icCam='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></svg>';
@@ -1353,13 +1599,14 @@ function baiGrafHTML(){const P=dadosBai(),fut=P.ate>=hoje();
   <div class="per"><button type="button" class="nav" data-bnav="-1" aria-label="Período anterior">‹</button><b>${P.titulo}</b><button type="button" class="nav" data-bnav="1" aria-label="Próximo período" ${fut?'disabled':''}>›</button></div></div>
   <div class="kp"><div><b style="color:var(--bai)">${brl(P.total)}</b><span>total ${P.art} ${P.nome}</span></div><div><b>${P.pecas}</b><span>peças consertadas</span></div><div><b>${P.cortadas}</b><span>cortadas (abaixo de R$ 15)</span></div><div><b>${P.melhor?esc(P.melhor.rot):'—'}</b><span>${P.nome==='mês'?'semana':'dia'} com mais valor${P.melhor?' ('+P.melhor.sub+')':''}</span></div></div>
   ${P.regs.length?svgBai(P):`<div class="empty" style="padding:22px">Nenhum conserto ${P.nome==='mês'?'neste mês':'nesta semana'}.</div>`}
-  <div class="acts"><button type="button" class="btn sm primary" id="bimpGraf" ${P.regs.length?'':'disabled'}>🖨 Imprimir relatório ${P.art} ${P.nome}</button>${ui.baiRef&&ui.baiRef!==hoje()?'<button type="button" class="btn sm" id="bhoje">Voltar para hoje</button>':''}</div></div>`}
+  <div class="acts"><button type="button" class="btn sm primary" id="bimpGraf" ${P.regs.length?'':'disabled'}>🖨 Imprimir relatório ${P.art} ${P.nome}</button><button type="button" class="btn sm" id="bxls" ${P.regs.length?'':'disabled'}>⬇ Excel ${P.art} ${P.nome}</button>${ui.baiRef&&ui.baiRef!==hoje()?'<button type="button" class="btn sm" id="bhoje">Voltar para hoje</button>':''}</div></div>`}
 function bindBaiGraf(){if(!$('bgraf'))return;
   document.querySelectorAll('[data-bper]').forEach(b=>b.onclick=()=>{ui.baiPer=b.dataset.bper;render()});
   document.querySelectorAll('[data-bnav]').forEach(b=>b.onclick=()=>{const ref=ui.baiRef||hoje(),k=+b.dataset.bnav;
     if(ui.baiPer==='mes'){const d=dObj(ref.slice(0,8)+'01');d.setMonth(d.getMonth()+k);ui.baiRef=dStr(d)}else ui.baiRef=addDias(ref,7*k);
     if(ui.baiRef>hoje())ui.baiRef=hoje();render()});
   const h=$('bhoje');if(h)h.onclick=()=>{ui.baiRef='';render()};
+  const bx=$('bxls');if(bx)bx.onclick=()=>{const P=dadosBai();if(!P.regs.length)return;exportarExcel([...P.regs].sort((a,b)=>diaBai(a).localeCompare(diaBai(b))),{cat:'Consertos Baiano',btn:'bxls',periodo:P.titulo,titulo:'Consertos Baiano · relatório '+P.art+' '+P.nome,arquivo:P.nome==='mês'?'mes-'+P.de.slice(0,7):'semana-'+P.de,g1:{tipo:'col',moeda:1,titulo:'Valor dos consertos por '+(P.nome==='mês'?'semana':'dia'),itens:P.grupos.map(g=>[g.rot+' '+g.sub,Math.round(g.valor*100)/100])}})};
   $('bimpGraf').onclick=()=>{const P=dadosBai();if(!P.regs.length)return;const l=[...P.regs].sort((a,b)=>diaBai(a).localeCompare(diaBai(b)));
     let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
     a.innerHTML=`<div class="folha"><div class="relbai"><h1>CONSERTOS BAIANO</h1><div class="sub">Relatório ${P.art} ${P.nome} · ${P.titulo}</div>
@@ -1500,12 +1747,12 @@ function mensalHTML(){
    <div class="chartwrap"><svg viewBox="0 0 ${W} ${H}" class="mchart" role="img" aria-label="Gráfico mês a mês do ano">${svg}</svg></div>
    <div class="legend"><span><span class="dot bg"></span>Garantia</span><span><span class="dot br"></span>Relatório</span><span><span class="dot bm"></span>Minucioso</span><span class="muted">Ano de ${ano}: ${totAno.g} garantias, ${totAno.r} relatórios e ${totAno.m} minuciosos</span></div>
   </div>`}
-function bindResumo(){const a=$('rano'),m=$('rmes');if(a)a.onchange=()=>{ui.mes=a.value+'-'+ui.mes.slice(5);render()};if(m)m.onchange=()=>{ui.mes=ui.mes.slice(0,4)+'-'+m.value;render()};
+function bindResumo(){const ex=$('exportar');if(ex)ex.onclick=()=>exportarExcel(ocs,{cat:'Geral',periodo:'Todos os registros carregados'});const a=$('rano'),m=$('rmes');if(a)a.onchange=()=>{ui.mes=a.value+'-'+ui.mes.slice(5);render()};if(m)m.onchange=()=>{ui.mes=ui.mes.slice(0,4)+'-'+m.value;render()};
   document.querySelectorAll('.mg').forEach(g=>{const f=()=>{ui.mes=g.dataset.mes;render()};g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}})})}
 function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{const d=dia(o.criado);if(d===hoje())c.hoje++;if(d>=diasAtras(6))c.sete++});
   const cont=f=>{const m={};ocs.forEach(o=>{const k=f(o);m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,8)};
   const bars=a=>{const mx=Math.max(1,...a.map(x=>x[1]));return a.length?a.map(([n,v])=>`<div class="bar"><span class="n">${esc(n)}</span><div class="tr"><div class="f" style="width:${v/mx*100}%"></div></div><span class="v">${v}</span></div>`).join(''):'<span class="muted small">Sem dados</span>'};
-  return`<div class="stack"><div class="stats">${[['hoje','Hoje'],['sete','Últimos 7 dias'],['total','Total']].map(([k,t])=>`<div class="stat"><div class="v">${c[k]}</div><div class="muted small">${t}</div></div>`).join('')}</div>
+  return`<div class="stack"><div class="box exgeral"><div><b>Relatório geral</b><div class="muted small">Excel com todos os módulos: números, gráficos, destaques e a lista completa.</div></div><button type="button" class="btn sm primary" id="exportar" ${ocs.length?'':'disabled'}>⬇ Exportar relatório geral</button></div><div class="stats">${[['hoje','Hoje'],['sete','Últimos 7 dias'],['total','Total']].map(([k,t])=>`<div class="stat"><div class="v">${c[k]}</div><div class="muted small">${t}</div></div>`).join('')}</div>
   ${mensalHTML()}
   ${(()=>{const g=ocs.filter(o=>o.categoria==='Garantia');if(!g.length)return'';const k={};GST.forEach(s=>k[s]=0);g.forEach(o=>k[o.gar_status||'Pendente']++);
     const pf={};g.forEach(o=>{const f=o.fornecedor||'Sem fornecedor';pf[f]=(pf[f]||0)+1});
