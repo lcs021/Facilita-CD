@@ -51,6 +51,8 @@ h1{font-size:1.08rem;margin:0;font-weight:800;letter-spacing:-.01em;white-space:
 #sair{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--ink-fg);border-radius:10px;padding:7px 12px;font-weight:600;font-size:.84rem;cursor:pointer}
 #sair:hover{background:rgba(255,255,255,.16)}
 body.auth .topbar{display:none}
+.homebtn{display:flex;align-items:center;gap:10px;background:none;border:0;color:inherit;font:inherit;padding:4px 8px 4px 4px;margin-left:-4px;border-radius:12px;cursor:pointer;min-width:0;transition:background .15s}
+.homebtn:hover{background:rgba(255,255,255,.08)}.homebtn:active{transform:translateY(1px)}
 
 .wrap{max-width:680px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 110px}
 h2{font-size:1.3rem;margin:0 0 4px;font-weight:800;letter-spacing:-.015em;text-wrap:balance}
@@ -543,7 +545,7 @@ nav#nav{display:none!important}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Inventário CD</h1></div><div class="hdr"><div class="who" id="who"></div><button id="sair" hidden>Sair</button></div></div></header>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="Inventário CD, voltar à tela principal"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Inventário CD</h1></button></div><div class="hdr"><div class="who" id="who"></div><button id="sair" hidden>Sair</button></div></div></header>
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <main id="view"><div class="center box"><p class="muted">Carregando…</p></div></main>
@@ -731,9 +733,16 @@ where id = (select id from public.perfis where admin order by criado limit 1)
 
 -- Cadastro sem e-mail: gera um endereço interno (caixa do administrador com +código)
 create or replace function public.email_novo_usuario(u text) returns text
-language sql stable security definer set search_path = public as $$
-  select split_part(email, '@', 1) || '+u' || substr(md5(lower(regexp_replace(trim(u), '\s+', ' ', 'g'))), 1, 10) || '@' || split_part(email, '@', 2)
-  from public.perfis where admin and email like '%@%' order by criado limit 1
+language sql stable security definer set search_path = public, auth as $$
+  select split_part(x.e, '@', 1) || '+u' || substr(md5(lower(regexp_replace(trim(u), '\s+', ' ', 'g'))), 1, 10) || '@' || split_part(x.e, '@', 2)
+  from (
+    select coalesce(nullif(p.email, ''), au.email) as e, p.criado
+    from public.perfis p join auth.users au on au.id = p.id
+    where p.admin
+    order by p.criado
+    limit 1
+  ) x
+  where x.e like '%@%'
 $$;
 grant execute on function public.email_novo_usuario(text) to anon, authenticated;
 
@@ -855,6 +864,8 @@ function escolheMenu(cat,setor){ui={...ui,cat,setor:setor||'',gst:'',tipo:'',det
     if(cat==='Minucioso'){draft.setor=ui.setor;draft.chefe=chefeDe(ui.setor)||''}}
   else if(ui.tab!=='lista')ui.tab='lista';
   abreMenu(false);render();scrollTo(0,0)}
+$('home').addEventListener('click',()=>{if(!uid)return;draft=null;abreMenu(false);
+  ui={...ui,tab:'lista',cat:'Garantia',setor:'',gst:'',tipo:'',busca:'',pessoa:'',de:'',ate:'',fano:'',fmes:'',det:null,confDel:false,baiRef:''};render();scrollTo(0,0);carregar()});
 $('menuBtn').addEventListener('click',()=>abreMenu(!$('side').classList.contains('open')));
 const mqHover=matchMedia('(hover:hover) and (min-width:960px)');let tFecha=null;
 const hoverAbre=()=>{if(!mqHover.matches||$('side').hidden)return;clearTimeout(tFecha);abreMenu(true)};
