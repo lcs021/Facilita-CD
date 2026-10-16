@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>try{var tm=localStorage.getItem("inv_tema");if(tm==="light"||tm==="dark")document.documentElement.dataset.theme=tm}catch(e){}</script>
 <title>Inventário CD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -23,7 +24,7 @@
   --mono:"JetBrains Mono",ui-monospace,Consolas,Menlo,monospace;
   color-scheme:light;
 }
-@media (prefers-color-scheme: dark){:root{
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0c111b; --surface:#151c29; --sunken:#1c2534; --line:#253045; --line2:#334058;
   --fg:#e9edf5; --muted:#94a0b4; --ink:#070b13; --ink-fg:#f5f7fb;
   --accent:#6f9bff; --accent-ink:#0b1220; --accent-soft:#1a2747;
@@ -33,6 +34,16 @@
   --alta:#ff6b5e; --baixa:#4cc785;
   --sh1:0 1px 2px rgba(0,0,0,.3); --sh2:0 6px 20px rgba(0,0,0,.35);
   color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c111b; --surface:#151c29; --sunken:#1c2534; --line:#253045; --line2:#334058;
+  --fg:#e9edf5; --muted:#94a0b4; --ink:#070b13; --ink-fg:#f5f7fb;
+  --accent:#6f9bff; --accent-ink:#0b1220; --accent-soft:#1a2747;
+  --gar:#ff8a45; --gar-soft:#3a2216; --gar-ink:#ffc39d;
+  --min:#4ade80; --min-soft:#13301f; --min-ink:#a7f3c0;
+  --bai:#b794ff; --bai-soft:#2a1f45; --bai-ink:#ddd0ff;
+  --alta:#ff6b5e; --baixa:#4cc785;
+  --sh1:0 1px 2px rgba(0,0,0,.3); --sh2:0 6px 20px rgba(0,0,0,.35);
+  color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{margin:0}
@@ -51,6 +62,16 @@ h1{font-size:1.08rem;margin:0;font-weight:800;letter-spacing:-.01em;white-space:
 #sair{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--ink-fg);border-radius:10px;padding:7px 12px;font-weight:600;font-size:.84rem;cursor:pointer}
 #sair:hover{background:rgba(255,255,255,.16)}
 body.auth .topbar{display:none}
+.temabtn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--ink-fg);cursor:pointer;flex:none;transition:background .15s,transform .2s}
+.temabtn:hover{background:rgba(255,255,255,.16)}.temabtn:active{transform:rotate(-20deg)}.temabtn svg{width:18px;height:18px}
+.temaflut{position:fixed;top:14px;right:14px;z-index:40;background:var(--surface);border:1px solid var(--line);color:var(--fg);box-shadow:var(--sh1)}
+.temaflut:hover{background:var(--sunken)}
+.aparencia{margin:10px 12px 4px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--sunken)}
+.aparencia .lb{font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0 2px 8px;display:block}
+.aparencia .op{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--surface);border-radius:11px;padding:3px;border:1px solid var(--line)}
+.aparencia button{border:0;background:none;color:var(--muted);font:700 .78rem var(--font);padding:7px 4px;border-radius:9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.aparencia button svg{width:16px;height:16px}
+.aparencia button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
 .homebtn{display:flex;align-items:center;gap:10px;background:none;border:0;color:inherit;font:inherit;padding:4px 8px 4px 4px;margin-left:-4px;border-radius:12px;cursor:pointer;min-width:0;transition:background .15s}
 .homebtn:hover{background:rgba(255,255,255,.08)}.homebtn:active{transform:translateY(1px)}
 
@@ -341,7 +362,8 @@ details summary{cursor:pointer;list-style-position:inside}
 @media (max-width:420px){.chefrow{grid-template-columns:1fr auto}.chefrow b{grid-column:1/-1}}
 .gst{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
 .gst.p{background:#fdf2c7;color:#7a5600}.gst.e{background:#dcfce7;color:#166534}
-@media (prefers-color-scheme: dark){.gst.p{background:#45370c;color:#f5d36e}.gst.e{background:#123a24;color:#86e0a9}}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .gst.p{background:#45370c;color:#f5d36e}:root:not([data-theme="light"]) .gst.e{background:#123a24;color:#86e0a9}}
+:root[data-theme="dark"] .gst.p{background:#45370c;color:#f5d36e}:root[data-theme="dark"] .gst.e{background:#123a24;color:#86e0a9}
 
 /* Filtros */
 .datas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;flex:1 1 280px!important}
@@ -538,14 +560,29 @@ nav#nav{display:none!important}
 .pc-act.chefe input{flex:1;min-width:0;padding:9px 11px}
 .pc-sel{display:flex;flex-direction:column;gap:4px;font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .pc-sel select{padding:9px 10px;font-size:.9rem;text-transform:none;letter-spacing:0;font-weight:600}
-.permbox{border-color:color-mix(in srgb,#0d9488 30%,var(--line))}
-.permgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
-.perm{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;transition:border-color .15s,background .15s}
-.perm:hover{border-color:var(--line2)}.perm:has(.sw:checked){background:color-mix(in srgb,#0d9488 7%,var(--surface));border-color:color-mix(in srgb,#0d9488 35%,var(--line))}
-.perm .pt{display:flex;flex-direction:column;min-width:0}.perm .pt b{font-size:.92rem}.perm .pt small{font-size:.76rem;color:var(--muted);line-height:1.3}
-.sw{appearance:none;-webkit-appearance:none;width:42px;height:24px;border-radius:999px;background:var(--line2);position:relative;flex:none;cursor:pointer;transition:background .2s;border:0;padding:0;margin:0}
-.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
-.sw:checked{background:#0d9488}.sw:checked::after{transform:translateX(18px)}.sw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.sw:disabled{opacity:.5}
+.permbox{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--sh2);overflow:hidden}
+.phead{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:20px 22px;background:linear-gradient(135deg,color-mix(in srgb,#0d9488 10%,var(--surface)),var(--surface) 65%);border-bottom:1px solid var(--line)}
+.pring{--p:0;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#0d9488 calc(var(--p)*1%),var(--line) 0);position:relative}
+.pring::before{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--surface)}
+.pring span{position:relative;font-weight:800;font-size:1.15rem;color:#0d9488}.pring small{font-size:.75rem;color:var(--muted);font-weight:700}
+.ptx h3{font-size:1.15rem;margin:2px 0 4px;letter-spacing:-.01em}.ptx p{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45;max-width:52ch}
+.pkick{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#0d9488}
+.pbulk{display:flex;gap:6px}.pbulk .btn{white-space:nowrap}
+.pgrp{padding:16px 22px 18px}.pgrp+.pgrp{border-top:1px dashed var(--line)}
+.pgh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}.pgh span{font-size:.74rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}.pgh small{font-size:.78rem;color:var(--muted)}
+.plist{display:grid;grid-template-columns:1fr;gap:8px}
+.prow{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;border:1px solid var(--line);background:var(--sunken);cursor:pointer;transition:background .2s,border-color .2s,transform .15s,box-shadow .2s;animation:rise .35s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*30ms)}
+.prow:hover{transform:translateY(-1px);box-shadow:var(--sh1);border-color:var(--line2)}
+.prow.on{background:var(--surface);border-color:color-mix(in srgb,var(--c) 40%,var(--line));box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 9%,transparent)}
+.pic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 12%,transparent);color:var(--c);transition:background .2s,color .2s}
+.pic svg{width:19px;height:19px}.prow:not(.on) .pic{background:var(--line);color:var(--muted)}
+.prow .pt{display:flex;flex-direction:column;min-width:0}.prow .pt b{font-size:.92rem}.prow .pt small{font-size:.76rem;color:var(--muted);line-height:1.3}
+.pst{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}.prow.on .pst{color:var(--c)}
+.prow.perigo.on{background:color-mix(in srgb,var(--alta) 6%,var(--surface))}
+.sw{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:999px;background:var(--line2);position:relative;flex:none;cursor:pointer;transition:background .2s;border:0;padding:0;margin:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .22s cubic-bezier(.3,1.4,.5,1)}
+.sw:checked{background:var(--c,#0d9488)}.sw:checked::after{transform:translateX(18px)}.sw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.sw:disabled{opacity:.5}
+@media (max-width:620px){.phead{grid-template-columns:auto 1fr}.pbulk{grid-column:1/-1;flex-direction:row}.pbulk .btn{flex:1}.pst{display:none}.pgrp,.phead{padding-left:16px;padding-right:16px}}
 .cargos{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:4px}
 .cg{display:flex;flex-direction:column;gap:5px;align-items:flex-start;background:var(--surface);border:1px dashed var(--line2);border-radius:12px;padding:10px 12px}
 .cg small{font-size:.76rem;color:var(--muted)}
@@ -553,7 +590,7 @@ nav#nav{display:none!important}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="Inventário CD, voltar à tela principal"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Inventário CD</h1></button></div><div class="hdr"><div class="who" id="who"></div><button id="sair" hidden>Sair</button></div></div></header>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="Inventário CD, voltar à tela principal"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Inventário CD</h1></button></div><div class="hdr"><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <main id="view"><div class="center box"><p class="muted">Carregando…</p></div></main>
@@ -888,9 +925,9 @@ const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filte
   <label class="subsearch">${svgI('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')}<input id="buscaSetor" placeholder="Buscar setor ou chefe" autocomplete="off"></label>
   <button class="ssub todos" data-mset="" aria-current="${ui.cat==='Minucioso'&&!ui.setor}" style="--i:0"><span class="sav all">${svgI('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>')}</span><span class="nm">Todos os setores<small>Visão geral</small></span><span class="n">${n('Minucioso')}</span></button>
   ${SETORES.map((s,i)=>{const ch=chefeDe(s),q=ns(s);return`<button class="ssub" data-mset="${esc(s)}" data-busca="${esc((s+' '+ch).toLowerCase())}" aria-current="${ui.cat==='Minucioso'&&ui.setor===s}" style="--i:${i+1}"><span class="sav" style="background:${ch?corNome(ch):'var(--line2)'}">${ch?esc(iniciais(ch)):'?'}</span><span class="nm">${esc(s)}<small>${ch?esc(ch):'Sem chefe definido'}</small></span><span class="n${q?' tem':''}">${q}</span></button>`}).join('')}
-  <div class="subvazio" hidden>Nenhum setor encontrado</div></div></div>`:''}${podeMod('Consertos Baiano')?item('Consertos Baiano'):''}${Object.keys(CATS).some(podeMod)?'':'<div class="muted small" style="padding:8px 12px">Nenhum módulo liberado para você.</div>'}`}
+  <div class="subvazio" hidden>Nenhum setor encontrado</div></div></div>`:''}${podeMod('Consertos Baiano')?item('Consertos Baiano'):''}${Object.keys(CATS).some(podeMod)?'':'<div class="muted small" style="padding:8px 12px">Nenhum módulo liberado para você.</div>'}${aparenciaHTML()}`}
 function abreMenu(on){const s=$('side'),b=$('sideBack');s.classList.toggle('open',on);b.hidden=!on||matchMedia('(hover:hover) and (min-width:960px)').matches;$('menuBtn').setAttribute('aria-expanded',String(on))}
-function renderSide(){const s=$('side');s.innerHTML=sideHTML();
+function renderSide(){const s=$('side');s.innerHTML=sideHTML();s.querySelectorAll('[data-tema]').forEach(b=>b.onclick=e=>{e.stopPropagation();aplicaTema(b.dataset.tema)});
   s.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{abreMenu(false);go(b.dataset.goto)});
   const nb=s.querySelector('[data-snew]');if(nb)nb.onclick=()=>{abreMenu(false);if(ui.tab!=='nova'){draft=null;go('nova')}};
   const bs=$('buscaSetor');if(bs){bs.addEventListener('click',e=>e.stopPropagation());bs.addEventListener('input',()=>{const q=bs.value.trim().toLowerCase();let vis=0;
@@ -981,7 +1018,7 @@ const IC={
  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>'};
 const lerLembrado=()=>{try{return localStorage.getItem('inv_email')||''}catch(e){return''}};
 const gravaLembrado=v=>{try{v?localStorage.setItem('inv_email',v):localStorage.removeItem('inv_email')}catch(e){}};
-const authShell=(mode,titulo,sub,form)=>`<div class="authshell"><div class="acard" id="acard">
+const authShell=(mode,titulo,sub,form)=>`<div class="authshell"><button type="button" class="temabtn temaflut" data-tflut="1"></button><div class="acard" id="acard">
   <div class="alogo"><span class="logo">${IC.box}</span><div><h1>${titulo}</h1><p>${sub}</p></div></div>
   <div class="apanel">${form}</div>
   <p class="atroca">${mode==='login'?'Ainda não tem cadastro? <button class="btn link" type="button" id="irCad">Criar cadastro</button>':'Já tem cadastro? <button class="btn link" type="button" id="irLogin">Entrar</button>'}</p>
@@ -989,7 +1026,7 @@ const authShell=(mode,titulo,sub,form)=>`<div class="authshell"><div class="acar
 const campo=(id,rot,tipo,ac,ico,extra='')=>`<div class="field"><label class="lbl" for="${id}">${rot}</label><div class="inp${tipo==='password'?' pw':''}">${IC[ico]}<input id="${id}" type="${tipo}" autocomplete="${ac}" ${extra}>${tipo==='password'?`<button type="button" class="eye" data-eye="${id}" aria-label="Mostrar senha" tabindex="-1">${IC.eye}</button>`:''}</div></div>`;
 const mostraEmail=p=>p.email&&!/\+u[0-9a-f]{10}@/.test(p.email);
 function authErr(er,msg){er.textContent=msg;er.hidden=false;const c=$('acard');if(c){c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}}
-function authFx(f){
+function authFx(f){const tf=document.querySelector('[data-tflut]');if(tf)tf.onclick=alternaTema;pintaTemaBtn();
   f.querySelectorAll('[data-eye]').forEach(b=>b.onclick=()=>{const i=$(b.dataset.eye),m=i.type==='password';i.type=m?'text':'password';b.setAttribute('aria-label',m?'Ocultar senha':'Mostrar senha');b.style.color=m?'var(--accent)':''});
   f.querySelectorAll('input[type=password]').forEach(i=>{const chk=e=>{const on=e.getModifierState&&e.getModifierState('CapsLock');let w=i.closest('.field').querySelector('.caps');
     if(on&&!w){i.closest('.field').insertAdjacentHTML('beforeend',`<div class="caps">${IC.warn}Caps Lock ligado</div>`)}else if(!on&&w)w.remove()};
@@ -1183,6 +1220,22 @@ function comprimir(file){return new Promise((res,rej)=>{const r=new FileReader()
   const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,c.height-28,c.width,28);x.fillStyle='#fff';x.font='16px monospace';x.fillText(fData(Date.now()),10,c.height-9);
   const prev=c.toDataURL('image/jpeg',0.7);c.toBlob(b=>b?res({blob:b,prev}):rej(new Error('imagem')),'image/jpeg',0.7)};img.src=r.result};r.readAsDataURL(file)})}
 
+
+
+/* ---------- Tema claro / escuro ---------- */
+const IC_SOL='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',IC_LUA='<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',IC_AUTO='<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>';
+const mqEscuro=matchMedia('(prefers-color-scheme: dark)');
+const temaSalvo=()=>{try{return localStorage.getItem('inv_tema')||'auto'}catch(e){return'auto'}};
+const temaAtual=()=>{const s=temaSalvo();return s==='auto'?(mqEscuro.matches?'dark':'light'):s};
+function aplicaTema(modo){try{modo==='auto'?localStorage.removeItem('inv_tema'):localStorage.setItem('inv_tema',modo)}catch(e){}
+  if(modo==='auto')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=modo;pintaTemaBtn()}
+function pintaTemaBtn(){const esc_=temaAtual()==='dark';document.querySelectorAll('.temabtn').forEach(b=>{b.innerHTML=svgI(esc_?IC_SOL:IC_LUA);b.setAttribute('aria-label',esc_?'Mudar para modo claro':'Mudar para modo escuro');b.title=esc_?'Modo claro':'Modo escuro'});
+  document.querySelectorAll('[data-tema]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tema===temaSalvo())))}
+const alternaTema=()=>aplicaTema(temaAtual()==='dark'?'light':'dark');
+$('temaBtn').addEventListener('click',alternaTema);
+mqEscuro.addEventListener('change',pintaTemaBtn);pintaTemaBtn();
+const aparenciaHTML=()=>`<div class="aparencia"><span class="lb">Aparência</span><div class="op" role="group" aria-label="Aparência">
+  <button type="button" data-tema="light" aria-pressed="${temaSalvo()==='light'}">${svgI(IC_SOL)}Claro</button><button type="button" data-tema="dark" aria-pressed="${temaSalvo()==='dark'}">${svgI(IC_LUA)}Escuro</button><button type="button" data-tema="auto" aria-pressed="${temaSalvo()==='auto'}">${svgI(IC_AUTO)}Automático</button></div></div>`;
 
 /* ---------- Consertos Baiano ---------- */
 const txtBai=l=>{const v=valorBai(numBR(l.custo));return v==null?'Informe o custo':v===0?'R$ 0,00 · cortado da soma':brl(v)+' · Total '+brl(v*(numBR(l.qtd)||1))};
@@ -1505,17 +1558,29 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   return`<div class="stack eqtela"><div class="listhead"><h2>Equipe</h2><span class="muted small">${todos.length} pessoa${todos.length===1?'':'s'} cadastrada${todos.length===1?'':'s'}</span></div>
   <div class="kpis">${kpi('pend','Aguardando',pend.length,'#e0a100')}${kpi('ativos','Com acesso',ativos.length,'var(--baixa)')}${kpi('recus','Não liberados',recus.length,'var(--alta)')}${kpi('chefes','Chefes definidos',tabs[3][2],'var(--min)')}</div>
   ${corpo}</div>`}
-function permHTML(){const pa=CARGOS['Auxiliar de Inventário']||[];
-  return`<section class="box stack permbox" id="perms"><div class="row"><div><b>O que o Auxiliar de Inventário pode fazer</b><div class="muted small">Ligue ou desligue cada item. Vale na hora para todos os auxiliares. O <b>Chefe de Inventário</b> sempre pode tudo.</div></div><span class="cpill" style="--k:${CARGO_COR['Auxiliar de Inventário']}">Auxiliar de Inventário</span></div>
+const PERM_IC={'registrar':'<path d="M12 5v14M5 12h14"/>','resumo':'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>','garantia':'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>','apagar':'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
+const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','registrar':'#0d9488','resumo':'#0ea5e9','garantia':'#d97706','apagar':'var(--alta)'};
+function permHTML(){const pa=CARGOS['Auxiliar de Inventário']||[],on=PERMS.filter(p=>pa.includes(p[0])).length,pct=Math.round(on/PERMS.length*100);
+  const row=([k,n,d],i)=>{const ic=k.startsWith('mod:')?icMod[k.slice(4)]:PERM_IC[k],ok=pa.includes(k);
+    return`<label class="prow${ok?' on':''}${k==='apagar'?' perigo':''}" style="--c:${PERM_COR[k]};--i:${i}"><span class="pic">${svgI(ic)}</span><span class="pt"><b>${n}</b><small>${d}</small></span><span class="pst">${ok?'Liberado':'Bloqueado'}</span><input type="checkbox" class="sw" data-perm="${esc(k)}" ${ok?'checked':''} ${cargosOk?'':'disabled'} aria-label="${esc(n)}"></label>`};
+  const mods=PERMS.filter(p=>p[0].startsWith('mod:')),acs=PERMS.filter(p=>!p[0].startsWith('mod:'));
+  return`<section class="permbox" id="perms">
+  <div class="phead"><div class="pring" style="--p:${pct}"><span>${on}<small>/${PERMS.length}</small></span></div>
+    <div class="ptx"><span class="pkick">Permissões</span><h3>Auxiliar de Inventário</h3><p>Escolha o que o auxiliar pode ver e fazer. Muda na hora para todos. O <b>Chefe de Inventário</b> sempre pode tudo.</p></div>
+    <div class="pbulk"><button type="button" class="btn sm" data-pall="1" ${cargosOk?'':'disabled'}>Liberar tudo</button><button type="button" class="btn sm" data-pall="0" ${cargosOk?'':'disabled'}>Bloquear tudo</button></div></div>
   ${cargosOk?'':'<div class="err">O banco precisa de uma atualização (permissões). Rode o SQL novo no Supabase.</div>'}
-  <div class="permgrid">${PERMS.map(([k,n,d])=>`<label class="perm${k.startsWith('mod:')?' mod':''}"><span class="pt"><b>${n}</b><small>${d}</small></span><input type="checkbox" class="sw" data-perm="${esc(k)}" ${pa.includes(k)?'checked':''} ${cargosOk?'':'disabled'}></label>`).join('')}</div></section>`}
+  <div class="pgrp"><div class="pgh"><span>Módulos</span><small>${mods.filter(p=>pa.includes(p[0])).length} de ${mods.length} liberados</small></div><div class="plist">${mods.map(row).join('')}</div></div>
+  <div class="pgrp"><div class="pgh"><span>Ações</span><small>${acs.filter(p=>pa.includes(p[0])).length} de ${acs.length} liberadas</small></div><div class="plist">${acs.map((p,i)=>row(p,i+4)).join('')}</div></div>
+  </section>`}
+async function salvaPerms(perms,msg){document.querySelectorAll('[data-perm],[data-pall]').forEach(x=>x.disabled=true);
+  const {error}=await sb.from('cargos').upsert({nome:'Auxiliar de Inventário',perms});
+  if(error){toast(/cargos|schema cache|relation/i.test(error.message||'')?'O banco precisa de uma atualização (permissões). Rode o SQL novo no Supabase.':erroMsg(error));render();return}
+  CARGOS['Auxiliar de Inventário']=perms;toast(msg);const y=scrollY;render();scrollTo(0,y)}
 async function mudaPerfil(id,campos,msg){const {error}=await sb.from('perfis').update(campos).eq('id',id);if(error){toast(erroMsg(error));return}Object.assign(perfis[id],campos);toast(msg);render()}
 function bindEquipe(){
-  document.querySelectorAll('[data-perm]').forEach(c=>c.addEventListener('change',async()=>{const atual=new Set(CARGOS['Auxiliar de Inventário']||[]);c.checked?atual.add(c.dataset.perm):atual.delete(c.dataset.perm);
-    const perms=TODAS.filter(k=>atual.has(k));document.querySelectorAll('[data-perm]').forEach(x=>x.disabled=true);
-    const {error}=await sb.from('cargos').upsert({nome:'Auxiliar de Inventário',perms});document.querySelectorAll('[data-perm]').forEach(x=>x.disabled=false);
-    if(error){c.checked=!c.checked;toast(/cargos|schema cache|relation/i.test(error.message||'')?'O banco precisa de uma atualização (permissões). Rode o SQL novo no Supabase.':erroMsg(error));return}
-    CARGOS['Auxiliar de Inventário']=perms;const nm=PERMS.find(p=>p[0]===c.dataset.perm)[1];toast((c.checked?'Liberado: ':'Bloqueado: ')+nm+' para Auxiliar')}));
+  document.querySelectorAll('[data-perm]').forEach(c=>c.addEventListener('change',()=>{const atual=new Set(CARGOS['Auxiliar de Inventário']||[]);c.checked?atual.add(c.dataset.perm):atual.delete(c.dataset.perm);
+    const nm=PERMS.find(p=>p[0]===c.dataset.perm)[1];salvaPerms(TODAS.filter(k=>atual.has(k)),(c.checked?'Liberado: ':'Bloqueado: ')+nm)}));
+  document.querySelectorAll('[data-pall]').forEach(b=>b.addEventListener('click',()=>salvaPerms(b.dataset.pall==='1'?[...TODAS]:[],b.dataset.pall==='1'?'Tudo liberado para o Auxiliar':'Tudo bloqueado para o Auxiliar')));
   document.querySelectorAll('[data-eqtab]').forEach(b=>b.addEventListener('click',()=>{ui.eqTab=b.dataset.eqtab;ui.eqBusca='';ui.confExcl=null;render()}));
   const eb=$('eqBusca');if(eb)eb.addEventListener('input',()=>{ui.eqBusca=eb.value;const p=eb.selectionStart;render();const n=$('eqBusca');n.focus();n.setSelectionRange(p,p)});
   document.querySelectorAll('[data-chef]').forEach(b=>b.addEventListener('click',async()=>{const i=+b.dataset.chef,s=SETORES[i],v=$('chef'+i).value.trim();b.disabled=true;
