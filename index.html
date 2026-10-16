@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script>try{var tm=localStorage.getItem("inv_tema");if(tm==="light"||tm==="dark")document.documentElement.dataset.theme=tm}catch(e){}</script>
-<title>Inventário CD</title>
+<title>Facilita CD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
@@ -590,7 +590,7 @@ nav#nav{display:none!important}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="Inventário CD, voltar à tela principal"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Inventário CD</h1></button></div><div class="hdr"><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="Facilita CD, voltar à tela principal"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Facilita CD</h1></button></div><div class="hdr"><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <main id="view"><div class="center box"><p class="muted">Carregando…</p></div></main>
@@ -1032,7 +1032,7 @@ function authFx(f){const tf=document.querySelector('[data-tflut]');if(tf)tf.oncl
     if(on&&!w){i.closest('.field').insertAdjacentHTML('beforeend',`<div class="caps">${IC.warn}Caps Lock ligado</div>`)}else if(!on&&w)w.remove()};
     i.addEventListener('keydown',chk);i.addEventListener('keyup',chk);i.addEventListener('blur',()=>{const w=i.closest('.field').querySelector('.caps');if(w)w.remove()})});
 }
-function loginHTML(){const lem=lerLembrado();return authShell('login','Inventário CD','Entre com seu usuário e senha.',`<form class="stack" id="flogin" novalidate>
+function loginHTML(){const lem=lerLembrado();return authShell('login','Facilita CD','Entre com seu usuário e senha.',`<form class="stack" id="flogin" novalidate>
   ${campo('lemail','Usuário','text','username','user',`value="${esc(lem)}" placeholder="Ex.: Lucas Carvalho" autocapitalize="off" spellcheck="false"`)}
   ${campo('lsenha','Senha','password','current-password','lock','placeholder="Sua senha"')}
   <label class="lembrar"><input type="checkbox" id="lembrar" ${lem?'checked':''}>Lembrar meu usuário neste computador</label>
