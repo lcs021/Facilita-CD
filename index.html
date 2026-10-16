@@ -522,7 +522,7 @@ nav#nav{display:none!important}
 .pc-top .cpill{margin-left:auto}
 .pav{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:.95rem;flex:none;box-shadow:0 3px 10px rgba(0,0,0,.14)}
 .pav.sq{border-radius:12px}
-.pc-id{display:flex;flex-direction:column;min-width:0;flex:1}
+.pc-id{display:flex;flex-direction:column;min-width:9rem;flex:1}
 .pc-id b{font-size:.98rem;overflow-wrap:anywhere;line-height:1.25}
 .pc-id small{font-size:.76rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .voce{font-size:.66rem;font-weight:800;background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:999px;vertical-align:middle;margin-left:4px}
@@ -565,7 +565,7 @@ create table if not exists public.perfis (
   id uuid primary key references auth.users(id) on delete cascade,
   nome text not null default '',
   email text,
-  cargo text not null default 'Conferente',
+  cargo text not null default 'Analista de inventário',
   aprovado boolean not null default false,
   admin boolean not null default false,
   criado timestamptz not null default now()
@@ -625,7 +625,7 @@ begin
   select not exists (select 1 from public.perfis) into primeiro;
   insert into public.perfis (id, nome, email, cargo, aprovado, admin, usuario)
   values (new.id, coalesce(new.raw_user_meta_data->>'nome', ''), new.email,
-          case when primeiro then 'Supervisor' else 'Conferente' end, primeiro, primeiro,
+          'Analista de inventário', primeiro, primeiro,
           nullif(regexp_replace(trim(coalesce(new.raw_user_meta_data->>'usuario', '')), '\s+', ' ', 'g'), ''));
   return new;
 end
@@ -652,11 +652,11 @@ create policy "registrar ocorrencias" on public.ocorrencias for insert to authen
   with check (public.is_aprovado() and autor = auth.uid());
 drop policy if exists "tratar ocorrencias" on public.ocorrencias;
 create policy "tratar ocorrencias" on public.ocorrencias for update to authenticated
-  using (public.tem_cargo(array['Líder','Analista de inventário','Supervisor']))
-  with check (public.tem_cargo(array['Líder','Analista de inventário','Supervisor']));
+  using (public.tem_cargo(array['Analista de inventário']))
+  with check (public.tem_cargo(array['Analista de inventário']));
 drop policy if exists "apagar ocorrencias" on public.ocorrencias;
 create policy "apagar ocorrencias" on public.ocorrencias for delete to authenticated
-  using (public.tem_cargo(array['Supervisor']));
+  using (public.tem_cargo(array['Analista de inventário']));
 
 -- Fotos e vídeos (pasta privada, até 50 MB por arquivo)
 insert into storage.buckets (id, name, public, file_size_limit)
@@ -671,7 +671,7 @@ create policy "enviar midias" on storage.objects for insert to authenticated
   with check (bucket_id = 'midias' and public.is_aprovado());
 drop policy if exists "apagar midias" on storage.objects;
 create policy "apagar midias" on storage.objects for delete to authenticated
-  using (bucket_id = 'midias' and (owner_id = auth.uid()::text or public.tem_cargo(array['Supervisor'])));
+  using (bucket_id = 'midias' and (owner_id = auth.uid()::text or public.tem_cargo(array['Analista de inventário'])));
 
 -- Excluir usuário não liberado (somente administrador)
 create or replace function public.excluir_usuario(alvo uuid) returns void
@@ -750,6 +750,10 @@ grant execute on function public.email_novo_usuario(text) to anon, authenticated
 alter table public.ocorrencias add column if not exists requisitante text;
 alter table public.ocorrencias add column if not exists valor_conserto numeric;
 alter table public.ocorrencias add column if not exists data_ref date;
+
+-- Cargo único: Analista de inventário
+alter table public.perfis alter column cargo set default 'Analista de inventário';
+update public.perfis set cargo = 'Analista de inventário' where cargo <> 'Analista de inventário';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
@@ -762,8 +766,8 @@ const ORIGINAL='<!doctype html>\n'+document.documentElement.outerHTML;
 const TIPOS_CAT={'Garantia':['Peça quebrada','Peça com defeito','Embalagem violada','Kit incompleto'],'Relatório':['Avaria / peça quebrada','Embalagem violada','Sem etiqueta / ilegível','Código divergente (peça trocada)','Kit incompleto']};
 const ORIGENS={'Loja':'Retirado como quebrado na loja','Fábrica':'Veio quebrado ou com defeito do fabricante','Transporte':'Quebrou no frete ou na entrega','CD':'Quebrou dentro do CD'};
 const TIPOS=[...new Set([...TIPOS_CAT['Garantia'],...TIPOS_CAT['Relatório']])];
-const CARGOS={'Conferente':['registrar'],'Operador':['registrar'],'Líder':['registrar','resumo','garantia'],'Analista de inventário':['registrar','resumo','garantia'],'Supervisor':['registrar','resumo','garantia','apagar']};
-const CARGO_DESC={'Conferente':'registra','Operador':'registra','Líder':'registra, vê o resumo e atualiza garantias','Analista de inventário':'registra, vê o resumo e atualiza garantias','Supervisor':'tudo, inclusive apagar registros'};
+const CARGOS={'Analista de inventário':['registrar','resumo','garantia','apagar']};
+const CARGO_DESC={'Analista de inventário':'registra, vê o resumo, atualiza garantias e apaga registros'};
 const ANDARES={'11':'1º andar','12':'2º andar','13':'3º andar'},LETRAS='ABCDEFGHI'.split('');
 const BUCKET='midias',H=3600e3,MAX_VIDEO=50*1024*1024;
 
@@ -886,7 +890,7 @@ const difHTML=v=>v==null?'—':`<span class="dif ${v>0?'pos':v<0?'neg':'zero'}">
 const GST=['Pendente','Enviado à garantia da loja'];
 const gstCls=s=>({'Pendente':'p','Enviado à garantia da loja':'e','Crédito recebido':'c','Recusada':'r'})[s]||'p';
 const gstBadge=o=>o.categoria==='Garantia'?`<span class="gst ${gstCls(o.gar_status)}">${esc(o.gar_status||'Pendente')}</span>`:'';
-const cargoNome=c=>c;
+const cargoNome=c=>'Analista de inventário';
 const catCls=c=>c==='Garantia'?'gar':c==='Minucioso'?'min':c==='Consertos Baiano'?'bai':'rel';
 const catBadge=c=>`<span class="cat ${catCls(c||'Relatório')}">${esc(c||'Relatório')}</span>`;
 const linhaBai=()=>({sku:'',produto:'',qtd:'1',custo:''});
@@ -1426,7 +1430,7 @@ function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{c
   <span class="lbl">Por pessoa</span><div class="box stack" style="gap:8px">${bars(cont(o=>nome(o.autor)))}</div></div>`}
 
 /* ---------- Equipe ---------- */
-const CARGO_COR={'Conferente':'#64748b','Operador':'#0d9488','Líder':'#7c3aed','Analista de inventário':'#2457d6','Supervisor':'#e2621b'};
+const CARGO_COR={'Analista de inventário':'#e2621b'};
 function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)-ts(a.criado));
   const pend=todos.filter(p=>!p.aprovado&&!p.admin&&!p.recusado),ativos=todos.filter(p=>p.aprovado||p.admin),recus=todos.filter(p=>!p.aprovado&&!p.admin&&p.recusado);
   if(!ui.eqTab)ui.eqTab=pend.length?'pend':'ativos';
@@ -1438,10 +1442,10 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   const stats=p=>{const r=regs(p.id),m=r.filter(o=>mesKey(o.criado)===mesAt).length,ult=r[0];return`<div class="pc-stats"><div><b>${r.length}</b><span>registros</span></div><div><b>${m}</b><span>este mês</span></div><div><b>${ult?idade(ult.criado):'—'}</b><span>último</span></div></div>`};
   const card=(p,i,corpo)=>`<article class="pcard" style="--i:${i}">${corpo}</article>`;
   const cPend=(p,i)=>card(p,i,`${topo(p,'<span class="cpill nova">Novo</span>')}<div class="muted small">Cadastrou-se em ${fData(p.criado)}</div>
-    <div class="pc-act"><label class="pc-sel"><span>Cargo</span><select data-cg="${esc(p.id)}" aria-label="Cargo de ${esc(p.nome)}">${opcoes('Conferente')}</select></label>
+    <div class="pc-act"><label class="pc-sel" hidden><span>Cargo</span><select data-cg="${esc(p.id)}" aria-label="Cargo de ${esc(p.nome)}">${opcoes('Analista de inventário')}</select></label>
     <div class="ctl2"><button class="btn sm primary" data-ok="${esc(p.id)}">✓ Liberar</button><button class="btn sm danger" data-nao="${esc(p.id)}">✕ Não liberar</button></div></div>`);
   const cAtivo=(p,i)=>card(p,i,`${topo(p,cargoPill(p))}${stats(p)}
-    ${p.id!==uid&&!p.admin?`<div class="pc-act"><label class="pc-sel"><span>Cargo</span><select data-cg="${esc(p.id)}" data-ativo="1" aria-label="Cargo de ${esc(p.nome)}">${opcoes(cargoNome(p.cargo))}</select></label><button class="btn sm" data-rev="${esc(p.id)}">Remover acesso</button></div>`:''}`);
+    ${p.id!==uid&&!p.admin?`<div class="pc-act"><label class="pc-sel" hidden><span>Cargo</span><select data-cg="${esc(p.id)}" data-ativo="1" aria-label="Cargo de ${esc(p.nome)}">${opcoes(cargoNome(p.cargo))}</select></label><button class="btn sm" data-rev="${esc(p.id)}">Remover acesso</button></div>`:''}`);
   const cRec=(p,i)=>card(p,i,`${topo(p,'<span class="cpill" style="--k:var(--alta)">Não liberado</span>')}<div class="muted small">Cadastrou-se em ${fData(p.criado)}</div>
     <div class="pc-act">${ui.confExcl===p.id?`<span class="small" style="font-weight:800;color:var(--alta)">Excluir de vez? Não dá para desfazer.</span><div class="ctl2"><button class="btn sm danger" data-exsim="${esc(p.id)}">Excluir</button><button class="btn sm" data-exnao="1">Cancelar</button></div>`:`<div class="ctl2"><button class="btn sm" data-rec="${esc(p.id)}">↺ Reconsiderar</button><button class="btn sm danger" data-excl="${esc(p.id)}">Excluir</button></div>`}</div>`);
   const tabs=[['pend','Aguardando',pend.length],['ativos','Com acesso',ativos.length],['recus','Não liberados',recus.length],['chefes','Chefes dos setores',SETORES.filter(s=>chefeDe(s)).length+'/'+SETORES.length]];
@@ -1455,11 +1459,11 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   }else{
     const lista=(ui.eqTab==='pend'?pend:ui.eqTab==='recus'?recus:ativos).filter(bate),fn=ui.eqTab==='pend'?cPend:ui.eqTab==='recus'?cRec:cAtivo;
     const vazio={pend:'Nenhum cadastro aguardando liberação.',ativos:'Ninguém com acesso ainda.',recus:'Nenhum cadastro recusado.'}[ui.eqTab];
-    corpo=`<label class="eqsearch">${svgI('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')}<input id="eqBusca" placeholder="Buscar por nome, e-mail ou cargo" value="${esc(ui.eqBusca||'')}" autocomplete="off"></label>
-    ${ui.eqTab==='pend'&&lista.length?'<p class="muted small" style="margin:0">Escolha o cargo e toque em <b>Liberar</b>. Se a pessoa não deve ter acesso, toque em <b>Não liberar</b>.</p>':''}
+    corpo=`<label class="eqsearch">${svgI('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')}<input id="eqBusca" placeholder="Buscar por nome ou usuário" value="${esc(ui.eqBusca||'')}" autocomplete="off"></label>
+    ${ui.eqTab==='pend'&&lista.length?'<p class="muted small" style="margin:0">Toque em <b>Liberar</b> para dar acesso como Analista de inventário. Se a pessoa não deve ter acesso, toque em <b>Não liberar</b>.</p>':''}
     ${ui.eqTab==='recus'&&lista.length?'<p class="muted small" style="margin:0">Excluir apaga o cadastro e o login. A pessoa pode se cadastrar de novo com o mesmo e-mail.</p>':''}
     <div class="pgrid">${lista.map(fn).join('')||`<div class="empty" style="grid-column:1/-1">${q?'Ninguém encontrado com essa busca.':vazio}</div>`}</div>
-    ${ui.eqTab==='ativos'?`<div class="cargos">${Object.entries(CARGO_DESC).map(([c,d])=>`<div class="cg"><span class="cpill" style="--k:${CARGO_COR[c]||'#64748b'}">${c}</span><small>${d}</small></div>`).join('')}</div>`:''}`;
+    ${ui.eqTab==='ativos'&&Object.keys(CARGO_DESC).length>1?`<div class="cargos">${Object.entries(CARGO_DESC).map(([c,d])=>`<div class="cg"><span class="cpill" style="--k:${CARGO_COR[c]||'#64748b'}">${c}</span><small>${d}</small></div>`).join('')}</div>`:''}`;
   }
   return`<div class="stack eqtela"><div class="listhead"><h2>Equipe</h2><span class="muted small">${todos.length} pessoa${todos.length===1?'':'s'} cadastrada${todos.length===1?'':'s'}</span></div>
   <div class="kpis">${kpi('pend','Aguardando',pend.length,'#e0a100')}${kpi('ativos','Com acesso',ativos.length,'var(--baixa)')}${kpi('recus','Não liberados',recus.length,'var(--alta)')}${kpi('chefes','Chefes definidos',tabs[3][2],'var(--min)')}</div>
