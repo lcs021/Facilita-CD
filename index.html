@@ -62,6 +62,14 @@ h1{font-size:1.08rem;margin:0;font-weight:800;letter-spacing:-.01em;white-space:
 #sair{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--ink-fg);border-radius:10px;padding:7px 12px;font-weight:600;font-size:.84rem;cursor:pointer}
 #sair:hover{background:rgba(255,255,255,.16)}
 body.auth .topbar{display:none}
+.rodape{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 8px;margin:34px auto 0;padding:16px 12px 6px;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem;text-align:center}
+.rodape b{color:var(--fg);font-weight:700}
+.rodape .rd-sep{opacity:.5}
+.rodape .rd-logo{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;background:linear-gradient(135deg,#ff8a45,#e2621b);color:#fff}
+.rodape .rd-logo svg{width:12px;height:12px}
+.rodape-auth{border-top:0;margin-top:18px;padding-top:4px}
+body.auth #rodape{display:none}
+@media print{.rodape{display:none!important}}
 .temabtn{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--ink-fg);cursor:pointer;flex:none;transition:background .15s,transform .2s}
 .temabtn:hover{background:rgba(255,255,255,.16)}.temabtn:active{transform:rotate(-20deg)}.temabtn svg{width:18px;height:18px}
 .temaflut{position:fixed;top:14px;right:14px;z-index:40;background:var(--surface);border:1px solid var(--line);color:var(--fg);box-shadow:var(--sh1)}
@@ -262,6 +270,11 @@ ul.hist li{font-size:.9rem;border-left:2px solid var(--line2);padding-left:12px}
 .ctl{display:flex;flex-direction:column;gap:6px;flex:none;width:13rem}
 .ctl select{padding:8px 10px;font-size:.88rem}
 .ctl2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sbox{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--sunken);animation:rise .25s both}
+.sbox.ok{border-color:color-mix(in srgb,var(--baixa) 45%,var(--line));background:color-mix(in srgb,var(--baixa) 8%,var(--surface))}
+.sbox small{color:var(--muted);font-size:.78rem;line-height:1.35}
+.snova{display:flex;gap:6px;align-items:center}.snova input{flex:1;min-width:0;padding:9px 11px}
+.snova b{flex:1;font-size:1.15rem;letter-spacing:.06em;background:var(--surface);border:1px dashed var(--line2);border-radius:10px;padding:8px 11px}
 .ctl2 .btn{padding:8px 6px}
 .nao{color:var(--alta);font-weight:700}
 details summary{cursor:pointer;list-style-position:inside}
@@ -595,6 +608,7 @@ nav#nav{display:none!important}
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <main id="view"><div class="center box"><p class="muted">Carregando…</p></div></main>
+  <footer class="rodape" id="rodape"></footer>
 </div>
 <nav id="nav" hidden>
   <button data-tab="lista"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg></span>Registros</button>
@@ -823,6 +837,20 @@ alter table public.ocorrencias add column if not exists data_ref date;
 -- Cargos: Chefe de Inventário e Auxiliar de Inventário
 alter table public.perfis alter column cargo set default 'Auxiliar de Inventário';
 update public.perfis set cargo = 'Auxiliar de Inventário' where cargo not in ('Chefe de Inventário','Auxiliar de Inventário');
+
+-- Administrador redefine a senha de um usuário (a senha antiga não é visível; fica guardada só em forma criptografada)
+create extension if not exists pgcrypto with schema extensions;
+create or replace function public.admin_redefinir_senha(alvo uuid, nova text) returns void
+language plpgsql security definer set search_path = public, extensions, auth as $$
+begin
+  if not public.is_admin() then raise exception 'Apenas o administrador pode redefinir senhas'; end if;
+  if length(coalesce(nova, '')) < 6 then raise exception 'A senha precisa ter pelo menos 6 caracteres'; end if;
+  update auth.users set encrypted_password = extensions.crypt(nova, extensions.gen_salt('bf')), updated_at = now() where id = alvo;
+  if not found then raise exception 'Usuário não encontrado'; end if;
+end
+$$;
+revoke all on function public.admin_redefinir_senha(uuid, text) from public, anon;
+grant execute on function public.admin_redefinir_senha(uuid, text) to authenticated;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
@@ -970,6 +998,7 @@ const linhaBai=()=>({sku:'',produto:'',qtd:'1',custo:''});
 function novo(){return{cat:ui.cat||'Garantia',setor:ui.cat==='Minucioso'?ui.setor:'',qs:'',qc:'',chefe:ui.cat==='Minucioso'?chefeDe(ui.setor):'',custo:'',falta:'',motivo_inventario:'',motivo_chefe:'',motivo_allan:'',bai:[linhaBai()],req:'',dref:'',origem:'',forn:'',idq:'',tipo:'',end:'',andar:'',letra:'',sku:'',produto:'',fab:'',qtd:'',obs:'',fotos:[],videos:[]}}
 
 function render(){
+  {const rf=$('rodape');if(rf&&!rf.innerHTML)rf.innerHTML=rodapeHTML()}
   const v=$('view'),fora=()=>{$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';$('side').hidden=true;abreMenu(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
   if(!sb)return;
   document.body.classList.toggle('auth',!uid);
@@ -1019,11 +1048,13 @@ const IC={
  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>'};
 const lerLembrado=()=>{try{return localStorage.getItem('inv_email')||''}catch(e){return''}};
 const gravaLembrado=v=>{try{v?localStorage.setItem('inv_email',v):localStorage.removeItem('inv_email')}catch(e){}};
+const IC_RD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>';
+const rodapeHTML=()=>`<span class="rd-logo">${IC_RD}</span><span>Facilita CD</span><span class="rd-sep">·</span><span>Criado por <b>Lucas Carvalho</b></span><span class="rd-sep">·</span><span>© ${new Date().getFullYear()}</span>`;
 const authShell=(mode,titulo,sub,form)=>`<div class="authshell"><button type="button" class="temabtn temaflut" data-tflut="1"></button><div class="acard" id="acard">
   <div class="alogo"><span class="logo">${IC.box}</span><div><h1>${titulo}</h1><p>${sub}</p></div></div>
   <div class="apanel">${form}</div>
   <p class="atroca">${mode==='login'?'Ainda não tem cadastro? <button class="btn link" type="button" id="irCad">Criar cadastro</button>':'Já tem cadastro? <button class="btn link" type="button" id="irLogin">Entrar</button>'}</p>
-  </div></div>`;
+  <footer class="rodape rodape-auth">${rodapeHTML()}</footer></div></div>`;
 const campo=(id,rot,tipo,ac,ico,extra='')=>`<div class="field"><label class="lbl" for="${id}">${rot}</label><div class="inp${tipo==='password'?' pw':''}">${IC[ico]}<input id="${id}" type="${tipo}" autocomplete="${ac}" ${extra}>${tipo==='password'?`<button type="button" class="eye" data-eye="${id}" aria-label="Mostrar senha" tabindex="-1">${IC.eye}</button>`:''}</div></div>`;
 const mostraEmail=p=>p.email&&!/\+u[0-9a-f]{10}@/.test(p.email);
 function authErr(er,msg){er.textContent=msg;er.hidden=false;const c=$('acard');if(c){c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}}
@@ -1782,7 +1813,7 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
     <div class="pc-act"><label class="pc-sel"><span>Cargo</span><select data-cg="${esc(p.id)}" aria-label="Cargo de ${esc(p.nome)}">${opcoes('Auxiliar de Inventário')}</select></label>
     <div class="ctl2"><button class="btn sm primary" data-ok="${esc(p.id)}">✓ Liberar</button><button class="btn sm danger" data-nao="${esc(p.id)}">✕ Não liberar</button></div></div>`);
   const cAtivo=(p,i)=>card(p,i,`${topo(p,cargoPill(p))}${stats(p)}
-    ${p.id!==uid&&!p.admin?`<div class="pc-act"><label class="pc-sel"><span>Cargo</span><select data-cg="${esc(p.id)}" data-ativo="1" aria-label="Cargo de ${esc(p.nome)}">${opcoes(cargoNome(p.cargo))}</select></label><button class="btn sm" data-rev="${esc(p.id)}">Remover acesso</button></div>`:''}`);
+    ${p.id!==uid&&!p.admin?`<div class="pc-act"><label class="pc-sel"><span>Cargo</span><select data-cg="${esc(p.id)}" data-ativo="1" aria-label="Cargo de ${esc(p.nome)}">${opcoes(cargoNome(p.cargo))}</select></label>${senhaBox(p)}<button class="btn sm" data-rev="${esc(p.id)}">Remover acesso</button></div>`:''}`);
   const cRec=(p,i)=>card(p,i,`${topo(p,'<span class="cpill" style="--k:var(--alta)">Não liberado</span>')}<div class="muted small">Cadastrou-se em ${fData(p.criado)}</div>
     <div class="pc-act">${ui.confExcl===p.id?`<span class="small" style="font-weight:800;color:var(--alta)">Excluir de vez? Não dá para desfazer.</span><div class="ctl2"><button class="btn sm danger" data-exsim="${esc(p.id)}">Excluir</button><button class="btn sm" data-exnao="1">Cancelar</button></div>`:`<div class="ctl2"><button class="btn sm" data-rec="${esc(p.id)}">↺ Reconsiderar</button><button class="btn sm danger" data-excl="${esc(p.id)}">Excluir</button></div>`}</div>`);
   const tabs=[['pend','Aguardando',pend.length],['ativos','Com acesso',ativos.length],['recus','Não liberados',recus.length],['chefes','Chefes dos setores',SETORES.filter(s=>chefeDe(s)).length+'/'+SETORES.length]];
@@ -1807,6 +1838,11 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   ${corpo}</div>`}
 const PERM_IC={'registrar':'<path d="M12 5v14M5 12h14"/>','resumo':'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>','garantia':'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>','apagar':'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
 const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','registrar':'#0d9488','resumo':'#0ea5e9','garantia':'#d97706','apagar':'var(--alta)'};
+const geraSenha=()=>{const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];for(let i=0;i<4;i++)s+=n[Math.floor(Math.random()*n.length)];return s};
+function senhaBox(p){if(ui.senhaOk&&ui.senhaOk.id===p.id)return`<div class="sbox ok"><span class="lbl">Nova senha de ${esc(p.nome)}</span><div class="snova"><b class="mono" id="snTxt">${esc(ui.senhaOk.s)}</b><button type="button" class="btn sm" data-scopy="1">Copiar</button></div><small>Passe essa senha para a pessoa. Ela não fica salva em lugar nenhum, então anote se precisar.</small><button type="button" class="btn sm" data-sfim="1">Pronto</button></div>`;
+  if(ui.senhaDe!==p.id)return`<button class="btn sm" data-senha="${esc(p.id)}">🔑 Redefinir senha</button>`;
+  return`<div class="sbox"><span class="lbl">Nova senha para ${esc(p.nome)}</span><div class="snova"><input id="snInp" class="mono" value="${esc(ui.senhaRasc||'')}" placeholder="mín. 6 caracteres" autocomplete="new-password"><button type="button" class="btn sm" data-sgera="1">Gerar</button></div>
+  <div class="ctl2"><button type="button" class="btn sm primary" data-ssalva="${esc(p.id)}">Salvar senha</button><button type="button" class="btn sm" data-scanc="1">Cancelar</button></div></div>`}
 function permHTML(){const pa=CARGOS['Auxiliar de Inventário']||[],on=PERMS.filter(p=>pa.includes(p[0])).length,pct=Math.round(on/PERMS.length*100);
   const row=([k,n,d],i)=>{const ic=k.startsWith('mod:')?icMod[k.slice(4)]:PERM_IC[k],ok=pa.includes(k);
     return`<label class="prow${ok?' on':''}${k==='apagar'?' perigo':''}" style="--c:${PERM_COR[k]};--i:${i}"><span class="pic">${svgI(ic)}</span><span class="pt"><b>${n}</b><small>${d}</small></span><span class="pst">${ok?'Liberado':'Bloqueado'}</span><input type="checkbox" class="sw" data-perm="${esc(k)}" ${ok?'checked':''} ${cargosOk?'':'disabled'} aria-label="${esc(n)}"></label>`};
@@ -1825,6 +1861,15 @@ async function salvaPerms(perms,msg){document.querySelectorAll('[data-perm],[dat
   CARGOS['Auxiliar de Inventário']=perms;toast(msg);const y=scrollY;render();scrollTo(0,y)}
 async function mudaPerfil(id,campos,msg){const {error}=await sb.from('perfis').update(campos).eq('id',id);if(error){toast(erroMsg(error));return}Object.assign(perfis[id],campos);toast(msg);render()}
 function bindEquipe(){
+  document.querySelectorAll('[data-senha]').forEach(b=>b.onclick=()=>{ui.senhaDe=b.dataset.senha;ui.senhaRasc=geraSenha();ui.senhaOk=null;render();const i=$('snInp');if(i){i.focus();i.select()}});
+  document.querySelectorAll('[data-sgera]').forEach(b=>b.onclick=()=>{const i=$('snInp');i.value=geraSenha();ui.senhaRasc=i.value});
+  const si=$('snInp');if(si)si.oninput=()=>{ui.senhaRasc=si.value};
+  document.querySelectorAll('[data-scanc],[data-sfim]').forEach(b=>b.onclick=()=>{ui.senhaDe=null;ui.senhaOk=null;ui.senhaRasc='';render()});
+  document.querySelectorAll('[data-scopy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(ui.senhaOk.s);toast('Senha copiada')}catch(e){toast('Não deu para copiar. Anote a senha.')}});
+  document.querySelectorAll('[data-ssalva]').forEach(b=>b.onclick=async()=>{const s=($('snInp').value||'').trim();if(s.length<6){toast('A senha precisa ter pelo menos 6 caracteres.');return}
+    b.disabled=true;const {error}=await sb.rpc('admin_redefinir_senha',{alvo:b.dataset.ssalva,nova:s});b.disabled=false;
+    if(error){toast(/admin_redefinir_senha|function|schema cache/i.test(error.message||'')&&!/administrador|caracteres/.test(error.message||'')?'O banco precisa de uma atualização (redefinir senha). Rode o SQL novo no Supabase.':erroMsg(error));return}
+    ui.senhaOk={id:b.dataset.ssalva,s};ui.senhaDe=null;ui.senhaRasc='';render()});
   document.querySelectorAll('[data-perm]').forEach(c=>c.addEventListener('change',()=>{const atual=new Set(CARGOS['Auxiliar de Inventário']||[]);c.checked?atual.add(c.dataset.perm):atual.delete(c.dataset.perm);
     const nm=PERMS.find(p=>p[0]===c.dataset.perm)[1];salvaPerms(TODAS.filter(k=>atual.has(k)),(c.checked?'Liberado: ':'Bloqueado: ')+nm)}));
   document.querySelectorAll('[data-pall]').forEach(b=>b.addEventListener('click',()=>salvaPerms(b.dataset.pall==='1'?[...TODAS]:[],b.dataset.pall==='1'?'Tudo liberado para o Auxiliar':'Tudo bloqueado para o Auxiliar')));
