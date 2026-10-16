@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script>try{var tm=localStorage.getItem("inv_tema");if(tm==="light"||tm==="dark")document.documentElement.dataset.theme=tm}catch(e){}</script>
 <title>Facilita CD</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22lgBg%22%20x1%3D%224%22%20y1%3D%222%22%20x2%3D%2244%22%20y2%3D%2246%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%235B8CFF%22/%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%232F63E6%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231B3FA6%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22lgTop%22%20x1%3D%2224%22%20y1%3D%228%22%20x2%3D%2224%22%20y2%3D%2224%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23F0F5FF%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2213%22%20fill%3D%22url%28%23lgBg%29%22/%3E%3Crect%20x%3D%22.75%22%20y%3D%22.75%22%20width%3D%2246.5%22%20height%3D%2246.5%22%20rx%3D%2212.3%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.22%22%20stroke-width%3D%221.5%22/%3E%3Cpath%20d%3D%22M24%208.2%2038.2%2016%2024%2023.8%209.8%2016z%22%20fill%3D%22url%28%23lgTop%29%22/%3E%3Cpath%20d%3D%22M9.8%2016%2024%2023.8v16.1L9.8%2032.1z%22%20fill%3D%22%23fff%22%20fill-opacity%3D%22.82%22/%3E%3Cpath%20d%3D%22M38.2%2016%2024%2023.8v16.1l14.2-7.8z%22%20fill%3D%22%23fff%22%20fill-opacity%3D%22.5%22/%3E%3Cpath%20d%3D%22m17.8%2015.9%204%202.4%207.6-5%22%20fill%3D%22none%22%20stroke%3D%22%232457D6%22%20stroke-width%3D%222.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
 /* Layout: barra superior escura, conteúdo em coluna de 680px, navegação inferior com botão central de registrar */
@@ -56,6 +56,9 @@ button,input,select,textarea{font-family:inherit}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
 .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#ff8a45,#e2621b);display:grid;place-items:center;flex:none;box-shadow:0 2px 8px rgba(226,98,27,.35)}
 .logo svg{width:20px;height:20px;color:#fff}
+.logo:has(svg.lg),.rd-logo:has(svg.lg){background:none!important}
+.logo svg.lg,.hero .logo svg.lg,.alogo .logo svg.lg,.rd-logo svg.lg{width:100%!important;height:100%!important;display:block}
+.logo:has(svg.lg){box-shadow:0 4px 14px rgba(36,87,214,.35)}
 h1{font-size:1.08rem;margin:0;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
 .hdr{display:flex;align-items:center;gap:10px;min-width:0}
 .who{font-size:.82rem;color:#b8c2d6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
@@ -134,7 +137,7 @@ body.auth{background:var(--bg)}
 .hero h1{font-size:1.6rem;white-space:normal}
 .hero p{margin:0;color:var(--muted)}
 .authshell{position:fixed;inset:0;z-index:30;overflow:auto;display:flex;align-items:center;justify-content:center;padding:24px 16px;
-  background:radial-gradient(600px 320px at 50% 0%,var(--gar-soft),transparent 70%),var(--bg)}
+  background:radial-gradient(600px 320px at 50% 0%,var(--accent-soft),transparent 70%),var(--bg)}
 .acard{width:100%;max-width:400px;margin:auto;animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
 .acard.shake{animation:shake .4s}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -604,7 +607,7 @@ nav#nav{display:none!important}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="Facilita CD, voltar à tela principal"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Facilita CD</h1></button></div><div class="hdr"><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="Facilita CD, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBgH" x1="4" y1="2" x2="44" y2="46" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5B8CFF"/><stop offset=".5" stop-color="#2F63E6"/><stop offset="1" stop-color="#1B3FA6"/></linearGradient><linearGradient id="lgTopH" x1="24" y1="8" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#F0F5FF"/></linearGradient></defs><rect width="48" height="48" rx="13" fill="url(#lgBgH)"/><rect x=".75" y=".75" width="46.5" height="46.5" rx="12.3" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="1.5"/><path d="M24 8.2 38.2 16 24 23.8 9.8 16z" fill="url(#lgTopH)"/><path d="M9.8 16 24 23.8v16.1L9.8 32.1z" fill="#fff" fill-opacity=".82"/><path d="M38.2 16 24 23.8v16.1l14.2-7.8z" fill="#fff" fill-opacity=".5"/><path d="m17.8 15.9 4 2.4 7.6-5" fill="none" stroke="#2457D6" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h1>Facilita CD</h1></button></div><div class="hdr"><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <main id="view"><div class="center box"><p class="muted">Carregando…</p></div></main>
@@ -1051,10 +1054,12 @@ const IC={
  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>'};
 const lerLembrado=()=>{try{return localStorage.getItem('inv_email')||''}catch(e){return''}};
 const gravaLembrado=v=>{try{v?localStorage.setItem('inv_email',v):localStorage.removeItem('inv_email')}catch(e){}};
+let logoN=0;const LOGO_BASE=`<svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBg" x1="4" y1="2" x2="44" y2="46" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5B8CFF"/><stop offset=".5" stop-color="#2F63E6"/><stop offset="1" stop-color="#1B3FA6"/></linearGradient><linearGradient id="lgTop" x1="24" y1="8" x2="24" y2="24" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#F0F5FF"/></linearGradient></defs><rect width="48" height="48" rx="13" fill="url(#lgBg)"/><rect x=".75" y=".75" width="46.5" height="46.5" rx="12.3" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="1.5"/><path d="M24 8.2 38.2 16 24 23.8 9.8 16z" fill="url(#lgTop)"/><path d="M9.8 16 24 23.8v16.1L9.8 32.1z" fill="#fff" fill-opacity=".82"/><path d="M38.2 16 24 23.8v16.1l14.2-7.8z" fill="#fff" fill-opacity=".5"/><path d="m17.8 15.9 4 2.4 7.6-5" fill="none" stroke="#2457D6" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const logoSVG=()=>{const k='lg'+(++logoN);return LOGO_BASE.replace(/lgBg/g,k+'b').replace(/lgTop/g,k+'t')};
 const IC_RD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>';
-const rodapeHTML=()=>`<span class="rd-logo">${IC_RD}</span><span>Facilita CD</span><span class="rd-sep">·</span><span>Criado por <b>Lucas Carvalho</b></span><span class="rd-sep">·</span><span>© ${new Date().getFullYear()}</span>`;
+const rodapeHTML=()=>`<span class="rd-logo">${logoSVG()}</span><span>Facilita CD</span><span class="rd-sep">·</span><span>Criado por <b>Lucas Carvalho</b></span><span class="rd-sep">·</span><span>© ${new Date().getFullYear()}</span>`;
 const authShell=(mode,titulo,sub,form)=>`<div class="authshell"><button type="button" class="temabtn temaflut" data-tflut="1"></button><div class="acard" id="acard">
-  <div class="alogo"><span class="logo">${IC.box}</span><div><h1>${titulo}</h1><p>${sub}</p></div></div>
+  <div class="alogo"><span class="logo">${logoSVG()}</span><div><h1>${titulo}</h1><p>${sub}</p></div></div>
   <div class="apanel">${form}</div>
   <p class="atroca">${mode==='login'?'Ainda não tem cadastro? <button class="btn link" type="button" id="irCad">Criar cadastro</button>':'Já tem cadastro? <button class="btn link" type="button" id="irLogin">Entrar</button>'}</p>
   <footer class="rodape rodape-auth">${rodapeHTML()}</footer></div></div>`;
