@@ -916,7 +916,7 @@ const SUPABASE_URL='';const SUPABASE_KEY='';
 /* =============================================================== */
 
 const ORIGINAL='<!doctype html>\n'+document.documentElement.outerHTML;
-const TIPOS_CAT={'Garantia':['Peça quebrada','Peça com defeito','Embalagem violada','Kit incompleto'],'Relatório':['Avaria / peça quebrada','Embalagem violada','Sem etiqueta / ilegível','Código divergente (peça trocada)','Kit incompleto']};
+const TIPOS_CAT={'Garantia':['Peça quebrada','Peça com defeito','Embalagem violada','Kit incompleto'],'Relatório':['Avaria / peça quebrada','Avaria / peça quebrada de fábrica','Material de devolução Mercado Livre','Material de devolução Shopee']};
 const ORIGENS={'Loja':'Retirado como quebrado na loja','Fábrica':'Veio quebrado ou com defeito do fabricante','Transporte':'Quebrou no frete ou na entrega','CD':'Quebrou dentro do CD'};
 const TIPOS=[...new Set([...TIPOS_CAT['Garantia'],...TIPOS_CAT['Relatório']])];
 const PERMS=[['mod:Garantia','Módulo Garantia','Ver e usar as garantias'],['mod:Relatório','Módulo Relatório','Ver e usar os relatórios'],['mod:Minucioso','Módulo Minucioso','Ver e usar as fichas do Minucioso'],['mod:Consertos Baiano','Módulo Consertos Baiano','Ver e usar os consertos'],['registrar','Criar registros','Lançar registros novos nos módulos liberados'],['resumo','Ver o Resumo','Abrir a tela de gráficos e totais'],['garantia','Editar registros','Atualizar a situação das garantias e os motivos do Minucioso'],['apagar','Apagar registros','Apagar registros, fotos e vídeos']];
