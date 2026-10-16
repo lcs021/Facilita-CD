@@ -466,9 +466,9 @@ code{font-family:var(--mono);font-size:.86em;background:var(--sunken);padding:1p
   .side{width:250px;overflow:visible;padding-bottom:20px;bottom:auto;border-radius:0 0 14px 0;border-bottom:1px solid var(--line)}
   .sideback{display:none!important}
   .mwrap{position:relative}
-  .mwrap .subitems{display:none;position:absolute;left:calc(100% + 8px);top:-8px;width:250px;margin:0;padding:8px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--sh2)}
-  .mwrap .subitems::before{content:"";position:absolute;left:-14px;top:0;bottom:0;width:14px}
-  .mwrap:hover .subitems,.mwrap:focus-within .subitems{display:flex}
+  .mwrap .subitems{display:flex!important;visibility:hidden;opacity:0;transform:translateX(-4px);transition:opacity .15s,transform .15s,visibility 0s linear .4s;position:absolute;left:calc(100% + 8px);top:-8px;width:250px;margin:0;padding:8px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--sh2)}
+  .mwrap .subitems::before{content:"";position:absolute;left:-16px;top:0;bottom:0;width:16px}
+  .mwrap:hover .subitems,.mwrap:focus-within .subitems{visibility:visible;opacity:1;transform:none;transition-delay:0s}
   .mwrap:hover>.sitem .chev{transform:rotate(90deg)}
 }
 /* Menu moderno */
@@ -520,7 +520,7 @@ code{font-family:var(--mono);font-size:.86em;background:var(--sunken);padding:1p
 @media (hover:hover) and (min-width:960px){
   .side{width:280px;transition:transform .22s cubic-bezier(.2,.8,.2,1),opacity .22s;opacity:0}
   .side.open{opacity:1}
-  .mwrap .subitems{width:290px;max-height:calc(100vh - 140px);overflow-y:auto;padding:10px}
+  .mwrap .subitems{width:290px;max-height:calc(100vh - 90px);overflow-y:auto;overscroll-behavior:contain;padding:10px}
 }
 nav#nav{display:none!important}
 .wrap{padding-block:18px 48px}
@@ -962,7 +962,10 @@ function renderSide(){const s=$('side');s.innerHTML=sideHTML();s.querySelectorAl
   const bs=$('buscaSetor');if(bs){bs.addEventListener('click',e=>e.stopPropagation());bs.addEventListener('input',()=>{const q=bs.value.trim().toLowerCase();let vis=0;
     s.querySelectorAll('.ssub[data-busca]').forEach(b=>{const ok=!q||b.dataset.busca.includes(q);b.hidden=!ok;if(ok)vis++});s.querySelector('.ssub.todos').hidden=!!q;s.querySelector('.subvazio').hidden=vis>0})}
   s.querySelectorAll('[data-mcat]').forEach(b=>b.onclick=()=>escolheMenu(b.dataset.mcat,''));
-  s.querySelectorAll('[data-mset]').forEach(b=>b.onclick=()=>escolheMenu('Minucioso',b.dataset.mset))}
+  s.querySelectorAll('[data-mset]').forEach(b=>b.onclick=()=>escolheMenu('Minucioso',b.dataset.mset));
+  const mw=s.querySelector('.mwrap');if(mw){const pos=()=>{if(!mqHover.matches)return;const sub=mw.querySelector('.subitems');if(!sub)return;sub.style.top='-8px';
+      requestAnimationFrame(()=>{const r=mw.getBoundingClientRect(),h=sub.offsetHeight,lim=innerHeight-12,topo=Math.max(72,Math.min(r.top-8,lim-h));sub.style.top=(topo-r.top)+'px'})};
+    mw.addEventListener('mouseenter',pos);mw.addEventListener('focusin',pos);pos()}}
 function escolheMenu(cat,setor){ui={...ui,cat,setor:setor||'',gst:'',tipo:'',det:null,confDel:false};
   if(ui.tab==='nova'){if(!draft)draft=novo();draft.cat=cat;if(cat!=='Garantia')draft.origem='';if(!(TIPOS_CAT[cat]||[]).includes(draft.tipo))draft.tipo='';
     if(cat==='Minucioso'){draft.setor=ui.setor;draft.chefe=chefeDe(ui.setor)||''}}
