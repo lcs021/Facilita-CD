@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script>try{var tm=localStorage.getItem("inv_tema");if(tm==="light"||tm==="dark")document.documentElement.dataset.theme=tm}catch(e){}</script>
-<title>Facilita CD</title>
+<title>Central de Inventário</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
@@ -604,7 +604,7 @@ nav#nav{display:none!important}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="Facilita CD, voltar à tela principal"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Facilita CD</h1></button></div><div class="hdr"><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="Central de Inventário, voltar à tela principal"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span><h1>Central de Inventário</h1></button></div><div class="hdr"><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <main id="view"><div class="center box"><p class="muted">Carregando…</p></div></main>
@@ -1049,7 +1049,7 @@ const IC={
 const lerLembrado=()=>{try{return localStorage.getItem('inv_email')||''}catch(e){return''}};
 const gravaLembrado=v=>{try{v?localStorage.setItem('inv_email',v):localStorage.removeItem('inv_email')}catch(e){}};
 const IC_RD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>';
-const rodapeHTML=()=>`<span class="rd-logo">${IC_RD}</span><span>Facilita CD</span><span class="rd-sep">·</span><span>Criado por <b>Lucas Carvalho</b></span><span class="rd-sep">·</span><span>© ${new Date().getFullYear()}</span>`;
+const rodapeHTML=()=>`<span class="rd-logo">${IC_RD}</span><span>Central de Inventário</span><span class="rd-sep">·</span><span>Criado por <b>Lucas Carvalho</b></span><span class="rd-sep">·</span><span>© ${new Date().getFullYear()}</span>`;
 const authShell=(mode,titulo,sub,form)=>`<div class="authshell"><button type="button" class="temabtn temaflut" data-tflut="1"></button><div class="acard" id="acard">
   <div class="alogo"><span class="logo">${IC.box}</span><div><h1>${titulo}</h1><p>${sub}</p></div></div>
   <div class="apanel">${form}</div>
@@ -1064,7 +1064,7 @@ function authFx(f){const tf=document.querySelector('[data-tflut]');if(tf)tf.oncl
     if(on&&!w){i.closest('.field').insertAdjacentHTML('beforeend',`<div class="caps">${IC.warn}Caps Lock ligado</div>`)}else if(!on&&w)w.remove()};
     i.addEventListener('keydown',chk);i.addEventListener('keyup',chk);i.addEventListener('blur',()=>{const w=i.closest('.field').querySelector('.caps');if(w)w.remove()})});
 }
-function loginHTML(){const lem=lerLembrado();return authShell('login','Facilita CD','Entre com seu usuário e senha.',`<form class="stack" id="flogin" novalidate>
+function loginHTML(){const lem=lerLembrado();return authShell('login','Central de Inventário','Entre com seu usuário e senha.',`<form class="stack" id="flogin" novalidate>
   ${campo('lemail','Usuário','text','username','user',`value="${esc(lem)}" placeholder="Ex.: Lucas Carvalho" autocapitalize="off" spellcheck="false"`)}
   ${campo('lsenha','Senha','password','current-password','lock','placeholder="Sua senha"')}
   <label class="lembrar"><input type="checkbox" id="lembrar" ${lem?'checked':''}>Lembrar meu usuário neste computador</label>
@@ -1319,7 +1319,7 @@ function montaRelatorioXL(cfg){ // cfg:{titulo,sub,cor,kpis,graficos(2),rankings
     cf.push(`<conditionalFormatting sqref="${XL.col(c1+5)}37:${XL.col(c1+5)}${last+1}"><cfRule type="dataBar" priority="${ri+1}"><dataBar><cfvo type="num" val="0"/><cfvo type="max"/><color rgb="FF${cfg.cor}"/></dataBar></cfRule></conditionalFormatting>`);
     fim=Math.max(fim,last+1)});
   for(let r=34;r<=fim;r++){const ex=rows.find(x=>x.r===r);for(let c=0;c<NC;c++){if(!ex||!ex.cells.some(y=>y[0]===c))row(r,null,[[c,'',22]])}}
-  fundo(fim+1,14);fundo(fim+2,18);row(fim+2,18,[[1,'Gerado pelo Facilita CD. Os números dos gráficos ficam na aba "Base" (oculta) e a lista completa na aba "Dados".',33]]);merges.push(`B${fim+3}:P${fim+3}`);fundo(fim+3,10);
+  fundo(fim+1,14);fundo(fim+2,18);row(fim+2,18,[[1,'Gerado pelo Central de Inventário. Os números dos gráficos ficam na aba "Base" (oculta) e a lista completa na aba "Dados".',33]]);merges.push(`B${fim+3}:P${fim+3}`);fundo(fim+3,10);
   // base dos gráficos (aba oculta)
   const G=cfg.graficos.slice(0,2),brow=[],fontes=[];let br=0;
   G.forEach(g=>{const its=g.itens.length?g.itens:[['Sem dados',0]];brow.push({r:br,cells:[[0,g.titulo,7],[1,g.moeda?'Valor':'Quantidade',7]]});
@@ -1352,7 +1352,7 @@ function montaRelatorioXL(cfg){ // cfg:{titulo,sub,cor,kpis,graficos(2),rankings
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>
 <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="${ws}"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="${ws}"/><Override PartName="/xl/worksheets/sheet3.xml" ContentType="${ws}"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/><Override PartName="/xl/drawings/drawing1.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>${charts.map((_,i)=>`<Override PartName="/xl/charts/chart${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>`).join('')}<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`],
     ['_rels/.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${ns}"><Relationship Id="rId1" Type="${od}/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`],
-    ['docProps/core.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${XL.x(cfg.titulo)}</dc:title><dc:creator>Facilita CD</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString().slice(0,19)}Z</dcterms:created></cp:coreProperties>`],
+    ['docProps/core.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${XL.x(cfg.titulo)}</dc:title><dc:creator>Central de Inventário</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString().slice(0,19)}Z</dcterms:created></cp:coreProperties>`],
     ['xl/workbook.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="${od}"><bookViews><workbookView activeTab="0"/></bookViews><sheets><sheet name="${R}" sheetId="1" r:id="rId1"/><sheet name="${D}" sheetId="2" r:id="rId2"/><sheet name="${BS}" sheetId="3" state="hidden" r:id="rId4"/></sheets>${cfg.linhas.length?`<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="1" hidden="1">'${D}'!$A$${hdr+1}:$${XL.col(cols.length-1)}$${ult+1}</definedName></definedNames>`:''}</workbook>`],
     ['xl/_rels/workbook.xml.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${ns}"><Relationship Id="rId1" Type="${od}/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="${od}/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId4" Type="${od}/worksheet" Target="worksheets/sheet3.xml"/><Relationship Id="rId3" Type="${od}/styles" Target="styles.xml"/></Relationships>`],
     ['xl/styles.xml',estilosXL(cfg.cor)],
@@ -1424,8 +1424,8 @@ async function exportarExcel(lista,op={}){
     rankings=[{titulo:'Peças mais registradas',cabNome:'Peça',cabVal:'Qtd',itens:top(peca,o=>Number(o.qtd)||1)},{titulo:'Quem mais registrou',cabNome:'Pessoa',cabVal:'Relatórios',itens:pessoa.slice(0,8)}];
     linhas=lista.map(base);
   }
-  const blob=montaRelatorioXL({titulo:'Facilita CD  ·  '+(op.titulo||'Relatório de '+nomeCat),sub,cor,kpis,graficos:(op.g1?[op.g1,...graficos.slice(1)]:graficos).slice(0,2),rankings,colunas,linhas});
-  const partes=['facilita-cd',{'Garantia':'garantias','Minucioso':'minucioso','Consertos Baiano':'consertos-baiano','Geral':'relatorio-geral'}[cat]||'relatorios'];if(op.arquivo)partes.push(op.arquivo);if(cat==='Minucioso'&&ui.setor)partes.push(ui.setor.toLowerCase().replace(/[^a-z0-9]+/gi,'-'));if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
+  const blob=montaRelatorioXL({titulo:'Central de Inventário  ·  '+(op.titulo||'Relatório de '+nomeCat),sub,cor,kpis,graficos:(op.g1?[op.g1,...graficos.slice(1)]:graficos).slice(0,2),rankings,colunas,linhas});
+  const partes=['central-de-inventario',{'Garantia':'garantias','Minucioso':'minucioso','Consertos Baiano':'consertos-baiano','Geral':'relatorio-geral'}[cat]||'relatorios'];if(op.arquivo)partes.push(op.arquivo);if(cat==='Minucioso'&&ui.setor)partes.push(ui.setor.toLowerCase().replace(/[^a-z0-9]+/gi,'-'));if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
   if(ui.pessoa)partes.push(nome(ui.pessoa).split(' ')[0].toLowerCase());if(!op.arquivo)partes.push(ui.de||ui.ate?(ui.de||'inicio')+'_a_'+(ui.ate||hoje()):hoje());
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=partes.join('-').normalize('NFD').replace(/[̀-ͯ]/g,'')+'.xlsx';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);
   toast('Relatório em Excel gerado ('+lista.length+(lista.length===1?' registro)':' registros)'));
