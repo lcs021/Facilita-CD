@@ -378,7 +378,7 @@ details summary{cursor:pointer;list-style-position:inside}
 .chefrow b{font-size:.9rem}
 @media (max-width:420px){.chefrow{grid-template-columns:1fr auto}.chefrow b{grid-column:1/-1}}
 .gst{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
-.gst.p{background:#fdf2c7;color:#7a5600}.gst.e{background:#dcfce7;color:#166534}.gst.f{background:var(--accent-soft);color:var(--accent)}
+.gst.p{background:#fdf2c7;color:#7a5600}.gst.e{background:#dcfce7;color:#166534}.gst.f{background:var(--accent-soft);color:var(--accent)}.gst.b{background:var(--bai-soft);color:var(--bai)}
 .gst.atr{background:color-mix(in srgb,var(--alta) 14%,var(--surface));color:var(--alta)}
 .alerta{display:flex;align-items:center;gap:12px;margin:0 0 16px;padding:12px 12px 12px 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--alta) 35%,var(--line));background:linear-gradient(90deg,color-mix(in srgb,var(--alta) 12%,var(--surface)),var(--surface));box-shadow:0 6px 18px color-mix(in srgb,var(--alta) 14%,transparent);animation:rise .35s both,pulsa 2.4s ease-in-out 3}
 .alerta .aic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex:none;background:var(--alta);color:#fff}
@@ -1194,8 +1194,8 @@ const totalBai=o=>(o.valor_conserto!=null)?Number(o.valor_conserto)*(Number(o.qt
 const dataBai=o=>o.data_ref?String(o.data_ref).slice(0,10).split('-').reverse().join('/'):new Date(o.criado).toLocaleDateString('pt-BR');
 const totalMin=o=>(o.custo!=null&&o.falta!=null)?Number(o.custo)*Number(o.falta):null;
 const difHTML=v=>v==null?'—':`<span class="dif ${v>0?'pos':v<0?'neg':'zero'}">${v>0?'+':''}${v}</span>`;
-const GST=['Pendente','Enviado à garantia da loja','Garantia PLASTIRON','Garantia R2A','Garantia BIBAS','Garantia DTS'];
-const gstCls=s=>({'Pendente':'p','Enviado à garantia da loja':'e','Crédito recebido':'c','Recusada':'r'})[s]||(/^Garantia /.test(s||'')?'f':'p');
+const GST=['Pendente','Enviado à garantia da loja','Garantia PLASTIRON','Garantia R2A','Garantia BIBAS','Garantia DTS','Conserto Baiano'];
+const gstCls=s=>({'Pendente':'p','Enviado à garantia da loja':'e','Crédito recebido':'c','Recusada':'r'})[s]||(s==='Conserto Baiano'?'b':/^Garantia /.test(s||'')?'f':'p');
 const gstBadge=o=>o.categoria==='Garantia'?`<span class="gst ${gstCls(o.gar_status)}">${esc(o.gar_status||'Pendente')}</span>`:'';
 const cargoNome=c=>CARGOS[c]?c:'Auxiliar de Inventário';
 const podeMod=c=>pode('mod:'+c);
@@ -1595,7 +1595,7 @@ async function exportarExcel(lista,op={}){
   const b=$(op.btn||'exportar'),txt0=b?b.textContent:'';if(b){b.disabled=true;b.textContent='Gerando…'}
   try{
   const cat=op.cat||ui.cat||'Relatório',d=o=>new Date(o.criado),qt=o=>Number(o.qtd)||0;
-  const enviadoEm=o=>{const h=[...(o.hist||[])].reverse().find(x=>/^(Enviado (ao fornecedor|à garantia)|Garantia )/.test(x.txt||''));return h?fData(h.t):''};
+  const enviadoEm=o=>{const h=[...(o.hist||[])].reverse().find(x=>/^(Enviado (ao fornecedor|à garantia)|Garantia |Conserto Baiano)/.test(x.txt||''));return h?fData(h.t):''};
   const periodo=op.periodo?op.periodo:ui.de||ui.ate?(ui.de===ui.ate?ui.de.split('-').reverse().join('/'):(ui.de?ui.de.split('-').reverse().join('/'):'início')+' a '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):'Todo o período';
   const filtros=op.periodo||op.cat==='Geral'?[]:[ui.gst&&'Situação: '+ui.gst,ui.setor&&'Setor: '+ui.setor,ui.tipo&&'Tipo: '+ui.tipo,ui.pessoa&&'Pessoa: '+nome(ui.pessoa),ui.busca&&'Busca: "'+ui.busca+'"'].filter(Boolean);
   const agora=new Date();
