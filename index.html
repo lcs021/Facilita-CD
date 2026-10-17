@@ -782,6 +782,19 @@ body.withside .wrap:has(.wms){max-width:1180px}
 .w-vazio2 span{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--baixa) 14%,var(--surface));color:var(--baixa);font-size:1.3rem}
 @media (max-width:560px){.wq2 li{grid-template-columns:auto 1fr auto}.wq2 li .wp,.wq2-go{display:none}.wsp{width:70px}}
 @media (prefers-reduced-motion:reduce){.wk2,.wpn2,.w-hero,.wq2 li,.wfeed2 li,.wsp-l{animation:none!important;stroke-dashoffset:0}}
+
+.wnovo{position:relative}
+.w-hero{position:relative;z-index:5}
+.wn-car{font-size:.7rem;margin-left:2px;opacity:.85}
+.wn-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:40;width:290px;padding:8px;border-radius:14px;border:1px solid var(--line);background:var(--surface);box-shadow:0 18px 44px rgba(15,23,42,.22),0 2px 6px rgba(15,23,42,.08);animation:rise .2s cubic-bezier(.2,.8,.2,1) both}
+.wn-tit{font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 8px 8px}
+.wn-op{width:100%;display:flex;align-items:center;gap:11px;padding:9px 8px;border:0;border-radius:10px;background:none;color:var(--fg);font:inherit;text-align:left;cursor:pointer;animation:entra .25s both;animation-delay:calc(var(--i)*40ms)}
+.wn-op:hover,.wn-op:focus-visible{background:var(--sunken);outline:none}
+.wn-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 80%,#fff),var(--c));color:#fff;box-shadow:0 4px 10px color-mix(in srgb,var(--c) 30%,transparent)}
+.wn-ic svg{width:17px;height:17px}
+.wn-tx{display:flex;flex-direction:column;min-width:0}.wn-tx b{font-size:.9rem}.wn-tx small{font-size:.75rem;color:var(--muted)}
+.wn-go{margin-left:auto;color:var(--muted);opacity:0;transition:opacity .15s,transform .15s}.wn-op:hover .wn-go{opacity:1;transform:translateX(2px);color:var(--c)}
+@media (max-width:560px){.wn-menu{right:auto;left:0;width:min(290px,calc(100vw - 48px))}}
 </style>
 </head>
 <body>
@@ -1129,7 +1142,7 @@ const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filte
   const item=c=>`<button title="${esc(sub[c])}" class="sitem ${cls[c]}${c==='Minucioso'&&ui.cat==='Minucioso'?' aberto':''}" data-mcat="${c}" aria-current="${ui.cat===c&&(c!=='Minucioso'||!ui.setor)}" style="--c:${cor[c]}">
     <span class="ico">${svgI(icMod[c])}</span><span class="tx"><b>${c}</b><small>${sub[c]}</small></span>${c==='Relatório'&&relAtrasados().length?`<span class="atrb" title="Relatórios com mais de 2 dias sem resolver">${relAtrasados().length}</span>`:''}<span class="n">${n(c)}</span>${c==='Minucioso'?icChev:''}</button>`;
   return`<div class="sidehead"><span class="av" style="background:${corNome(eu&&eu.nome)}">${esc(iniciais(eu&&eu.nome))}</span><div class="tx"><b>${esc(eu?eu.nome:'')}</b><small>${esc(eu?cargoNome(eu.cargo):'')}</small></div></div>
-  <button class="sidenew${ui.tab==='nova'?' ativo':''}" data-snew="1" ${pode('registrar')?'':'hidden'}>${svgI('<path d="M12 5v14M5 12h14"/>')}Novo registro${ui.cat?` <span>· ${esc(ui.cat==='Consertos Baiano'?'Baiano':ui.cat)}</span>`:''}</button>
+
   <div class="sidesec">Navegação</div>${navItem('painel','Painel','<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>')}${navItem('lista','Registros','<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/>')}${pode('resumo')?navItem('resumo','Resumo','<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'):''}${eu&&eu.admin?navItem('equipe','Equipe','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/>',pendEq):''}
   <div class="sidesec">Módulos</div>${podeMod('Garantia')?item('Garantia'):''}${podeMod('Relatório')?item('Relatório'):''}${podeMod('Minucioso')?`<div class="mwrap">${item('Minucioso')}
   <div class="subitems${ui.cat==='Minucioso'?' show':''}"><div class="subhead"><b>Setores</b><span>${SETORES.length}</span></div>
@@ -1325,7 +1338,7 @@ function filtrar(){const q=ui.busca.trim().toLowerCase();
   .sort((a,b)=>ts(b.criado)-ts(a.criado))}
 function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<button class="card" data-id="${esc(o.id)}">
   <div class="thumb">${f?`<img data-path="${esc(f)}" alt="">`:nv?'▶ vídeo':'sem foto'}${f&&nv?'<span class="vb">▶</span>':''}</div>
-  <div class="b"><div class="row"><span class="t">${esc(o.categoria==='Minucioso'?(o.produto||o.sku||'Relatório minucioso'):o.tipo)}</span>${catBadge(o.categoria)}</div>${ehRel(o)?`<div class="line">${relBadge(o)}</div>`:''}${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.origem?' · Origem: '+esc(o.origem):''}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}${o.categoria==='Minucioso'?`<div class="line"><b style="color:var(--min)">${esc(o.setor||'Sem setor')}</b>${o.chefe?' · Chefe: '+esc(o.chefe):''}${o.falta!=null?' · Falta: <b style="color:var(--alta)">'+esc(o.falta)+'</b>':difDe(o)!=null?' · Dif: '+difHTML(difDe(o)):''}${totalMin(o)!=null?' · '+brl(totalMin(o)):''}</div>`:''}
+  <div class="b"><div class="row"><span class="t">${esc(o.categoria==='Minucioso'?(o.produto||o.sku||'Relatório minucioso'):o.tipo)}</span>${catBadge(o.categoria)}</div>${ehRel(o)?`<div class="line">${relBadge(o)}</div>`:''}${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.origem?' · Origem: '+esc(o.origem):''}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}${o.categoria==='Minucioso'?`<div class="line"><span class="gst e">✓ Concluído</span></div><div class="line"><b style="color:var(--min)">${esc(o.setor||'Sem setor')}</b>${o.chefe?' · Chefe: '+esc(o.chefe):''}${o.falta!=null?' · Falta: <b style="color:var(--alta)">'+esc(o.falta)+'</b>':difDe(o)!=null?' · Dif: '+difHTML(difDe(o)):''}${totalMin(o)!=null?' · '+brl(totalMin(o)):''}</div>`:''}
   ${o.endereco||o.sku?`<div class="line">${o.endereco?`<span class="addr">${esc(o.endereco)}</span> `:''}${esc(o.sku||'')}</div>`:''}
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
   <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
@@ -1352,7 +1365,7 @@ function setoresGridHTML(){
   const tab=(s,txt)=>`<button type="button" class="subtab" data-fset="${esc(s)}" aria-pressed="${ui.setor===s}">${esc(txt)}<span class="sc">${n(s)}</span></button>`;
   const l=base.filter(o=>!ui.setor||o.setor===ui.setor),pf=l.reduce((a,o)=>a+(Number(o.falta)||0),0),vt=l.reduce((a,o)=>a+(totalMin(o)||0),0),semMot=l.filter(o=>!o.motivo_chefe).length;
   return`<div class="box sethead"><div class="row"><div><b>${ui.setor?esc(ui.setor):'Todos os setores'}</b><div class="muted small">${ui.setor?(chefeDe(ui.setor)?'Chefe: <b style="color:var(--fg)">'+esc(chefeDe(ui.setor))+'</b>':'Sem chefe definido · defina na aba Equipe'):'Escolha um setor no menu para ver só os relatórios dele'}</div></div><span class="cat min">Minucioso</span></div>
-  <div class="setnums"><div><b>${l.length}</b><span>relatório${l.length===1?'':'s'}</span></div><div><b class="dif neg">${pf}</b><span>peças em falta</span></div><div><b style="font-size:1rem">${brl(vt)}</b><span>valor em falta</span></div><div><b class="dif pos">${semMot}</b><span>sem motivo do chefe</span></div></div></div>`}
+  <div class="setnums"><div><b>${l.length}</b><span>relatório${l.length===1?'':'s'}</span></div><div><b class="dif neg">${pf}</b><span>peças em falta</span></div><div><b style="font-size:1rem">${brl(vt)}</b><span>valor em falta</span></div><div><b style="color:var(--baixa)">✓ ${l.length}</b><span>concluído${l.length===1?'':'s'}</span></div></div></div>`}
 function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{ui.det=c.dataset.id;render();scrollTo(0,0)}))}
 function bindLista(){bindBaiGraf();const pb=$('imprBai');if(pb)pb.onclick=()=>{const l=filtrar();if(l.length)imprimirBai(l.reverse())};document.querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>{ui.det=r.dataset.id;render();scrollTo(0,0)});
   const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
@@ -1980,8 +1993,7 @@ function painelHTML(){
   const kpi=(rot,val,sub,cor,ic,alvo,alerta)=>`<button type="button" class="wk${alerta?' al':''}" style="--k:${cor}" ${alvo?`data-ir="${alvo}"`:''}><span class="wk-top"><span class="wk-ic">${svgI(ic)}</span><span class="wk-rot">${rot}</span></span><b class="wk-val">${val}</b><span class="wk-sub">${sub}</span></button>`;
   // fila de pendências
   const fila=[...rAtr.map(o=>({p:1,o,tipo:'Relatório atrasado',det:o.tipo,loc:'—',acao:'Resolver'})),
-    ...gPend.map(o=>({p:(agora-ts(o.criado)>3*864e5)?1:2,o,tipo:'Garantia pendente',det:o.tipo,loc:o.origem||o.fornecedor||'—',acao:'Enviar à loja'})),
-    ...semMot.map(o=>({p:3,o,tipo:'Minucioso sem motivo',det:'Falta '+(o.falta??''),loc:o.setor||'—',acao:'Cobrar chefe'}))]
+    ...gPend.map(o=>({p:(agora-ts(o.criado)>3*864e5)?1:2,o,tipo:'Garantia pendente',det:o.tipo,loc:o.origem||o.fornecedor||'—',acao:'Enviar à loja'}))]
     .sort((a,b)=>a.p-b.p||ts(a.o.criado)-ts(b.o.criado));
   const pri=p=>p===1?'<span class="wp alta">ALTA</span>':p===2?'<span class="wp media">MÉDIA</span>':'<span class="wp baixa">BAIXA</span>';
   const filaHTML=fila.length?`<div class="wt-scroll"><table class="wt"><thead><tr><th>Prior.</th><th>Tarefa</th><th>Item</th><th>Local / origem</th><th class="r">Idade</th><th>Registrado por</th><th></th></tr></thead><tbody>
@@ -2017,7 +2029,7 @@ function painelHTML(){
   const hr=new Date().getHours(),saud=hr<5?'Boa noite':hr<12?'Bom dia':hr<18?'Boa tarde':'Boa noite',pnome=(eu&&eu.nome||'').split(' ')[0];
   return`<div class="wms simples moderno">
   <div class="w-hero"><div class="w-hero-tx"><span class="w-kick">Painel</span><h2>${saud}${pnome?', '+esc(pnome):''}</h2><span class="muted small"><span id="wRelogio">${relogio[0].toUpperCase()+relogio.slice(1)}</span> · ${fila.length?`<b style="color:var(--alta)">${fila.length} pendência${fila.length===1?'':'s'}</b> para olhar`:'<b style="color:var(--baixa)">tudo em dia</b>'}</span></div>
-    <div class="w-acts"><button type="button" class="btn sm wbtn-at" id="wAtual"><span class="wrot">↻</span> Atualizar</button>${pode('registrar')?'<button type="button" class="btn sm primary" id="wNovo">+ Novo registro</button>':''}</div></div>
+    <div class="w-acts"><button type="button" class="btn sm wbtn-at" id="wAtual"><span class="wrot">↻</span> Atualizar</button>${pode('registrar')?novoMenuHTML():''}</div></div>
   <div class="wk-grid">
     ${card(0,'Registros hoje',hojeN,'n',`<span class="${delta>0?'up':delta<0?'dn':''}">${delta>0?'▲':delta<0?'▼':'■'} ${Math.abs(delta)}</span> vs ontem`,'#0ea5e9','<path d="M12 5v14M5 12h14"/>','lista',false,porDia(()=>true))}
     ${podeMod('Garantia')?card(1,'Garantias pendentes',gPend.length,'n',gPend.length?'aguardando envio à loja':'tudo enviado','#f97316','<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/>','Garantia',gPend.length>0,porDia(o=>o.categoria==='Garantia')):''}
@@ -2029,6 +2041,11 @@ function painelHTML(){
     <section class="wpn wpn2" style="--i:5"><div class="wpn-h"><b>Últimos registros</b><span class="wpn-t">tempo real</span></div>${recentes.length?`<ul class="wfeed2">${recentes.slice(0,6).map((o,i)=>`<li data-id="${esc(o.id)}" style="--i:${i}"><span class="wq2-av" style="background:${corNome(nome(o.autor))}">${esc(iniciais(nome(o.autor)))}</span><span class="wf-x"><span class="wf-l"><b>${esc(nome(o.autor))}</b> registrou <b>${esc(cat(o)==='Minucioso'?'ficha Minucioso':cat(o)==='Consertos Baiano'?'conserto':o.tipo||cat(o))}</b></span><small>${catBadge(cat(o))}${o.sku?` <span class="mono">${esc(o.sku)}</span>`:''}</small></span><span class="wf-t mono">${idade(o.criado)}</span></li>`).join('')}</ul>`:'<div class="w-vazio2">Nenhum registro ainda.</div>'}</section>
   </div>
   </div>`}
+const NOVO_DESC={'Garantia':'Peça quebrada ou com defeito','Relatório':'Avaria ou devolução','Minucioso':'Ficha de falta de produtos','Consertos Baiano':'Peças para conserto'};
+const NOVO_COR={'Garantia':'var(--gar)','Relatório':'var(--accent)','Minucioso':'var(--min)','Consertos Baiano':'var(--bai)'};
+function novoMenuHTML(){const mods=Object.keys(CATS).filter(podeMod);
+  return`<div class="wnovo"><button type="button" class="btn sm primary" id="wNovo" aria-haspopup="menu" aria-expanded="false">+ Novo registro <span class="wn-car">▾</span></button>
+  <div class="wn-menu" id="wnMenu" role="menu" hidden><div class="wn-tit">O que você quer registrar?</div>${mods.map((m,i)=>`<button type="button" role="menuitem" class="wn-op" data-novocat="${esc(m)}" style="--c:${NOVO_COR[m]};--i:${i}"><span class="wn-ic">${svgI(icMod[m])}</span><span class="wn-tx"><b>${esc(m)}</b><small>${NOVO_DESC[m]||''}</small></span><span class="wn-go">›</span></button>`).join('')}</div></div>`}
 let wTimer=null;
 function bindPainel(){
   const a=$('wAtual');if(a)a.onclick=async()=>{a.disabled=true;a.classList.add('gira');await carregar();toast('Painel atualizado')};
@@ -2037,7 +2054,13 @@ function bindPainel(){
     if(red||!alvo){el.textContent=fm(alvo);return}const t0=performance.now(),dur=900;
     const passo=n=>{const p=Math.min(1,(n-t0)/dur),e=1-Math.pow(1-p,3);el.textContent=fm(f==='brl'?alvo*e:alvo*e);if(p<1)requestAnimationFrame(passo);else el.textContent=fm(alvo)};requestAnimationFrame(passo)});
   clearInterval(wTimer);wTimer=setInterval(()=>{const r=$('wRelogio');if(!r){clearInterval(wTimer);return}const s=new Date().toLocaleString('pt-BR',{weekday:'long',day:'2-digit',month:'long',hour:'2-digit',minute:'2-digit'});r.textContent=s[0].toUpperCase()+s.slice(1)},20000);
-  const nv=$('wNovo');if(nv)nv.onclick=()=>{draft=null;go('nova')};
+  const nv=$('wNovo'),nm=$('wnMenu');
+  if(nv&&nm){const abre=on=>{nm.hidden=!on;nv.setAttribute('aria-expanded',String(on));if(on){const f=nm.querySelector('.wn-op');if(f)f.focus()}};
+    nv.onclick=e=>{e.stopPropagation();abre(nm.hidden)};
+    nm.querySelectorAll('[data-novocat]').forEach(b=>b.onclick=()=>{const c=b.dataset.novocat;ui={...ui,cat:c,setor:'',det:null};draft=novo();draft.cat=c;abre(false);go('nova')});
+    const fecha=e=>{if(!document.body.contains(nm)){document.removeEventListener('click',fecha);document.removeEventListener('keydown',esc_);return}if(!nm.hidden&&!nm.contains(e.target))abre(false)};
+    const esc_=e=>{if(e.key==='Escape'&&!nm.hidden){abre(false);nv.focus()}};
+    document.addEventListener('click',fecha);document.addEventListener('keydown',esc_)}
   document.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>{const k=b.dataset.ir;
     if(k==='lista'){ui={...ui,tab:'lista',de:hoje(),ate:hoje(),fano:'',fmes:''};render();return}
     if(k==='equipe'){go('equipe');return}
