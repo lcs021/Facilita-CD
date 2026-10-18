@@ -795,6 +795,11 @@ body.withside .wrap:has(.wms){max-width:1180px}
 .wn-tx{display:flex;flex-direction:column;min-width:0}.wn-tx b{font-size:.9rem}.wn-tx small{font-size:.75rem;color:var(--muted)}
 .wn-go{margin-left:auto;color:var(--muted);opacity:0;transition:opacity .15s,transform .15s}.wn-op:hover .wn-go{opacity:1;transform:translateX(2px);color:var(--c)}
 @media (max-width:560px){.wn-menu{right:auto;left:0;width:min(290px,calc(100vw - 48px))}}
+
+.chefdel-b{align-self:flex-start;border:0;background:none;color:var(--muted);font:700 .78rem var(--font);cursor:pointer;padding:4px 2px;border-radius:6px}
+.chefdel-b:hover{color:var(--alta)}
+.chefdel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.8rem;font-weight:700;color:var(--alta)}
+.chefdel span{flex:1 0 100%}
 </style>
 </head>
 <body>
@@ -2146,7 +2151,8 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   if(ui.eqTab==='chefes'){
     corpo=`<datalist id="pessoasList">${ativos.map(p=>`<option value="${esc(p.nome)}">`).join('')}</datalist><div class="pgrid">${SETORES.map((s,i)=>{const ch=chefeDe(s),n=ocs.filter(o=>o.categoria==='Minucioso'&&o.setor===s).length;
       return`<article class="pcard" style="--i:${i}"><div class="pc-top"><span class="pav sq" style="background:${ch?corNome(ch):'var(--line2)'}">${ch?esc(iniciais(ch)):'?'}</span><div class="pc-id"><b>${esc(s)}</b><small>${ch?'Chefe: '+esc(ch):'Sem chefe definido'} · ${n} minucioso${n===1?'':'s'}</small></div></div>
-      <div class="pc-act chefe"><input id="chef${i}" list="pessoasList" value="${esc(ch)}" placeholder="Nome do chefe"><button class="btn sm primary" data-chef="${i}">Salvar</button></div></article>`}).join('')}</div>
+      <div class="pc-act chefe"><input id="chef${i}" list="pessoasList" value="${esc(ch)}" placeholder="Nome do chefe"><button class="btn sm primary" data-chef="${i}">Salvar</button></div>
+      ${ch?(ui.confChef===i?`<div class="chefdel conf"><span>Excluir o chefe de ${esc(s)}?</span><button class="btn sm danger" data-chefsim="${i}">Excluir</button><button class="btn sm" data-chefnao="1">Cancelar</button></div>`:`<button type="button" class="chefdel-b" data-chefdel="${i}">✕ Excluir chefe</button>`):''}</article>`}).join('')}</div>
       <p class="muted small" style="margin:0">O chefe aparece no menu do Minucioso e vai impresso na ficha de cada setor.</p>`;
   }else{
     const lista=(ui.eqTab==='pend'?pend:ui.eqTab==='recus'?recus:ativos).filter(bate),fn=ui.eqTab==='pend'?cPend:ui.eqTab==='recus'?cRec:cAtivo;
@@ -2203,6 +2209,11 @@ function bindEquipe(){
     const {error}=await sb.from('setores').upsert({nome:s,chefe:v||null,ordem:i});b.disabled=false;
     if(error){toast(/schema cache|does not exist|relation/i.test(error.message)?'O banco precisa de uma atualização (tabela setores). Rode o comando novo no SQL Editor. Detalhe: '+error.message:/row-level security/i.test(error.message)?'Sem permissão para salvar o chefe. Só o administrador pode. Detalhe: '+error.message:erroMsg(error));return}
     chefes[s]=v;toast(v?'Chefe de '+s+': '+v:'Chefe de '+s+' removido')}));
+  document.querySelectorAll('[data-chefdel]').forEach(b=>b.addEventListener('click',()=>{ui.confChef=+b.dataset.chefdel;render()}));
+  document.querySelectorAll('[data-chefnao]').forEach(b=>b.addEventListener('click',()=>{ui.confChef=null;render()}));
+  document.querySelectorAll('[data-chefsim]').forEach(b=>b.addEventListener('click',async()=>{const i=+b.dataset.chefsim,s=SETORES[i];b.disabled=true;
+    const {error}=await sb.from('setores').upsert({nome:s,chefe:null,ordem:i});ui.confChef=null;
+    if(error){toast(erroMsg(error));render();return}chefes[s]='';toast('Chefe de '+s+' excluído');render()}));
   document.querySelectorAll('select[data-ativo]').forEach(s=>s.addEventListener('change',()=>mudaPerfil(s.dataset.cg,{cargo:s.value},'Cargo alterado para '+s.value)));
   document.querySelectorAll('[data-ok]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;const cg=document.querySelector(`select[data-cg="${b.dataset.ok}"]`).value;mudaPerfil(b.dataset.ok,{aprovado:true,recusado:false,cargo:cg},'Acesso liberado como '+cg)}));
   document.querySelectorAll('[data-nao]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;mudaPerfil(b.dataset.nao,{aprovado:false,recusado:true},'Cadastro não liberado')}));
