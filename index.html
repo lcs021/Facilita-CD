@@ -800,6 +800,10 @@ body.withside .wrap:has(.wms){max-width:1180px}
 .chefdel-b:hover{color:var(--alta)}
 .chefdel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.8rem;font-weight:700;color:var(--alta)}
 .chefdel span{flex:1 0 100%}
+
+.chefdel-r{display:flex;gap:14px;flex-wrap:wrap}
+.chefdel-b.forte:hover{color:var(--alta)}
+.chefdel.conf span{line-height:1.35}
 </style>
 </head>
 <body>
@@ -1121,7 +1125,7 @@ async function carregar(){
     if(p.data){perfis={};p.data.forEach(x=>perfis[x.id]=x)}
     if(o.data)ocs=o.data.map(x=>x.gar_status==='Enviado ao fornecedor'?{...x,gar_status:'Enviado à garantia da loja'}:x);
     if(o.error)toast(erroMsg(o.error));
-    const st=await sb.from('setores').select('*');if(st.data){chefes={};st.data.forEach(x=>chefes[x.nome]=x.chefe||'')}
+    const st=await sb.from('setores').select('*');if(st.data&&!st.error){chefes={};st.data.forEach(x=>chefes[x.nome]=x.chefe||'');if(st.data.length||carregou)SETORES=[...st.data].sort((a,b)=>(a.ordem||0)-(b.ordem||0)).map(x=>x.nome)}
     const cg=await sb.from('cargos').select('*');if(cg.data&&!cg.error){cargosOk=true;cg.data.forEach(x=>{if(x.nome==='Auxiliar de Inventário')CARGOS['Auxiliar de Inventário']=x.perms||[]})}else cargosOk=false;
   }
   carregou=true;render();
@@ -1181,7 +1185,7 @@ const hoverFecha=()=>{if(!mqHover.matches)return;clearTimeout(tFecha);tFecha=set
 $('sideBack').addEventListener('click',()=>abreMenu(false));
 function go(tab){ui={...ui,tab,det:null,confDel:false};if(tab==='nova'&&!draft)draft=novo();render();scrollTo(0,0);if(tab!=='nova')carregar()}
 const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia','Minucioso':'Relatório de falta de produtos por setor, para o chefe assinar','Consertos Baiano':'Peças sem garantia enviadas para conserto'};
-const SETORES=['Expedição','Shopee','Mercado Livre','Cofre','1º andar','2º andar','3º andar','Carga e descarga','Recebimento','Parachoque'];
+let SETORES=['Expedição','Shopee','Mercado Livre','Cofre','1º andar','2º andar','3º andar','Carga e descarga','Recebimento','Parachoque'];
 let chefes={},cargosOk=true;
 const chefeDe=s=>chefes[s]||'';
 const difDe=o=>(o.qtd_sistema==null||o.qtd_contada==null)?null:o.qtd_contada-o.qtd_sistema;
@@ -2152,7 +2156,9 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
     corpo=`<datalist id="pessoasList">${ativos.map(p=>`<option value="${esc(p.nome)}">`).join('')}</datalist><div class="pgrid">${SETORES.map((s,i)=>{const ch=chefeDe(s),n=ocs.filter(o=>o.categoria==='Minucioso'&&o.setor===s).length;
       return`<article class="pcard" style="--i:${i}"><div class="pc-top"><span class="pav sq" style="background:${ch?corNome(ch):'var(--line2)'}">${ch?esc(iniciais(ch)):'?'}</span><div class="pc-id"><b>${esc(s)}</b><small>${ch?'Chefe: '+esc(ch):'Sem chefe definido'} · ${n} minucioso${n===1?'':'s'}</small></div></div>
       <div class="pc-act chefe"><input id="chef${i}" list="pessoasList" value="${esc(ch)}" placeholder="Nome do chefe"><button class="btn sm primary" data-chef="${i}">Salvar</button></div>
-      ${ch?(ui.confChef===i?`<div class="chefdel conf"><span>Excluir o chefe de ${esc(s)}?</span><button class="btn sm danger" data-chefsim="${i}">Excluir</button><button class="btn sm" data-chefnao="1">Cancelar</button></div>`:`<button type="button" class="chefdel-b" data-chefdel="${i}">✕ Excluir chefe</button>`):''}</article>`}).join('')}</div>
+      ${ui.confSet===i?`<div class="chefdel conf"><span>Excluir o setor ${esc(s)} do Minucioso?${n?` As ${n} ficha${n===1?'':'s'} já registrada${n===1?'':'s'} continuam salva${n===1?'':'s'}, mas o setor some do menu.`:''}</span><button class="btn sm danger" data-setsim="${i}">Excluir setor</button><button class="btn sm" data-setnao="1">Cancelar</button></div>`
+      :ui.confChef===i?`<div class="chefdel conf"><span>Excluir só o chefe de ${esc(s)}?</span><button class="btn sm danger" data-chefsim="${i}">Excluir chefe</button><button class="btn sm" data-chefnao="1">Cancelar</button></div>`
+      :`<div class="chefdel-r">${ch?`<button type="button" class="chefdel-b" data-chefdel="${i}">✕ Excluir chefe</button>`:''}<button type="button" class="chefdel-b forte" data-setdel="${i}">🗑 Excluir setor</button></div>`}</article>`}).join('')}</div>
       <p class="muted small" style="margin:0">O chefe aparece no menu do Minucioso e vai impresso na ficha de cada setor.</p>`;
   }else{
     const lista=(ui.eqTab==='pend'?pend:ui.eqTab==='recus'?recus:ativos).filter(bate),fn=ui.eqTab==='pend'?cPend:ui.eqTab==='recus'?cRec:cAtivo;
@@ -2209,6 +2215,13 @@ function bindEquipe(){
     const {error}=await sb.from('setores').upsert({nome:s,chefe:v||null,ordem:i});b.disabled=false;
     if(error){toast(/schema cache|does not exist|relation/i.test(error.message)?'O banco precisa de uma atualização (tabela setores). Rode o comando novo no SQL Editor. Detalhe: '+error.message:/row-level security/i.test(error.message)?'Sem permissão para salvar o chefe. Só o administrador pode. Detalhe: '+error.message:erroMsg(error));return}
     chefes[s]=v;toast(v?'Chefe de '+s+': '+v:'Chefe de '+s+' removido')}));
+  document.querySelectorAll('[data-setdel]').forEach(b=>b.addEventListener('click',()=>{ui.confSet=+b.dataset.setdel;ui.confChef=null;render()}));
+  document.querySelectorAll('[data-setnao]').forEach(b=>b.addEventListener('click',()=>{ui.confSet=null;render()}));
+  document.querySelectorAll('[data-setsim]').forEach(b=>b.addEventListener('click',async()=>{const s=SETORES[+b.dataset.setsim];b.disabled=true;
+    const {error}=await sb.from('setores').delete().eq('nome',s);ui.confSet=null;
+    if(error){toast(/row-level security/i.test(error.message||'')?'Sem permissão para excluir o setor. Só o administrador pode.':erroMsg(error));render();return}
+    SETORES=SETORES.filter(x=>x!==s);delete chefes[s];if(ui.setor===s)ui.setor='';if(draft&&draft.setor===s){draft.setor='';draft.chefe=''}
+    toast('Setor '+s+' excluído do Minucioso');render();carregar()}));
   document.querySelectorAll('[data-chefdel]').forEach(b=>b.addEventListener('click',()=>{ui.confChef=+b.dataset.chefdel;render()}));
   document.querySelectorAll('[data-chefnao]').forEach(b=>b.addEventListener('click',()=>{ui.confChef=null;render()}));
   document.querySelectorAll('[data-chefsim]').forEach(b=>b.addEventListener('click',async()=>{const i=+b.dataset.chefsim,s=SETORES[i];b.disabled=true;
