@@ -1147,7 +1147,7 @@ const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filte
   const pend=ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')==='Pendente').length,mesAt=mesKey(Date.now());
   const relMes=ocs.filter(o=>(o.categoria||'Relatório')==='Relatório'&&mesKey(o.criado)===mesAt).length;
   const setAt=SETORES.filter(s=>ns(s)).length;
-  const sub={Garantia:pend?`${pend} pendente${pend===1?'':'s'}`:'Nada pendente','Relatório':(()=>{const a=relAtrasados().length;return a?`${a} atrasado${a===1?'':'s'} (mais de 2 dias)`:`${relMes} este mês`})(),Minucioso:`${setAt} de ${SETORES.length} setores ativos`,'Consertos Baiano':(()=>{const v=ocs.filter(o=>o.categoria==='Consertos Baiano'&&mesKey(o.criado)===mesAt).reduce((a,o)=>a+(totalBai(o)||0),0);return v?brl(v)+' este mês':'Nada este mês'})()};
+  const sub={Garantia:pend?`${pend} pendente${pend===1?'':'s'}`:'Nada pendente','Relatório':(()=>{const a=relAtrasados().length;return a?`${a} atrasado${a===1?'':'s'} (mais de 2 dias úteis)`:`${relMes} este mês`})(),Minucioso:`${setAt} de ${SETORES.length} setores ativos`,'Consertos Baiano':(()=>{const v=ocs.filter(o=>o.categoria==='Consertos Baiano'&&mesKey(o.criado)===mesAt).reduce((a,o)=>a+(totalBai(o)||0),0);return v?brl(v)+' este mês':'Nada este mês'})()};
   const cor={Garantia:'var(--gar)','Relatório':'var(--accent)',Minucioso:'var(--min)','Consertos Baiano':'var(--bai)'},cls={Garantia:'g','Relatório':'r',Minucioso:'m','Consertos Baiano':'b'};
   const item=c=>`<button title="${esc(sub[c])}" class="sitem ${cls[c]}${c==='Minucioso'&&ui.cat==='Minucioso'?' aberto':''}" data-mcat="${c}" aria-current="${ui.cat===c&&(c!=='Minucioso'||!ui.setor)}" style="--c:${cor[c]}">
     <span class="ico">${svgI(icMod[c])}</span><span class="tx"><b>${c}</b><small>${sub[c]}</small></span>${c==='Relatório'&&relAtrasados().length?`<span class="atrb" title="Relatórios com mais de 2 dias sem resolver">${relAtrasados().length}</span>`:''}<span class="n">${n(c)}</span>${c==='Minucioso'?icChev:''}</button>`;
@@ -1192,14 +1192,18 @@ const chefeDe=s=>chefes[s]||'';
 const difDe=o=>(o.qtd_sistema==null||o.qtd_contada==null)?null:o.qtd_contada-o.qtd_sistema;
 const brl=v=>v==null||v===''||isNaN(v)?'—':Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const PRAZO_REL=2*864e5;
+/* Prazo só conta de segunda a sexta (sábado e domingo não contam) */
+function uteisMs(ini,fim){if(fim<=ini)return 0;let tot=0,c=ini;while(c<fim){const d=new Date(c),prox=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1).getTime(),f=Math.min(prox,fim);const w=d.getDay();if(w!==0&&w!==6)tot+=f-c;c=f}return tot}
+function fimPrazo(ini,ms){let c=ini,r=ms;while(r>0){const d=new Date(c),prox=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1).getTime(),w=d.getDay();if(w===0||w===6){c=prox;continue}const g=Math.min(prox-c,r);c+=g;r-=g}return c}
+const decorrido=o=>uteisMs(ts(o.criado),Date.now());
 const ehRel=o=>(o.categoria||'Relatório')==='Relatório';
 const relResolvido=o=>o.status==='resolvido';
-const relAtrasado=o=>ehRel(o)&&!relResolvido(o)&&Date.now()-ts(o.criado)>PRAZO_REL;
-const diasDesde=o=>Math.max(0,Math.floor((Date.now()-ts(o.criado))/864e5));
+const relAtrasado=o=>ehRel(o)&&!relResolvido(o)&&decorrido(o)>PRAZO_REL;
+const diasDesde=o=>Math.max(0,Math.floor(decorrido(o)/864e5));
 const relAtrasados=()=>podeMod('Relatório')?ocs.filter(relAtrasado):[];
 const relBadge=o=>{if(!ehRel(o))return'';if(relResolvido(o))return'<span class="gst e">✓ Resolvido</span>';
   if(relAtrasado(o))return`<span class="gst atr">⚠ Atrasado · ${diasDesde(o)} dia${diasDesde(o)===1?'':'s'}</span>`;
-  const h=Math.ceil((ts(o.criado)+PRAZO_REL-Date.now())/36e5);return`<span class="gst p">⏳ No prazo · ${h>=24?Math.ceil(h/24)+' dia'+(Math.ceil(h/24)===1?'':'s'):h+'h'} restante${(h>=24?Math.ceil(h/24):h)===1?'':'s'}</span>`};
+  const h=Math.ceil((PRAZO_REL-decorrido(o))/36e5);return`<span class="gst p">⏳ No prazo · ${h>=24?Math.ceil(h/24)+' dia'+(Math.ceil(h/24)===1?'':'s'):h+'h'} restante${(h>=24?Math.ceil(h/24):h)===1?'':'s'}</span>`};
 const totalBai=o=>(o.valor_conserto!=null)?Number(o.valor_conserto)*(Number(o.qtd)||1):null;
 const dataBai=o=>o.data_ref?String(o.data_ref).slice(0,10).split('-').reverse().join('/'):new Date(o.criado).toLocaleDateString('pt-BR');
 const totalMin=o=>(o.custo!=null&&o.falta!=null)?Number(o.custo)*Number(o.falta):null;
@@ -1965,7 +1969,7 @@ function detHTML(){const o=ocs.find(x=>x.id===ui.det);if(!o){ui.det=null;return 
   <input id="gnota" placeholder="Observação (opcional): ex. nº do protocolo, data da coleta"></div>`:'<p class="muted small" style="margin:0">A situação da garantia é atualizada pelo líder, analista ou supervisor.</p>'}
   ${(o.hist||[]).length>1?`<ul class="hist">${o.hist.slice(1).map(h=>`<li><span class="muted small">${fData(h.t)} · ${esc(nome(h.por))}</span><br>${esc(h.txt)}</li>`).join('')}</ul>`:''}</div>`:''}
   ${ehRel(o)?`<div class="box stack rbox${relAtrasado(o)?' atrasado':''}"><div class="row"><b>Prazo do relatório</b>${relBadge(o)}</div>
-  <div class="muted small">${relResolvido(o)?'Este relatório foi marcado como resolvido.':relAtrasado(o)?`Registrado há ${diasDesde(o)} dias. O prazo de 2 dias venceu em ${fData(new Date(ts(o.criado)+PRAZO_REL).toISOString())}.`:`Prazo para resolver: até ${fData(new Date(ts(o.criado)+PRAZO_REL).toISOString())}.`}</div>
+  <div class="muted small">${relResolvido(o)?'Este relatório foi marcado como resolvido.':relAtrasado(o)?`Registrado há ${diasDesde(o)} dias úteis (sábado e domingo não contam). O prazo de 2 dias úteis venceu em ${fData(new Date(fimPrazo(ts(o.criado),PRAZO_REL)).toISOString())}.`:`Prazo para resolver: até ${fData(new Date(fimPrazo(ts(o.criado),PRAZO_REL)).toISOString())}.`}</div>
   ${pode('garantia')?(relResolvido(o)?'<button class="btn sm" id="relReabre">Reabrir relatório</button>':'<button class="btn primary" id="relResolve">✓ Marcar como resolvido</button>'):''}
   ${(o.hist||[]).length>1?`<ul class="hist">${o.hist.slice(1).map(h=>`<li><span class="muted small">${fData(h.t)} · ${esc(nome(h.por))}</span><br>${esc(h.txt)}</li>`).join('')}</ul>`:''}</div>`:''}
   ${o.categoria==='Minucioso'?`<div class="box stack mbox"><b>Minucioso</b><dl class="facts"><dt>Setor</dt><dd>${esc(o.setor||'—')}</dd><dt>Chefe do setor</dt><dd>${esc(o.chefe||'—')}</dd><dt>Qtd no sistema</dt><dd class="mono">${esc(o.qtd_sistema??'—')}</dd><dt>Qtd contada</dt><dd class="mono">${esc(o.qtd_contada??'—')}</dd><dt>Diferença</dt><dd>${difHTML(difDe(o))}</dd></dl></div>`:''}
