@@ -1040,7 +1040,7 @@ alter table public.ocorrencias add column if not exists data_ref date;
 
 -- Cargos: Chefe de Inventário e Auxiliar de Inventário
 alter table public.perfis alter column cargo set default 'Auxiliar de Inventário';
-update public.perfis set cargo = 'Auxiliar de Inventário' where cargo not in ('Chefe de Inventário','Auxiliar de Inventário');
+update public.perfis set cargo = 'Auxiliar de Inventário' where cargo not in ('Chefe de Inventário','Auxiliar de Inventário','Visitante');
 
 -- Administrador redefine a senha de um usuário (a senha antiga não é visível; fica guardada só em forma criptografada)
 create extension if not exists pgcrypto with schema extensions;
@@ -1070,8 +1070,8 @@ const ORIGENS={'Loja':'Retirado como quebrado na loja','Fábrica':'Veio quebrado
 const TIPOS=[...new Set([...TIPOS_CAT['Garantia'],...TIPOS_CAT['Relatório']])];
 const PERMS=[['mod:Garantia','Módulo Garantia','Ver e usar as garantias'],['mod:Relatório','Módulo Relatório','Ver e usar os relatórios'],['mod:Minucioso','Módulo Minucioso','Ver e usar as fichas do Minucioso'],['mod:Consertos Baiano','Módulo Consertos Baiano','Ver e usar os consertos'],['registrar','Criar registros','Lançar registros novos nos módulos liberados'],['resumo','Ver o Resumo','Abrir a tela de gráficos e totais'],['garantia','Editar registros','Atualizar a situação das garantias e os motivos do Minucioso'],['apagar','Apagar registros','Apagar registros, fotos e vídeos']];
 const TODAS=PERMS.map(p=>p[0]),PERM_AUX_PADRAO=['mod:Garantia','mod:Relatório','mod:Minucioso','mod:Consertos Baiano','registrar','resumo','garantia'];
-let CARGOS={'Chefe de Inventário':TODAS,'Auxiliar de Inventário':PERM_AUX_PADRAO};
-const CARGO_DESC={'Chefe de Inventário':'pode tudo','Auxiliar de Inventário':'pode o que você liberar abaixo'};
+let CARGOS={'Chefe de Inventário':TODAS,'Auxiliar de Inventário':PERM_AUX_PADRAO,'Visitante':[]};
+const CARGO_DESC={'Chefe de Inventário':'pode tudo','Auxiliar de Inventário':'pode o que você liberar abaixo','Visitante':'só vê o que você marcar abaixo'};
 const ANDARES={'11':'1º andar','12':'2º andar','13':'3º andar'},LETRAS='ABCDEFGHI'.split('');
 const BUCKET='midias',H=3600e3,MAX_VIDEO=50*1024*1024;
 
@@ -1127,7 +1127,7 @@ async function carregar(){
     if(o.data)ocs=o.data.map(x=>x.gar_status==='Enviado ao fornecedor'?{...x,gar_status:'Enviado à garantia da loja'}:x);
     if(o.error)toast(erroMsg(o.error));
     const st=await sb.from('setores').select('*');if(st.data&&!st.error){chefes={};st.data.forEach(x=>chefes[x.nome]=x.chefe||'');if(st.data.length||carregou)SETORES=[...st.data].sort((a,b)=>(a.ordem||0)-(b.ordem||0)).map(x=>x.nome)}
-    const cg=await sb.from('cargos').select('*');if(cg.data&&!cg.error){cargosOk=true;cg.data.forEach(x=>{if(x.nome==='Auxiliar de Inventário')CARGOS['Auxiliar de Inventário']=x.perms||[]})}else cargosOk=false;
+    const cg=await sb.from('cargos').select('*');if(cg.data&&!cg.error){cargosOk=true;cg.data.forEach(x=>{if(x.nome==='Auxiliar de Inventário'||x.nome==='Visitante')CARGOS[x.nome]=x.perms||[]})}else cargosOk=false;
   }
   carregou=true;render();
 }
@@ -2136,7 +2136,7 @@ function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{c
   <span class="lbl">Por pessoa</span><div class="box stack" style="gap:8px">${bars(cont(o=>nome(o.autor)))}</div></div>`}
 
 /* ---------- Equipe ---------- */
-const CARGO_COR={'Chefe de Inventário':'#e2621b','Auxiliar de Inventário':'#0d9488'};
+const CARGO_COR={'Chefe de Inventário':'#e2621b','Auxiliar de Inventário':'#0d9488','Visitante':'#7c3aed'};
 function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)-ts(a.criado));
   const pend=todos.filter(p=>!p.aprovado&&!p.admin&&!p.recusado),ativos=todos.filter(p=>p.aprovado||p.admin),recus=todos.filter(p=>!p.aprovado&&!p.admin&&p.recusado);
   if(!ui.eqTab)ui.eqTab=pend.length?'pend':'ativos';
@@ -2184,22 +2184,22 @@ function senhaBox(p){if(ui.senhaOk&&ui.senhaOk.id===p.id)return`<div class="sbox
   if(ui.senhaDe!==p.id)return`<button class="btn sm" data-senha="${esc(p.id)}">🔑 Redefinir senha</button>`;
   return`<div class="sbox"><span class="lbl">Nova senha para ${esc(p.nome)}</span><div class="snova"><input id="snInp" class="mono" value="${esc(ui.senhaRasc||'')}" placeholder="mín. 6 caracteres" autocomplete="new-password"><button type="button" class="btn sm" data-sgera="1">Gerar</button></div>
   <div class="ctl2"><button type="button" class="btn sm primary" data-ssalva="${esc(p.id)}">Salvar senha</button><button type="button" class="btn sm" data-scanc="1">Cancelar</button></div></div>`}
-function permHTML(){const pa=CARGOS['Auxiliar de Inventário']||[],on=PERMS.filter(p=>pa.includes(p[0])).length,pct=Math.round(on/PERMS.length*100);
+function permHTML(){const pcg=ui.permCargo||'Auxiliar de Inventário',pa=CARGOS[pcg]||[],on=PERMS.filter(p=>pa.includes(p[0])).length,pct=Math.round(on/PERMS.length*100);
   const row=([k,n,d],i)=>{const ic=k.startsWith('mod:')?icMod[k.slice(4)]:PERM_IC[k],ok=pa.includes(k);
     return`<label class="prow${ok?' on':''}${k==='apagar'?' perigo':''}" style="--c:${PERM_COR[k]};--i:${i}"><span class="pic">${svgI(ic)}</span><span class="pt"><b>${n}</b><small>${d}</small></span><span class="pst">${ok?'Liberado':'Bloqueado'}</span><input type="checkbox" class="sw" data-perm="${esc(k)}" ${ok?'checked':''} ${cargosOk?'':'disabled'} aria-label="${esc(n)}"></label>`};
   const mods=PERMS.filter(p=>p[0].startsWith('mod:')),acs=PERMS.filter(p=>!p[0].startsWith('mod:'));
   return`<section class="permbox" id="perms">
   <div class="phead"><div class="pring" style="--p:${pct}"><span>${on}<small>/${PERMS.length}</small></span></div>
-    <div class="ptx"><span class="pkick">Permissões</span><h3>Auxiliar de Inventário</h3><p>Escolha o que o auxiliar pode ver e fazer. Muda na hora para todos. O <b>Chefe de Inventário</b> sempre pode tudo.</p></div>
+    <div class="ptx"><span class="pkick">Permissões</span><h3>${pcg}</h3><p>${pcg==='Visitante'?'O <b>Visitante</b> não tem função na equipe: ele só vê o que você marcar aqui. Tudo começa bloqueado.':'Escolha o que o auxiliar pode ver e fazer.'} Muda na hora para todos. O <b>Chefe de Inventário</b> sempre pode tudo.</p><div class="chips" style="margin-top:8px">${['Auxiliar de Inventário','Visitante'].map(c=>`<button type="button" class="chip" data-pcg="${c}" aria-pressed="${c===pcg}">${c==='Visitante'?'Visitante':'Auxiliar'}</button>`).join('')}</div></div>
     <div class="pbulk"><button type="button" class="btn sm" data-pall="1" ${cargosOk?'':'disabled'}>Liberar tudo</button><button type="button" class="btn sm" data-pall="0" ${cargosOk?'':'disabled'}>Bloquear tudo</button></div></div>
   ${cargosOk?'':'<div class="err">O banco precisa de uma atualização (permissões). Rode o SQL novo no Supabase.</div>'}
   <div class="pgrp"><div class="pgh"><span>Módulos</span><small>${mods.filter(p=>pa.includes(p[0])).length} de ${mods.length} liberados</small></div><div class="plist">${mods.map(row).join('')}</div></div>
   <div class="pgrp"><div class="pgh"><span>Ações</span><small>${acs.filter(p=>pa.includes(p[0])).length} de ${acs.length} liberadas</small></div><div class="plist">${acs.map((p,i)=>row(p,i+4)).join('')}</div></div>
   </section>`}
 async function salvaPerms(perms,msg){document.querySelectorAll('[data-perm],[data-pall]').forEach(x=>x.disabled=true);
-  const {error}=await sb.from('cargos').upsert({nome:'Auxiliar de Inventário',perms});
+  const pcg=ui.permCargo||'Auxiliar de Inventário';const {error}=await sb.from('cargos').upsert({nome:pcg,perms});
   if(error){toast(/cargos|schema cache|relation/i.test(error.message||'')?'O banco precisa de uma atualização (permissões). Rode o SQL novo no Supabase.':erroMsg(error));render();return}
-  CARGOS['Auxiliar de Inventário']=perms;toast(msg);const y=scrollY;render();scrollTo(0,y)}
+  CARGOS[pcg]=perms;toast(msg);const y=scrollY;render();scrollTo(0,y)}
 async function mudaPerfil(id,campos,msg){const {error}=await sb.from('perfis').update(campos).eq('id',id);if(error){toast(erroMsg(error));return}Object.assign(perfis[id],campos);toast(msg);render()}
 function bindEquipe(){
   document.querySelectorAll('[data-senha]').forEach(b=>b.onclick=()=>{ui.senhaDe=b.dataset.senha;ui.senhaRasc=geraSenha();ui.senhaOk=null;render();const i=$('snInp');if(i){i.focus();i.select()}});
@@ -2211,9 +2211,10 @@ function bindEquipe(){
     b.disabled=true;const {error}=await sb.rpc('admin_redefinir_senha',{alvo:b.dataset.ssalva,nova:s});b.disabled=false;
     if(error){toast(/admin_redefinir_senha|function|schema cache/i.test(error.message||'')&&!/administrador|caracteres/.test(error.message||'')?'O banco precisa de uma atualização (redefinir senha). Rode o SQL novo no Supabase.':erroMsg(error));return}
     ui.senhaOk={id:b.dataset.ssalva,s};ui.senhaDe=null;ui.senhaRasc='';render()});
-  document.querySelectorAll('[data-perm]').forEach(c=>c.addEventListener('change',()=>{const atual=new Set(CARGOS['Auxiliar de Inventário']||[]);c.checked?atual.add(c.dataset.perm):atual.delete(c.dataset.perm);
+  document.querySelectorAll('[data-perm]').forEach(c=>c.addEventListener('change',()=>{const atual=new Set(CARGOS[ui.permCargo||'Auxiliar de Inventário']||[]);c.checked?atual.add(c.dataset.perm):atual.delete(c.dataset.perm);
     const nm=PERMS.find(p=>p[0]===c.dataset.perm)[1];salvaPerms(TODAS.filter(k=>atual.has(k)),(c.checked?'Liberado: ':'Bloqueado: ')+nm)}));
-  document.querySelectorAll('[data-pall]').forEach(b=>b.addEventListener('click',()=>salvaPerms(b.dataset.pall==='1'?[...TODAS]:[],b.dataset.pall==='1'?'Tudo liberado para o Auxiliar':'Tudo bloqueado para o Auxiliar')));
+  document.querySelectorAll('[data-pcg]').forEach(b=>b.addEventListener('click',()=>{ui.permCargo=b.dataset.pcg;const y=scrollY;render();scrollTo(0,y)}));
+  document.querySelectorAll('[data-pall]').forEach(b=>b.addEventListener('click',()=>salvaPerms(b.dataset.pall==='1'?[...TODAS]:[],b.dataset.pall==='1'?'Tudo liberado para '+(ui.permCargo||'o Auxiliar'):'Tudo bloqueado para '+(ui.permCargo||'o Auxiliar'))));
   document.querySelectorAll('[data-eqtab]').forEach(b=>b.addEventListener('click',()=>{ui.eqTab=b.dataset.eqtab;ui.eqBusca='';ui.confExcl=null;render()}));
   const eb=$('eqBusca');if(eb)eb.addEventListener('input',()=>{ui.eqBusca=eb.value;const p=eb.selectionStart;render();const n=$('eqBusca');n.focus();n.setSelectionRange(p,p)});
   document.querySelectorAll('[data-chef]').forEach(b=>b.addEventListener('click',async()=>{const i=+b.dataset.chef,s=SETORES[i],v=$('chef'+i).value.trim();b.disabled=true;
