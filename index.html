@@ -804,6 +804,7 @@ body.withside .wrap:has(.wms){max-width:1180px}
 .chefdel-r{display:flex;gap:14px;flex-wrap:wrap}
 .chefdel-b.forte:hover{color:var(--alta)}
 .chefdel.conf span{line-height:1.35}
+.mfoto{display:flex;align-items:center;gap:12px}.mfoto img{width:84px;height:84px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -1250,6 +1251,7 @@ function render(){
 /* ---------- Fotos e vídeos (links temporários) ---------- */
 function src(path){return urls[path]?.url||''}
 function pedirUrls(){
+  document.querySelectorAll('[data-path]').forEach(e=>{const p=e.dataset.path;if(/^https?:/.test(p)&&!urls[p])urls[p]={url:p,ate:Infinity}});
   const falta=[...document.querySelectorAll('[data-path]')].map(e=>e.dataset.path).filter(p=>p&&!(urls[p]&&urls[p].ate>Date.now())&&!pedindo.has(p));
   [...document.querySelectorAll('[data-path]')].forEach(e=>{if(urls[e.dataset.path])e.src=urls[e.dataset.path].url});
   if(!falta.length)return;falta.forEach(p=>pedindo.add(p));
@@ -1889,6 +1891,7 @@ function minFormHTML(){const d=draft;const tot=(d.custo!==''&&d.falta!=='')?brl(
   <div class="two"><div class="field"><label class="lbl" for="msku">Produto (código) *</label><input id="msku" autocapitalize="characters" class="mono" value="${esc(d.sku)}"></div>
   <div class="field"><label class="lbl" for="mfab">Fabricante</label><input id="mfab" value="${esc(d.fab)}"></div></div>
   <div class="field"><label class="lbl" for="mdesc">Descrição</label><input id="mdesc" value="${esc(d.produto)}" placeholder="Ex.: Pastilha de freio dianteira"></div>
+  <div id="mfoto" class="mfoto">${d.fotoCat?`<img src="${esc(d.fotoCat)}" alt="Foto da peça"><span class="muted small">Foto da peça (catálogo)</span>`:''}</div>
   <div class="two"><div class="field"><label class="lbl" for="mcusto">Custo (R$ por unidade)</label><input id="mcusto" inputmode="decimal" value="${esc(d.custo)}" placeholder="0,00"></div>
   <div class="field"><label class="lbl" for="mfalta">Falta (quantidade) *</label><input id="mfalta" type="number" min="0" inputmode="numeric" value="${esc(d.falta)}"></div></div>
   <div class="box row"><span class="lbl" style="margin:0">Total</span><b class="mono" id="mtotal" style="font-size:1.25rem">${tot}</b></div>
@@ -1914,7 +1917,7 @@ function bindMinForm(){const fm=$('fmin');document.querySelectorAll('[data-abrem
     const m=!draft.setor?'Escolha o setor no menu à esquerda.':!draft.sku?'Informe o código do produto.':falta==null?'Informe a quantidade em falta.':(draft.custo!==''&&custo==null)?'O custo está em formato inválido. Use, por exemplo, 12,50.':'';
     if(m){er.textContent=m;er.hidden=false;return}
     const o={categoria:'Minucioso',tipo:'Minucioso',endereco:'',setor:draft.setor,chefe:draft.chefe||null,sku:draft.sku,produto:draft.produto||null,fab:draft.fab||null,custo,falta,qtd:falta,
-      motivo_inventario:draft.motivo_inventario||null,motivo_chefe:draft.motivo_chefe||null,motivo_allan:draft.motivo_allan||null,fotos:[],videos:[],autor:uid,status:'registrada',hist:[{t:new Date().toISOString(),por:uid,txt:'Registrado'}]};
+      motivo_inventario:draft.motivo_inventario||null,motivo_chefe:draft.motivo_chefe||null,motivo_allan:draft.motivo_allan||null,fotos:draft.fotoCat?[draft.fotoCat]:[],videos:[],autor:uid,status:'registrada',hist:[{t:new Date().toISOString(),por:uid,txt:'Registrado'}]};
     saving=true;const {data,error}=await sb.from('ocorrencias').insert(o).select().single();saving=false;
     if(error){er.textContent=erroMsg(error);er.hidden=false;return}
     const novoReg=data||{...o,id:'tmp'+Date.now(),criado:new Date().toISOString()};ocs.unshift(novoReg);
@@ -1939,6 +1942,7 @@ function minDetHTML(o){const ed=pode('garantia')||o.autor===uid;
   return`<div class="stack"><button class="btn sm" id="voltar" style="align-self:flex-start">← Voltar</button>
   <div class="row"><div>${catBadge('Minucioso')}<h2 style="margin-top:6px">${esc(o.setor||'Sem setor')} · ${esc(o.sku||'')}</h2><div class="muted small">Registrado por <b>${esc(nome(o.autor))}</b> em ${fData(o.criado)}</div></div></div>
   <button class="btn primary" id="imprimir">🖨 Imprimir / Salvar PDF</button>
+  ${(o.fotos||[]).length?`<div class="gallery">${o.fotos.map((f,i)=>`<img data-path="${esc(f)}" alt="Foto ${i+1}">`).join('')}</div>`:''}
   <div class="prevwrap"><div class="prev">${folhaMin(o)}</div></div>
   ${ed?`<div class="box stack"><b>Preencher motivos depois</b><span class="muted small">Quando o chefe devolver a folha, você pode digitar os motivos aqui e imprimir de novo.</span>
   <div class="field"><label class="lbl" for="dmchefe">Motivo chefe setor</label><textarea id="dmchefe">${esc(o.motivo_chefe||'')}</textarea></div>
@@ -2333,6 +2337,10 @@ async function fotoCatalogo(cod){
   if(draft===d){ler();render()}
 }
 document.addEventListener('input',e=>{if(e.target.id!=='sku')return;clearTimeout(fcTimer);const c=e.target.value.trim();fcTimer=setTimeout(()=>fotoCatalogo(c.length>=3?c:''),700)});
+document.addEventListener('input',e=>{if(e.target.id!=='msku')return;clearTimeout(fcTimer);const c=e.target.value.trim(),d=draft;
+  fcTimer=setTimeout(async()=>{if(c.length<3){if(d){d.fotoCat=''}const m=$('mfoto');if(m)m.innerHTML='';return}
+    const a=await achaPeca(c);if(draft!==d||!$('msku')||$('msku').value.trim()!==c)return;
+    d.fotoCat=a&&a.img?a.img:'';const m=$('mfoto');if(m)m.innerHTML=d.fotoCat?`<img src="${d.fotoCat}" alt="Foto da peça"><span class="muted small">Foto da peça (catálogo)</span>`:(a&&a.erro?'<span class="muted small">Sem acesso ao catálogo online</span>':'')},700)});
 </script>
 </body>
 </html>
