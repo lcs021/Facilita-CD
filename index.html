@@ -2298,16 +2298,35 @@ function telaConfig(){document.body.classList.add('auth');
 init();
 
 /* Preenche o nome da peça ao digitar o código (catálogo do WMS em produtos.js) */
+const ultAuto={};
 document.addEventListener('input',e=>{
   const el=e.target,id=el.id||'';let dest=null;
   if(id==='sku')dest='produto';else if(id==='msku')dest='mdesc';else if(/^bs\d+$/.test(id))dest='bp'+id.slice(2);
   if(!dest||!window.PRODUTOS)return;
   const alvo=document.getElementById(dest);if(!alvo)return;
   const nome=window.PRODUTOS[el.value.trim().replace(/^0+(?=\d)/,'')]||window.PRODUTOS[el.value.trim()];
-  if(nome){if(!alvo.value||alvo.dataset.auto==='1'){alvo.value=nome;alvo.dataset.auto='1';alvo.dispatchEvent(new Event('input',{bubbles:true}))}}
-  else if(alvo.dataset.auto==='1'){alvo.value='';alvo.dataset.auto='';alvo.dispatchEvent(new Event('input',{bubbles:true}))}
+  if(nome){if(!alvo.value||alvo.dataset.auto==='1'||alvo.value===ultAuto[dest]){alvo.value=nome;ultAuto[dest]=nome;alvo.dataset.auto='1';alvo.dispatchEvent(new Event('input',{bubbles:true}))}}
+  else if(alvo.dataset.auto==='1'||(alvo.value&&alvo.value===ultAuto[dest])){alvo.value='';alvo.dataset.auto='';alvo.dispatchEvent(new Event('input',{bubbles:true}))}
 });
 document.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.auto==='1'&&e.isTrusted)e.target.dataset.auto=''},true);
+
+/* Foto da peça: busca no catálogo online ao digitar o código (Garantia e Relatório) */
+const VTEX='https://www.fuscaopretoautopeca.com.br/api/catalog_system/pub/products/search';
+let fcTimer=null;
+async function achaPeca(cod){for(const q of['?fq=alternateIds_RefId:'+encodeURIComponent(cod),'?ft='+encodeURIComponent(cod)]){try{const r=await fetch(VTEX+q);if(!r.ok)continue;const j=await r.json();const p=j&&j[0];if(p&&String(p.productReference||'')===cod){const im=(p.items&&p.items[0]&&p.items[0].images)||[];return{nome:p.productName,img:im[0]&&im[0].imageUrl}}}catch(e){}}return null}
+async function fotoCatalogo(cod){
+  if(!$('foto')||!draft||draft.catCod===cod)return;
+  const antigas=draft.fotos.filter(f=>f.cat&&f.cat!==cod);
+  if(antigas.length){draft.fotos=draft.fotos.filter(f=>!f.cat||f.cat===cod);removerArquivos(antigas.map(f=>f.path));ler();render()}
+  draft.catCod=cod;if(!cod||draft.fotos.length>=4)return;
+  const d=draft,a=await achaPeca(cod);if(!a||!a.img||draft!==d||d.catCod!==cod)return;
+  try{const bl=await (await fetch(a.img)).blob();const f=new File([bl],'peca.jpg',{type:bl.type||'image/jpeg'});
+    ler();enviando++;render();
+    try{const{blob,prev}=await comprimir(f);const path=await enviar(blob,'jpg','image/jpeg');if(draft===d&&d.catCod===cod&&d.fotos.length<4){d.fotos.push({path,prev,cat:cod});toast('Foto da peça preenchida')}else removerArquivos([path])}finally{enviando--}
+    if(draft===d){ler();render()}
+  }catch(e){}
+}
+document.addEventListener('input',e=>{if(e.target.id!=='sku')return;clearTimeout(fcTimer);const c=e.target.value.trim();fcTimer=setTimeout(()=>fotoCatalogo(c.length>=3?c:''),700)});
 </script>
 </body>
 </html>
