@@ -2313,18 +2313,24 @@ document.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.auto
 /* Foto da peça: busca no catálogo online ao digitar o código (Garantia e Relatório) */
 const VTEX='https://www.fuscaopretoautopeca.com.br/api/catalog_system/pub/products/search';
 let fcTimer=null;
-async function achaPeca(cod){for(const q of['?fq=alternateIds_RefId:'+encodeURIComponent(cod),'?ft='+encodeURIComponent(cod)]){try{const r=await fetch(VTEX+q);if(!r.ok)continue;const j=await r.json();const p=j&&j[0];if(p&&String(p.productReference||'')===cod){const im=(p.items&&p.items[0]&&p.items[0].images)||[];return{nome:p.productName,img:im[0]&&im[0].imageUrl}}}catch(e){}}return null}
+async function achaPeca(cod){let falhou=false;for(const q of['?fq=alternateIds_RefId:'+encodeURIComponent(cod),'?ft='+encodeURIComponent(cod)]){try{const r=await fetch(VTEX+q);if(!r.ok){falhou=true;continue}const j=await r.json();const p=j&&j[0];if(p&&String(p.productReference||'')===cod){const im=(p.items&&p.items[0]&&p.items[0].images)||[];return{nome:p.productName,img:im[0]&&im[0].imageUrl}}}catch(e){falhou=true}}return falhou?{erro:1}:null}
 async function fotoCatalogo(cod){
   if(!$('foto')||!draft||draft.catCod===cod)return;
   const antigas=draft.fotos.filter(f=>f.cat&&f.cat!==cod);
-  if(antigas.length){draft.fotos=draft.fotos.filter(f=>!f.cat||f.cat===cod);removerArquivos(antigas.map(f=>f.path));ler();render()}
+  if(antigas.length){draft.fotos=draft.fotos.filter(f=>!f.cat||f.cat===cod);removerArquivos(antigas.map(f=>f.path).filter(p=>!/^https?:/.test(p)));ler();render()}
   draft.catCod=cod;if(!cod||draft.fotos.length>=4)return;
-  const d=draft,a=await achaPeca(cod);if(!a||!a.img||draft!==d||d.catCod!==cod)return;
-  try{const bl=await (await fetch(a.img)).blob();const f=new File([bl],'peca.jpg',{type:bl.type||'image/jpeg'});
-    ler();enviando++;render();
-    try{const{blob,prev}=await comprimir(f);const path=await enviar(blob,'jpg','image/jpeg');if(draft===d&&d.catCod===cod&&d.fotos.length<4){d.fotos.push({path,prev,cat:cod});toast('Foto da peça preenchida')}else removerArquivos([path])}finally{enviando--}
-    if(draft===d){ler();render()}
-  }catch(e){}
+  const d=draft,a=await achaPeca(cod);if(draft!==d||d.catCod!==cod)return;
+  if(!a){return}
+  if(a.erro){toast('Sem acesso ao catálogo online para buscar a foto');return}
+  if(!a.img)return;
+  ler();enviando++;render();
+  try{
+    let blob,prev,path;
+    try{const bl=await (await fetch(a.img)).blob();const f=new File([bl],'peca.jpg',{type:bl.type||'image/jpeg'});({blob,prev}=await comprimir(f));path=await enviar(blob,'jpg','image/jpeg')}
+    catch(e){path=a.img;prev=a.img;urls[path]={url:a.img,ate:Infinity}}
+    if(draft===d&&d.catCod===cod&&d.fotos.length<4){d.fotos.push({path,prev,cat:cod});toast('Foto da peça preenchida')}else if(!/^https?:/.test(path))removerArquivos([path]);
+  }finally{enviando--}
+  if(draft===d){ler();render()}
 }
 document.addEventListener('input',e=>{if(e.target.id!=='sku')return;clearTimeout(fcTimer);const c=e.target.value.trim();fcTimer=setTimeout(()=>fotoCatalogo(c.length>=3?c:''),700)});
 </script>
