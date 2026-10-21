@@ -840,6 +840,34 @@ body.withside .wrap:has(.wms){max-width:1180px}
 .ia-form button:disabled{opacity:.45;cursor:default}
 .ia-form button svg{width:20px;height:20px}
 .ia-nota{font-size:.75rem;color:var(--muted);text-align:center;margin-top:-6px}
+
+/* Assistente IA: botão flutuante e painel */
+.ia-fab{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:max(20px,env(safe-area-inset-bottom,0px));z-index:44;width:58px;height:58px;border-radius:18px;border:0;cursor:pointer;color:#fff;display:grid;place-items:center;background:linear-gradient(135deg,#6f5cff,#2457d6);box-shadow:0 10px 26px rgba(50,70,220,.42),0 0 0 1px rgba(255,255,255,.12) inset;transition:transform .15s,box-shadow .15s}
+.ia-fab svg{width:27px;height:27px}
+.ia-fab:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 14px 30px rgba(50,70,220,.5)}
+.ia-fab:active{transform:scale(.96)}
+.ia-fab[aria-expanded="true"]{transform:rotate(-8deg)}
+.ia-panel{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(max(20px,env(safe-area-inset-bottom,0px)) + 72px);z-index:45;width:min(410px,calc(100vw - 32px));height:min(640px,calc(100vh - 120px));display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 60px rgba(16,24,40,.28),0 2px 6px rgba(16,24,40,.1);overflow:hidden;animation:iaAbre .18s ease-out;transform-origin:bottom right}
+.ia-panel[hidden]{display:none!important}
+.ia-ph{display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px;background:var(--ink);color:var(--ink-fg)}
+.ia-ph .ia-av{width:36px;height:36px;border-radius:11px}.ia-ph .ia-av svg{width:19px;height:19px}
+.ia-ph .tx{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}.ia-ph .tx small{color:#b8c2d6;font-size:.76rem}
+.ia-ib{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--ink-fg);display:grid;place-items:center;cursor:pointer;flex:none}
+.ia-ib:hover{background:rgba(255,255,255,.16)}.ia-ib svg{width:17px;height:17px}
+.ia-panel .ia-msgs{flex:1;overflow-y:auto;padding:14px;overscroll-behavior:contain}
+.ia-panel .ia-b{max-width:92%;font-size:.92rem}
+.ia-panel .ia-sug{grid-template-columns:1fr}
+.ia-pf{padding:10px 12px 8px;border-top:1px solid var(--line);background:var(--surface)}
+.ia-panel .ia-form{position:static;box-shadow:none;border-radius:14px}
+.ia-panel .ia-form:focus-within{box-shadow:0 0 0 4px var(--accent-soft)}
+.ia-panel .ia-nota{margin:6px 0 0}
+@keyframes iaAbre{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+@media (max-width:640px){
+  .ia-panel{inset:0;width:auto;height:auto;border-radius:0;border:0;padding-top:env(safe-area-inset-top,0px);transform-origin:center}
+  body.ia-on .ia-fab{display:none}
+  body.ia-on{overflow:hidden}}
+@media (prefers-reduced-motion:reduce){.ia-panel{animation:none}.ia-fab{transition:none}}
+@media print{.ia-fab,.ia-panel{display:none!important}}
 @keyframes iaIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @keyframes iaDot{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.ia-b,.ia-dots i{animation:none}}
@@ -857,10 +885,11 @@ body.withside .wrap:has(.wms){max-width:1180px}
   <button data-tab="lista"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg></span>Registros</button>
   <button data-tab="nova"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>Registrar</button>
   <button data-tab="resumo"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Resumo</button>
-  <button data-tab="ia" hidden><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></span>IA</button>
   <button data-tab="equipe"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/></svg></span>Equipe<span class="badge" id="badge" hidden></span></button>
 </nav>
 <div class="toast" id="toast" hidden></div>
+<button type="button" id="iaFab" class="ia-fab" hidden aria-label="Abrir Assistente IA" aria-controls="iaPanel" aria-expanded="false" title="Assistente IA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></button>
+<section id="iaPanel" class="ia-panel" role="dialog" aria-label="Assistente IA" hidden></section>
 
 <script type="text/plain" id="sql">-- Inventário CD: estrutura do banco (rode uma vez no SQL Editor do Supabase)
 
@@ -1150,7 +1179,7 @@ async function init(){
   sb=window.supabase.createClient(URL_,KEY_);
   sb.auth.onAuthStateChange((ev,s)=>{const novo=s?.user?.id||null;if(novo!==uid){uid=novo;setTimeout(entrouOuSaiu,0)}});
   const {data}=await sb.auth.getSession();uid=data.session?.user?.id||null;entrouOuSaiu();
-  setInterval(()=>{if(eu&&(eu.aprovado||eu.admin)&&!document.hidden&&!ui.det&&ui.tab!=='nova'&&ui.tab!=='ia')carregar()},30000);
+  setInterval(()=>{if(eu&&(eu.aprovado||eu.admin)&&!document.hidden&&!ui.det&&ui.tab!=='nova')carregar()},30000);
 }
 async function entrouOuSaiu(){
   if(!uid){eu=null;perfis={};ocs=[];carregou=false;render();return}
@@ -1194,7 +1223,7 @@ const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filte
     <span class="ico">${svgI(icMod[c])}</span><span class="tx"><b>${c}</b><small>${sub[c]}</small></span>${c==='Relatório'&&relAtrasados().length?`<span class="atrb" title="Relatórios com mais de 2 dias sem resolver">${relAtrasados().length}</span>`:''}<span class="n">${n(c)}</span>${c==='Minucioso'?icChev:''}</button>`;
   return`<div class="sidehead"><span class="av" style="background:${corNome(eu&&eu.nome)}">${esc(iniciais(eu&&eu.nome))}</span><div class="tx"><b>${esc(eu?eu.nome:'')}</b><small>${esc(eu?cargoNome(eu.cargo):'')}</small></div></div>
 
-  <div class="sidesec">Navegação</div>${navItem('painel','Painel','<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>')}${navItem('lista','Registros','<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/>')}${pode('resumo')?navItem('resumo','Resumo','<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'):''}${pode('ia')?navItem('ia','Assistente IA',IC_IA):''}${eu&&eu.admin?navItem('equipe','Equipe','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/>',pendEq):''}
+  <div class="sidesec">Navegação</div>${navItem('painel','Painel','<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>')}${navItem('lista','Registros','<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/>')}${pode('resumo')?navItem('resumo','Resumo','<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'):''}${eu&&eu.admin?navItem('equipe','Equipe','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/>',pendEq):''}
   <div class="sidesec">Módulos</div>${podeMod('Garantia')?item('Garantia'):''}${podeMod('Relatório')?item('Relatório'):''}${podeMod('Minucioso')?`<div class="mwrap">${item('Minucioso')}
   <div class="subitems${ui.cat==='Minucioso'?' show':''}"><div class="subhead"><b>Setores</b><span>${SETORES.length}</span></div>
   <label class="subsearch">${svgI('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')}<input id="buscaSetor" placeholder="Buscar setor ou chefe" autocomplete="off"></label>
@@ -1261,7 +1290,7 @@ function novo(){return{cat:ui.cat||'Garantia',setor:ui.cat==='Minucioso'?ui.seto
 
 function render(){
   {const rf=$('rodape');if(rf&&!rf.innerHTML)rf.innerHTML=rodapeHTML()}
-  const v=$('view'),fora=()=>{const al=$('alertas');if(al)al.innerHTML='';$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';$('side').hidden=true;abreMenu(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
+  const v=$('view'),fora=()=>{const al=$('alertas');if(al)al.innerHTML='';$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';$('side').hidden=true;abreMenu(false);iaFab(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
   if(!sb)return;
   document.body.classList.toggle('auth',!uid);
   if(!uid){fora();if(tela==='cadastro'){v.innerHTML=cadastroHTML();bindCadastro()}else{v.innerHTML=loginHTML();bindLogin()}return}
@@ -1272,9 +1301,9 @@ function render(){
   $('nav').hidden=false;$('sair').hidden=false;$('side').hidden=false;$('menuBtn').hidden=false;document.body.classList.add('withside');renderSide();$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo);
   const pend=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
   $('badge').hidden=!(eu.admin&&pend);$('badge').textContent=pend;{let mb=$('menuBtn').querySelector('.mb');if(eu.admin&&pend){if(!mb){mb=document.createElement('span');mb.className='mb';$('menuBtn').appendChild(mb)}mb.textContent=pend}else if(mb)mb.remove()}
-  document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;document.querySelector('[data-tab=ia]').hidden=!pode('ia');
+  document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;iaFab(pode('ia'));
   $('nav').style.gridTemplateColumns=`repeat(${document.querySelectorAll('nav button:not([hidden])').length},1fr)`;
-  if((ui.tab==='resumo'&&!pode('resumo'))||(ui.tab==='ia'&&!pode('ia'))||(ui.tab==='equipe'&&!eu.admin)||(ui.tab==='nova'&&!pode('registrar')))ui.tab='lista';
+  if((ui.tab==='resumo'&&!pode('resumo'))||(ui.tab==='ia')||(ui.tab==='equipe'&&!eu.admin)||(ui.tab==='nova'&&!pode('registrar')))ui.tab='lista';
   {const mods=Object.keys(CATS).filter(podeMod);if(!mods.includes(ui.cat)){ui.cat=mods[0]||'';ui.setor=''}if(draft&&!mods.includes(draft.cat))draft.cat=mods[0]||draft.cat;
    if(!mods.length&&!ui.det&&ui.tab!=='equipe'&&ui.tab!=='resumo'){v.innerHTML='<div class="center box stack"><h2>Nenhum módulo liberado</h2><p>Seu cargo ainda não tem acesso a nenhum módulo. Peça ao Chefe de Inventário para liberar.</p></div>';return}}
   document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',String(b.dataset.tab===ui.tab&&!ui.det)));
@@ -1288,7 +1317,6 @@ function render(){
   else if(ui.tab==='nova'){if(draft.cat==='Consertos Baiano'){v.innerHTML=baiFormHTML();bindBaiForm()}else if(draft.cat==='Minucioso'){v.innerHTML=minFormHTML();bindMinForm()}else{v.innerHTML=formHTML();bindForm()}}
   else if(ui.tab==='painel'){v.innerHTML=painelHTML();bindPainel()}
   else if(ui.tab==='resumo'){v.innerHTML=resumoHTML();bindCards();bindResumo()}
-  else if(ui.tab==='ia'){v.innerHTML=iaHTML();bindIA()}
   else{v.innerHTML=equipeHTML();bindEquipe()}
   pedirUrls();
 }
@@ -2430,30 +2458,39 @@ function iaMsgsHTML(){let h='';
   if(IA.busy)h+=`<div class="ia-pens"><span class="ia-dots"><i></i><i></i><i></i></span>${esc(IA.passo||'Pensando…')}</div>`;
   if(IA.erro)h+=`<div class="ia-erro" role="alert">${esc(IA.erro)}</div>`;
   return h}
-function iaHTML(){iaCarrega();return`<div class="ia">
-  <div class="ia-top"><span class="ia-av">${svgI(IC_IA)}</span><div class="tx"><h2>Assistente IA</h2><p>IA própria do app. Pergunte do seu jeito sobre os registros do CD.</p></div>
-  ${IA.msgs.length?'<button class="btn sm" id="iaNova" type="button">Nova conversa</button>':''}</div>
+function iaHTML(){iaCarrega();return`<div class="ia-ph"><span class="ia-av">${svgI(IC_IA)}</span><div class="tx"><b>Assistente IA</b><small>IA própria do Facilita CD</small></div>
+  <button type="button" class="ia-ib" id="iaNova" title="Nova conversa" aria-label="Nova conversa" ${IA.msgs.length?'':'hidden'}>${svgI('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>')}</button>
+  <button type="button" class="ia-ib" id="iaFecha" title="Fechar" aria-label="Fechar">${svgI('<path d="M18 6 6 18M6 6l12 12"/>')}</button></div>
   <div class="ia-msgs" id="iaMsgs" aria-live="polite">${iaMsgsHTML()}</div>
-  <form class="ia-form" id="iaForm"><textarea id="iaTxt" rows="1" placeholder="Pergunte sobre garantias, relatórios, produtos…" aria-label="Sua pergunta" ${IA.busy?'disabled':''}></textarea>
+  <div class="ia-pf"><form class="ia-form" id="iaForm"><textarea id="iaTxt" rows="1" placeholder="Pergunte sobre o CD…" aria-label="Sua pergunta" ${IA.busy?'disabled':''}></textarea>
   <button type="submit" id="iaEnv" aria-label="Enviar" ${IA.busy?'disabled':''}>${svgI('<path d="M5 12h14M13 6l6 6-6 6"/>')}</button></form>
-  <p class="ia-nota">As respostas são calculadas direto dos registros. Digite <b>ajuda</b> para ver o que ela entende.</p></div>`}
-function iaPinta(){if(ui.tab!=='ia'||ui.det)return;const box=$('iaMsgs');if(!box)return;box.innerHTML=iaMsgsHTML();iaBindMsgs();
-  const t=$('iaTxt'),b=$('iaEnv');if(t)t.disabled=IA.busy;if(b)b.disabled=IA.busy;
-  const nv=$('iaNova');if(!nv&&IA.msgs.length&&!IA.busy){render();return}
-  if(!IA.busy&&t)t.focus();scrollTo({top:document.body.scrollHeight,behavior:'smooth'})}
+  <p class="ia-nota">Calculado direto dos registros. Digite <b>ajuda</b> para ver o que ela entende.</p></div>`}
+const iaAberto=()=>!$('iaPanel').hidden;
+const iaRola=(suave)=>{const box=$('iaMsgs');if(box)box.scrollTo({top:box.scrollHeight,behavior:suave?'smooth':'auto'})};
+function iaPinta(){if(!iaAberto())return;const box=$('iaMsgs');if(!box)return;box.innerHTML=iaMsgsHTML();iaBindMsgs();
+  const t=$('iaTxt'),b=$('iaEnv'),nv=$('iaNova');if(t)t.disabled=IA.busy;if(b)b.disabled=IA.busy;if(nv)nv.hidden=!IA.msgs.length;
+  if(!IA.busy&&t)t.focus();iaRola(true)}
 function iaBindMsgs(){const box=$('iaMsgs');if(!box)return;
   box.querySelectorAll('[data-sug]').forEach(b=>b.onclick=()=>iaEnviar(b.dataset.sug));
   box.querySelectorAll('[data-reg]').forEach(b=>b.onclick=()=>iaAbre(b.dataset.reg))}
 async function iaAbre(id){if(!ocs.find(x=>x.id===id)){const {data,error}=await sb.from('ocorrencias').select('*').eq('id',id).maybeSingle();
     if(error||!data){toast(error?erroMsg(error):'Registro não encontrado.');return}ocs.push(data)}
+  if(matchMedia('(max-width:640px)').matches)iaPainel(false);
   ui={...ui,det:id,confDel:false};render();scrollTo(0,0)}
+function iaPainel(on){const p=$('iaPanel'),f=$('iaFab');if(!p)return;
+  if(on){p.innerHTML=iaHTML();p.hidden=false;f.setAttribute('aria-expanded','true');document.body.classList.add('ia-on');bindIA()}
+  else{p.hidden=true;f.setAttribute('aria-expanded','false');document.body.classList.remove('ia-on')}}
+function iaFab(ok){const f=$('iaFab');if(!f)return;f.hidden=!ok;if(!ok&&iaAberto())iaPainel(false)}
 function bindIA(){const f=$('iaForm'),t=$('iaTxt');iaBindMsgs();
-  const cresce=()=>{t.style.height='auto';t.style.height=Math.min(160,t.scrollHeight)+'px'};
+  const cresce=()=>{t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'};
   t.addEventListener('input',cresce);
   t.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();f.requestSubmit()}});
   f.onsubmit=e=>{e.preventDefault();const q=t.value.trim();if(!q||IA.busy)return;t.value='';cresce();iaEnviar(q)};
-  const nv=$('iaNova');if(nv)nv.onclick=()=>{if(IA.busy)return;IA.msgs=[];IA.erro='';IA.ctx=null;iaGrava();render()};
-  if(!IA.busy)t.focus();if(IA.msgs.length)scrollTo(0,document.body.scrollHeight)}
+  $('iaNova').onclick=()=>{if(IA.busy)return;IA.msgs=[];IA.erro='';IA.ctx=null;iaGrava();iaPinta()};
+  $('iaFecha').onclick=()=>{iaPainel(false);$('iaFab').focus()};
+  if(!IA.busy)t.focus();iaRola(false)}
+$('iaFab').addEventListener('click',()=>iaPainel(!iaAberto()));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&iaAberto()){iaPainel(false);$('iaFab').focus()}});
 /* IA própria: entende a pergunta em português e calcula a resposta direto dos registros (sem chave, sem custo) */
 const iaN=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const iaISO=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
