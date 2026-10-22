@@ -2241,7 +2241,7 @@ function detHTML(){const o=ocs.find(x=>x.id===ui.det);if(!o){ui.det=null;return 
     ${pode('garantia')?`<div class="two"><div class="field"><label class="lbl" for="bprazo">Prazo para voltar</label><input id="bprazo" type="date" value="${esc(String(o.data_ref||'').slice(0,10))}"></div><div class="field"><label class="lbl">&nbsp;</label><button type="button" class="btn" id="bsalvaprazo">Salvar prazo</button></div></div>
     <div class="actions"><button type="button" class="btn primary" id="bcobrei">📞 Registrei a cobrança</button><button type="button" class="btn" id="bvoltou">✓ Voltou ao estoque</button></div>`:''}</div>`:''}
   ${pode('garantia')?`<div class="field"><span class="lbl">Atualizar situação</span><div class="chips">${GST.filter(s=>s!==(o.gar_status||'Pendente')).map(s=>`<button type="button" class="chip" data-novo="${s}">${s}</button>`).join('')}</div>
-  <div class="field" style="margin-top:6px"><label class="lbl" for="gprazo">Prazo do conserto (obrigatório ao marcar Conserto Baiano)</label><input id="gprazo" type="date" value="${esc(String(o.data_ref||'').slice(0,10)||dia(Date.now()+7*864e5))}"></div>
+  <div class="field" style="margin-top:6px"><label class="lbl" for="gprazo">Prazo do conserto (padrão: 1 semana)</label><input id="gprazo" type="date" value="${esc(String(o.data_ref||'').slice(0,10)||dia(Date.now()+7*864e5))}"></div>
   <input id="gnota" placeholder="Observação (opcional): ex. nº do protocolo, data da coleta"></div>`:'<p class="muted small" style="margin:0">A situação da garantia é atualizada pelo líder, analista ou supervisor.</p>'}
   ${(o.hist||[]).length>1?`<ul class="hist">${o.hist.slice(1).map(h=>`<li><span class="muted small">${fData(h.t)} · ${esc(nome(h.por))}</span><br>${esc(h.txt)}</li>`).join('')}</ul>`:''}</div>`:''}
   ${ehRel(o)?`<div class="box stack rbox${relAtrasado(o)?' atrasado':''}"><div class="row"><b>Prazo do relatório</b>${relBadge(o)}</div>
@@ -2259,7 +2259,7 @@ function bindDet(){const o=ocs.find(x=>x.id===ui.det);$('voltar').onclick=()=>{u
   const rr=$('relResolve');if(rr)rr.onclick=()=>muda('resolvido','Marcado como resolvido','Relatório resolvido');
   const ra=$('relReabre');if(ra)ra.onclick=()=>muda('registrada','Relatório reaberto','Relatório reaberto');
   document.querySelectorAll('[data-novo]').forEach(b=>b.addEventListener('click',async()=>{if(saving)return;const s=b.dataset.novo,n=$('gnota').value.trim();
-    const pz=s==='Conserto Baiano'?($('gprazo').value||''):'';if(s==='Conserto Baiano'&&!pz){toast('Escolha o prazo do conserto antes de marcar Conserto Baiano');return}
+    const pz=s==='Conserto Baiano'?($('gprazo').value||dia(Date.now()+7*864e5)):'';
     const hist=[...(o.hist||[]),{t:new Date().toISOString(),por:uid,txt:s+(pz?' · prazo '+fDia(pz):'')+(n?': '+n:'')}];
     const upd={gar_status:s,hist};if(pz)upd.data_ref=pz;
     saving=true;const {error}=await sb.from('ocorrencias').update(upd).eq('id',o.id);saving=false;
