@@ -804,73 +804,29 @@ body.withside .wrap:has(.wms){max-width:1180px}
 .chefdel-r{display:flex;gap:14px;flex-wrap:wrap}
 .chefdel-b.forte:hover{color:var(--alta)}
 .chefdel.conf span{line-height:1.35}
-
-/* Assistente IA */
-.ia{display:flex;flex-direction:column;gap:14px}
-.ia-top{display:flex;align-items:center;gap:12px}
-.ia-av{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex:none;color:#fff;background:linear-gradient(135deg,#6f5cff,#2457d6);box-shadow:0 6px 16px rgba(60,80,220,.32)}
-.ia-av svg{width:22px;height:22px}
-.ia-top .tx{flex:1;min-width:0}.ia-top .tx p{margin:0;color:var(--muted);font-size:.86rem}
-.ia-msgs{display:flex;flex-direction:column;gap:10px;min-height:120px}
-.ia-b{max-width:88%;padding:11px 14px;border-radius:16px;line-height:1.55;font-size:.95rem;overflow-wrap:anywhere;animation:iaIn .2s ease-out}
-.ia-b.eu{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:5px;white-space:pre-wrap}
-.ia-b.ai{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:5px;box-shadow:var(--sh1)}
-.ia-b.ai p{margin:0 0 8px}.ia-b.ai p:last-child{margin-bottom:0}
-.ia-b.ai ul,.ia-b.ai ol{margin:4px 0 8px;padding-left:20px}.ia-b.ai li{margin:2px 0}
-.ia-b.ai code{font-family:var(--mono);font-size:.86em;background:var(--sunken);padding:1px 5px;border-radius:5px}
-.ia-b.ai .h{display:block;font-weight:800;margin:6px 0 4px}
-.ia-reg{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line2);background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:1px 9px;font:700 .76rem var(--font);cursor:pointer;vertical-align:1px;margin:0 2px}
-.ia-reg:hover{filter:brightness(1.05)}
-.ia-passo{align-self:flex-start;display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.8rem;padding:0 6px}
-.ia-passo svg{width:14px;height:14px}
-.ia-pens{align-self:flex-start;display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.86rem;padding:10px 14px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
-.ia-dots{display:inline-flex;gap:4px}.ia-dots i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:iaDot 1s infinite ease-in-out}
-.ia-dots i:nth-child(2){animation-delay:.15s}.ia-dots i:nth-child(3){animation-delay:.3s}
-.ia-erro{align-self:stretch;border:1px solid color-mix(in srgb,var(--alta) 40%,var(--line));background:color-mix(in srgb,var(--alta) 8%,var(--surface));color:var(--alta);border-radius:12px;padding:10px 13px;font-size:.88rem;font-weight:600}
-.ia-vazio{display:flex;flex-direction:column;gap:12px;padding:18px;border:1px dashed var(--line2);border-radius:var(--r);background:var(--surface)}
-.ia-vazio b{font-size:1rem}
-.ia-sug{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ia-sug button{text-align:left;border:1px solid var(--line);background:var(--sunken);color:var(--fg);border-radius:12px;padding:10px 12px;font:600 .85rem var(--font);cursor:pointer;line-height:1.35;transition:border-color .15s,background .15s}
-.ia-sug button:hover{border-color:var(--accent);background:var(--accent-soft)}
-@media (max-width:520px){.ia-sug{grid-template-columns:1fr}}
-.ia-form{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:flex-end;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:6px;box-shadow:var(--sh2);z-index:5}
-.ia-form:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft),var(--sh2)}
-.ia-form textarea{border:0;box-shadow:none!important;min-height:44px;max-height:160px;resize:none;padding:11px 10px;background:transparent}
-.ia-form button{flex:none;width:44px;height:44px;border-radius:12px;border:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;cursor:pointer}
-.ia-form button:disabled{opacity:.45;cursor:default}
-.ia-form button svg{width:20px;height:20px}
-.ia-nota{font-size:.75rem;color:var(--muted);text-align:center;margin-top:-6px}
-
-/* Assistente IA: botão flutuante e painel */
-.ia-fab{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:max(20px,env(safe-area-inset-bottom,0px));z-index:44;width:58px;height:58px;border-radius:18px;border:0;cursor:pointer;color:#fff;display:grid;place-items:center;background:linear-gradient(135deg,#6f5cff,#2457d6);box-shadow:0 10px 26px rgba(50,70,220,.42),0 0 0 1px rgba(255,255,255,.12) inset;transition:transform .15s,box-shadow .15s}
-.ia-fab svg{width:27px;height:27px}
-.ia-fab:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 14px 30px rgba(50,70,220,.5)}
-.ia-fab:active{transform:scale(.96)}
-.ia-fab[aria-expanded="true"]{transform:rotate(-8deg)}
-.ia-panel{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(max(20px,env(safe-area-inset-bottom,0px)) + 72px);z-index:45;width:min(410px,calc(100vw - 32px));height:min(640px,calc(100vh - 120px));display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 60px rgba(16,24,40,.28),0 2px 6px rgba(16,24,40,.1);overflow:hidden;animation:iaAbre .18s ease-out;transform-origin:bottom right}
-.ia-panel[hidden]{display:none!important}
-.ia-ph{display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px;background:var(--ink);color:var(--ink-fg)}
-.ia-ph .ia-av{width:36px;height:36px;border-radius:11px}.ia-ph .ia-av svg{width:19px;height:19px}
-.ia-ph .tx{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}.ia-ph .tx small{color:#b8c2d6;font-size:.76rem}
-.ia-ib{width:34px;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--ink-fg);display:grid;place-items:center;cursor:pointer;flex:none}
-.ia-ib:hover{background:rgba(255,255,255,.16)}.ia-ib svg{width:17px;height:17px}
-.ia-panel .ia-msgs{flex:1;overflow-y:auto;padding:14px;overscroll-behavior:contain}
-.ia-panel .ia-b{max-width:92%;font-size:.92rem}
-.ia-panel .ia-sug{grid-template-columns:1fr}
-.ia-pf{padding:10px 12px 8px;border-top:1px solid var(--line);background:var(--surface)}
-.ia-panel .ia-form{position:static;box-shadow:none;border-radius:14px}
-.ia-panel .ia-form:focus-within{box-shadow:0 0 0 4px var(--accent-soft)}
-.ia-panel .ia-nota{margin:6px 0 0}
-@keyframes iaAbre{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
-@media (max-width:640px){
-  .ia-panel{inset:0;width:auto;height:auto;border-radius:0;border:0;padding-top:env(safe-area-inset-top,0px);transform-origin:center}
-  body.ia-on .ia-fab{display:none}
-  body.ia-on{overflow:hidden}}
-@media (prefers-reduced-motion:reduce){.ia-panel{animation:none}.ia-fab{transition:none}}
-@media print{.ia-fab,.ia-panel{display:none!important}}
-@keyframes iaIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-@keyframes iaDot{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){.ia-b,.ia-dots i{animation:none}}
+.cat.ava{background:color-mix(in srgb,#e11d48 14%,var(--surface));color:#be123c}
+.sitem.av[aria-current="true"]{background:color-mix(in srgb,#e11d48 12%,var(--surface));color:#e11d48}
+.avfolha{font-family:Calibri,Carlito,Arial,sans-serif;color:#000;padding:0 8px}
+.avfolha *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.avt{font-size:24pt;font-weight:400;text-align:center;text-decoration:underline;margin:6px 0 22px;line-height:1.1}
+.avbox{border:1px solid #000;padding:6px 8px 2px;position:relative;font-size:9.5pt;font-weight:700}
+.avbox p{margin:0 0 9px}.avref{position:absolute;right:8px;top:6px;color:#e00000;font-size:9.5pt;font-weight:700}
+.avh{color:#2e74b5;font-size:11pt;font-weight:700;margin:14px 0 4px}
+.avp{font-size:12pt;font-weight:700;margin:0 0 10px;line-height:1.35;white-space:normal}
+.avr{color:#e00000}
+.avnota{text-align:center;font-size:12pt;margin-top:8px;padding-bottom:3px;border-bottom:2px solid #000}
+.avnota span{background:#ffff00;display:inline-block;padding:0 4px;line-height:1.3}
+.avass{margin-top:30px;font-size:11pt}.avass div{display:flex;gap:6px;align-items:flex-end;margin-bottom:14px}
+.avass i{flex:1;border-bottom:1px solid #000;height:14px;font-style:normal;font-size:10pt;padding-left:4px}
+.avcorte{margin:26px 0 8px;border-top:2px dashed #000;text-align:center;font-size:9pt;line-height:0;color:#000}
+.avcorte span{background:#fff;padding:0 8px;position:relative;top:-1px}
+.avterm{border:1px solid #000;padding:10px 12px;font-size:10.5pt}
+.avterm b.tt{display:block;text-align:center;font-size:11.5pt;margin-bottom:8px}
+.avterm p{margin:0 0 10px;line-height:1.4}
+.avterm .sg{display:grid;grid-template-columns:2fr 1fr;gap:22px;margin-top:22px;text-align:center;font-size:9.5pt}
+.avterm .sg span{display:block;border-top:1px solid #000;padding-top:2px}
+@media print{#printArea .avfolha{min-height:268mm;display:flex;flex-direction:column;padding:0 18mm}#printArea .avterm{margin-top:0}#printArea .avspc{flex:1}}
+.avspc{display:none}
 </style>
 </head>
 <body>
@@ -888,8 +844,6 @@ body.withside .wrap:has(.wms){max-width:1180px}
   <button data-tab="equipe"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/></svg></span>Equipe<span class="badge" id="badge" hidden></span></button>
 </nav>
 <div class="toast" id="toast" hidden></div>
-<button type="button" id="iaFab" class="ia-fab" hidden aria-label="Abrir Assistente IA" aria-controls="iaPanel" aria-expanded="false" title="Assistente IA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></button>
-<section id="iaPanel" class="ia-panel" role="dialog" aria-label="Assistente IA" hidden></section>
 
 <script type="text/plain" id="sql">-- Inventário CD: estrutura do banco (rode uma vez no SQL Editor do Supabase)
 
@@ -1125,6 +1079,10 @@ $$;
 revoke all on function public.admin_redefinir_senha(uuid, text) from public, anon;
 grant execute on function public.admin_redefinir_senha(uuid, text) to authenticated;
 
+-- Relatório de Avaria
+alter table public.ocorrencias add column if not exists dados jsonb;
+
+notify pgrst, 'reload schema';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
@@ -1138,8 +1096,8 @@ const ORIGINAL='<!doctype html>\n'+document.documentElement.outerHTML;
 const TIPOS_CAT={'Garantia':['Peça quebrada','Peça com defeito','Embalagem violada','Kit incompleto'],'Relatório':['Avaria / peça quebrada','Avaria / peça quebrada de fábrica','Material de devolução Mercado Livre','Material de devolução Shopee']};
 const ORIGENS={'Loja':'Retirado como quebrado na loja','Fábrica':'Veio quebrado ou com defeito do fabricante','Transporte':'Quebrou no frete ou na entrega','CD':'Quebrou dentro do CD'};
 const TIPOS=[...new Set([...TIPOS_CAT['Garantia'],...TIPOS_CAT['Relatório']])];
-const PERMS=[['mod:Garantia','Módulo Garantia','Ver e usar as garantias'],['mod:Relatório','Módulo Relatório','Ver e usar os relatórios'],['mod:Minucioso','Módulo Minucioso','Ver e usar as fichas do Minucioso'],['mod:Consertos Baiano','Módulo Consertos Baiano','Ver e usar os consertos'],['registrar','Criar registros','Lançar registros novos nos módulos liberados'],['resumo','Ver o Resumo','Abrir a tela de gráficos e totais'],['garantia','Editar registros','Atualizar a situação das garantias e os motivos do Minucioso'],['apagar','Apagar registros','Apagar registros, fotos e vídeos'],['ia','Assistente IA','Conversar com a IA sobre os registros do CD']];
-const TODAS=PERMS.map(p=>p[0]),PERM_AUX_PADRAO=['mod:Garantia','mod:Relatório','mod:Minucioso','mod:Consertos Baiano','registrar','resumo','garantia'];
+const PERMS=[['mod:Garantia','Módulo Garantia','Ver e usar as garantias'],['mod:Relatório','Módulo Relatório','Ver e usar os relatórios'],['mod:Minucioso','Módulo Minucioso','Ver e usar as fichas do Minucioso'],['mod:Consertos Baiano','Módulo Consertos Baiano','Ver e usar os consertos'],['mod:Avaria','Módulo Relatório de Avaria','Ver e usar os relatórios de avaria'],['registrar','Criar registros','Lançar registros novos nos módulos liberados'],['resumo','Ver o Resumo','Abrir a tela de gráficos e totais'],['garantia','Editar registros','Atualizar a situação das garantias e os motivos do Minucioso'],['apagar','Apagar registros','Apagar registros, fotos e vídeos']];
+const TODAS=PERMS.map(p=>p[0]),PERM_AUX_PADRAO=['mod:Garantia','mod:Relatório','mod:Minucioso','mod:Consertos Baiano','mod:Avaria','registrar','resumo','garantia'];
 let CARGOS={'Chefe de Inventário':TODAS,'Auxiliar de Inventário':PERM_AUX_PADRAO,'Visitante':[]};
 const CARGO_DESC={'Chefe de Inventário':'pode tudo','Auxiliar de Inventário':'pode o que você liberar abaixo','Visitante':'só vê o que você marcar abaixo'};
 const ANDARES={'11':'1º andar','12':'2º andar','13':'3º andar'},LETRAS='ABCDEFGHI'.split('');
@@ -1207,6 +1165,7 @@ const icChev='<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentC
 const icMod={Garantia:'<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
   'Relatório':'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
   Minucioso:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/>',
+  'Avaria':'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>',
   'Consertos Baiano':'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.4-.4-2.4z"/>'};
 const svgI=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const iniciais=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'?';
@@ -1217,8 +1176,8 @@ const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filte
   const pend=ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')==='Pendente').length,mesAt=mesKey(Date.now());
   const relMes=ocs.filter(o=>(o.categoria||'Relatório')==='Relatório'&&mesKey(o.criado)===mesAt).length;
   const setAt=SETORES.filter(s=>ns(s)).length;
-  const sub={Garantia:pend?`${pend} pendente${pend===1?'':'s'}`:'Nada pendente','Relatório':(()=>{const a=relAtrasados().length;return a?`${a} atrasado${a===1?'':'s'} (mais de 2 dias úteis)`:`${relMes} este mês`})(),Minucioso:`${setAt} de ${SETORES.length} setores ativos`,'Consertos Baiano':(()=>{const v=ocs.filter(o=>o.categoria==='Consertos Baiano'&&mesKey(o.criado)===mesAt).reduce((a,o)=>a+(totalBai(o)||0),0);return v?brl(v)+' este mês':'Nada este mês'})()};
-  const cor={Garantia:'var(--gar)','Relatório':'var(--accent)',Minucioso:'var(--min)','Consertos Baiano':'var(--bai)'},cls={Garantia:'g','Relatório':'r',Minucioso:'m','Consertos Baiano':'b'};
+  const sub={Garantia:pend?`${pend} pendente${pend===1?'':'s'}`:'Nada pendente','Relatório':(()=>{const a=relAtrasados().length;return a?`${a} atrasado${a===1?'':'s'} (mais de 2 dias úteis)`:`${relMes} este mês`})(),Minucioso:`${setAt} de ${SETORES.length} setores ativos`,'Avaria':(()=>{const q=ocs.filter(o=>o.categoria==='Avaria'&&mesKey(o.criado)===mesAt).length;return q?q+' este mês':'Nada este mês'})(),'Consertos Baiano':(()=>{const v=ocs.filter(o=>o.categoria==='Consertos Baiano'&&mesKey(o.criado)===mesAt).reduce((a,o)=>a+(totalBai(o)||0),0);return v?brl(v)+' este mês':'Nada este mês'})()};
+  const cor={Garantia:'var(--gar)','Relatório':'var(--accent)',Minucioso:'var(--min)','Consertos Baiano':'var(--bai)','Avaria':'#e11d48'},cls={Garantia:'g','Relatório':'r',Minucioso:'m','Consertos Baiano':'b','Avaria':'av'};
   const item=c=>`<button title="${esc(sub[c])}" class="sitem ${cls[c]}${c==='Minucioso'&&ui.cat==='Minucioso'?' aberto':''}" data-mcat="${c}" aria-current="${ui.cat===c&&(c!=='Minucioso'||!ui.setor)}" style="--c:${cor[c]}">
     <span class="ico">${svgI(icMod[c])}</span><span class="tx"><b>${c}</b><small>${sub[c]}</small></span>${c==='Relatório'&&relAtrasados().length?`<span class="atrb" title="Relatórios com mais de 2 dias sem resolver">${relAtrasados().length}</span>`:''}<span class="n">${n(c)}</span>${c==='Minucioso'?icChev:''}</button>`;
   return`<div class="sidehead"><span class="av" style="background:${corNome(eu&&eu.nome)}">${esc(iniciais(eu&&eu.nome))}</span><div class="tx"><b>${esc(eu?eu.nome:'')}</b><small>${esc(eu?cargoNome(eu.cargo):'')}</small></div></div>
@@ -1229,7 +1188,7 @@ const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filte
   <label class="subsearch">${svgI('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')}<input id="buscaSetor" placeholder="Buscar setor ou chefe" autocomplete="off"></label>
   <button class="ssub todos" data-mset="" aria-current="${ui.cat==='Minucioso'&&!ui.setor}" style="--i:0"><span class="sav all">${svgI('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>')}</span><span class="nm">Todos os setores<small>Visão geral</small></span><span class="n">${n('Minucioso')}</span></button>
   ${SETORES.map((s,i)=>{const ch=chefeDe(s),q=ns(s);return`<button class="ssub" data-mset="${esc(s)}" data-busca="${esc((s+' '+ch).toLowerCase())}" aria-current="${ui.cat==='Minucioso'&&ui.setor===s}" style="--i:${i+1}"><span class="sav" style="background:${ch?corNome(ch):'var(--line2)'}">${ch?esc(iniciais(ch)):'?'}</span><span class="nm">${esc(s)}<small>${ch?esc(ch):'Sem chefe definido'}</small></span><span class="n${q?' tem':''}">${q}</span></button>`}).join('')}
-  <div class="subvazio" hidden>Nenhum setor encontrado</div></div></div>`:''}${podeMod('Consertos Baiano')?item('Consertos Baiano'):''}${Object.keys(CATS).some(podeMod)?'':'<div class="muted small" style="padding:8px 12px">Nenhum módulo liberado para você.</div>'}`}
+  <div class="subvazio" hidden>Nenhum setor encontrado</div></div></div>`:''}${podeMod('Consertos Baiano')?item('Consertos Baiano'):''}${podeMod('Avaria')?item('Avaria'):''}${Object.keys(CATS).some(podeMod)?'':'<div class="muted small" style="padding:8px 12px">Nenhum módulo liberado para você.</div>'}`}
 function abreMenu(on){const s=$('side'),b=$('sideBack');s.classList.toggle('open',on);b.hidden=!on||matchMedia('(hover:hover) and (min-width:960px)').matches;$('menuBtn').setAttribute('aria-expanded',String(on))}
 function renderSide(){const s=$('side');s.innerHTML=sideHTML();s.querySelectorAll('[data-tema]').forEach(b=>b.onclick=e=>{e.stopPropagation();aplicaTema(b.dataset.tema)});
   s.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>{abreMenu(false);go(b.dataset.goto)});
@@ -1255,7 +1214,7 @@ const hoverFecha=()=>{if(!mqHover.matches)return;clearTimeout(tFecha);tFecha=set
 ['menuBtn','side','hoverzone'].forEach(id=>{$(id).addEventListener('mouseenter',hoverAbre);$(id).addEventListener('mouseleave',hoverFecha)});
 $('sideBack').addEventListener('click',()=>abreMenu(false));
 function go(tab){ui={...ui,tab,det:null,confDel:false};if(tab==='nova'&&!draft)draft=novo();render();scrollTo(0,0);if(tab!=='nova')carregar()}
-const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia','Minucioso':'Relatório de falta de produtos por setor, para o chefe assinar','Consertos Baiano':'Peças sem garantia enviadas para conserto'};
+const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia','Minucioso':'Relatório de falta de produtos por setor, para o chefe assinar','Consertos Baiano':'Peças sem garantia enviadas para conserto','Avaria':'Relatório de avaria no formato oficial, com termo de entrega para o supervisor assinar'};
 let SETORES=['Expedição','Shopee','Mercado Livre','Cofre','1º andar','2º andar','3º andar','Carga e descarga','Recebimento','Parachoque'];
 let chefes={},cargosOk=true;
 const chefeDe=s=>chefes[s]||'';
@@ -1283,14 +1242,14 @@ const gstCls=s=>({'Pendente':'p','Enviado à garantia da loja':'e','Crédito rec
 const gstBadge=o=>o.categoria==='Garantia'?`<span class="gst ${gstCls(o.gar_status)}">${esc(o.gar_status||'Pendente')}</span>`:'';
 const cargoNome=c=>CARGOS[c]?c:'Auxiliar de Inventário';
 const podeMod=c=>pode('mod:'+c);
-const catCls=c=>c==='Garantia'?'gar':c==='Minucioso'?'min':c==='Consertos Baiano'?'bai':'rel';
+const catCls=c=>c==='Garantia'?'gar':c==='Minucioso'?'min':c==='Consertos Baiano'?'bai':c==='Avaria'?'ava':'rel';
 const catBadge=c=>`<span class="cat ${catCls(c||'Relatório')}">${esc(c||'Relatório')}</span>`;
 const linhaBai=()=>({sku:'',produto:'',qtd:'1',custo:''});
 function novo(){return{cat:ui.cat||'Garantia',setor:ui.cat==='Minucioso'?ui.setor:'',qs:'',qc:'',chefe:ui.cat==='Minucioso'?chefeDe(ui.setor):'',custo:'',falta:'',motivo_inventario:'',motivo_chefe:'',motivo_allan:'',bai:[linhaBai()],req:'',dref:'',origem:'',forn:'',idq:'',tipo:'',end:'',andar:'',letra:'',sku:'',produto:'',fab:'',qtd:'',obs:'',fotos:[],videos:[]}}
 
 function render(){
   {const rf=$('rodape');if(rf&&!rf.innerHTML)rf.innerHTML=rodapeHTML()}
-  const v=$('view'),fora=()=>{const al=$('alertas');if(al)al.innerHTML='';$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';$('side').hidden=true;abreMenu(false);iaFab(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
+  const v=$('view'),fora=()=>{const al=$('alertas');if(al)al.innerHTML='';$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';$('side').hidden=true;abreMenu(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
   if(!sb)return;
   document.body.classList.toggle('auth',!uid);
   if(!uid){fora();if(tela==='cadastro'){v.innerHTML=cadastroHTML();bindCadastro()}else{v.innerHTML=loginHTML();bindLogin()}return}
@@ -1301,9 +1260,9 @@ function render(){
   $('nav').hidden=false;$('sair').hidden=false;$('side').hidden=false;$('menuBtn').hidden=false;document.body.classList.add('withside');renderSide();$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo);
   const pend=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
   $('badge').hidden=!(eu.admin&&pend);$('badge').textContent=pend;{let mb=$('menuBtn').querySelector('.mb');if(eu.admin&&pend){if(!mb){mb=document.createElement('span');mb.className='mb';$('menuBtn').appendChild(mb)}mb.textContent=pend}else if(mb)mb.remove()}
-  document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;iaFab(pode('ia'));
+  document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;
   $('nav').style.gridTemplateColumns=`repeat(${document.querySelectorAll('nav button:not([hidden])').length},1fr)`;
-  if((ui.tab==='resumo'&&!pode('resumo'))||(ui.tab==='ia')||(ui.tab==='equipe'&&!eu.admin)||(ui.tab==='nova'&&!pode('registrar')))ui.tab='lista';
+  if((ui.tab==='resumo'&&!pode('resumo'))||(ui.tab==='equipe'&&!eu.admin)||(ui.tab==='nova'&&!pode('registrar')))ui.tab='lista';
   {const mods=Object.keys(CATS).filter(podeMod);if(!mods.includes(ui.cat)){ui.cat=mods[0]||'';ui.setor=''}if(draft&&!mods.includes(draft.cat))draft.cat=mods[0]||draft.cat;
    if(!mods.length&&!ui.det&&ui.tab!=='equipe'&&ui.tab!=='resumo'){v.innerHTML='<div class="center box stack"><h2>Nenhum módulo liberado</h2><p>Seu cargo ainda não tem acesso a nenhum módulo. Peça ao Chefe de Inventário para liberar.</p></div>';return}}
   document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',String(b.dataset.tab===ui.tab&&!ui.det)));
@@ -1312,9 +1271,9 @@ function render(){
      al.innerHTML=`<div class="alerta" role="alert"><span class="aic">${svgI('<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>')}</span><div class="atx"><b>${q} relatório${q===1?'':'s'} passa${q===1?'':'ram'} do prazo de 2 dias</b><small>${q===1?'Está':'O mais antigo está'} há ${mx} dia${mx===1?'':'s'} sem ser resolvido.</small></div><button type="button" class="btn sm" data-alver="1">Ver atrasados</button><button type="button" class="ax" data-alx="1" aria-label="Fechar alerta">×</button></div>`;
      al.querySelector('[data-alver]').onclick=()=>{ui={...ui,tab:'lista',cat:'Relatório',setor:'',det:null,relSt:'atr'};render();scrollTo(0,0)};
      al.querySelector('[data-alx]').onclick=()=>{ui.alertaVisto=q;render()}}else al.innerHTML=''}}
-  if(ui.det){const od=ocs.find(x=>x.id===ui.det);if(od&&od.categoria==='Consertos Baiano'){v.innerHTML=baiDetHTML(od);bindBaiDet(od)}else if(od&&od.categoria==='Minucioso'&&!(od.qtd_contada!=null&&od.falta==null)){v.innerHTML=minDetHTML(od);bindMinDet(od)}else{v.innerHTML=detHTML();bindDet()}}
+  if(ui.det){const od=ocs.find(x=>x.id===ui.det);if(od&&od.categoria==='Avaria'){v.innerHTML=avDetHTML(od);bindAvDet(od)}else if(od&&od.categoria==='Consertos Baiano'){v.innerHTML=baiDetHTML(od);bindBaiDet(od)}else if(od&&od.categoria==='Minucioso'&&!(od.qtd_contada!=null&&od.falta==null)){v.innerHTML=minDetHTML(od);bindMinDet(od)}else{v.innerHTML=detHTML();bindDet()}}
   else if(ui.tab==='lista'){v.innerHTML=listaHTML();bindLista()}
-  else if(ui.tab==='nova'){if(draft.cat==='Consertos Baiano'){v.innerHTML=baiFormHTML();bindBaiForm()}else if(draft.cat==='Minucioso'){v.innerHTML=minFormHTML();bindMinForm()}else{v.innerHTML=formHTML();bindForm()}}
+  else if(ui.tab==='nova'){if(draft.cat==='Avaria'){v.innerHTML=avFormHTML();bindAvForm()}else if(draft.cat==='Consertos Baiano'){v.innerHTML=baiFormHTML();bindBaiForm()}else if(draft.cat==='Minucioso'){v.innerHTML=minFormHTML();bindMinForm()}else{v.innerHTML=formHTML();bindForm()}}
   else if(ui.tab==='painel'){v.innerHTML=painelHTML();bindPainel()}
   else if(ui.tab==='resumo'){v.innerHTML=resumoHTML();bindCards();bindResumo()}
   else{v.innerHTML=equipeHTML();bindEquipe()}
@@ -1422,7 +1381,7 @@ function filtrar(){const q=ui.busca.trim().toLowerCase();
   .sort((a,b)=>ts(b.criado)-ts(a.criado))}
 function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<button class="card" data-id="${esc(o.id)}">
   <div class="thumb">${f?`<img data-path="${esc(f)}" alt="">`:nv?'▶ vídeo':'sem foto'}${f&&nv?'<span class="vb">▶</span>':''}</div>
-  <div class="b"><div class="row"><span class="t">${esc(o.categoria==='Minucioso'?(o.produto||o.sku||'Relatório minucioso'):o.tipo)}</span>${catBadge(o.categoria)}</div>${ehRel(o)?`<div class="line">${relBadge(o)}</div>`:''}${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.origem?' · Origem: '+esc(o.origem):''}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}${o.categoria==='Minucioso'?`<div class="line"><span class="gst e">✓ Concluído</span></div><div class="line"><b style="color:var(--min)">${esc(o.setor||'Sem setor')}</b>${o.chefe?' · Chefe: '+esc(o.chefe):''}${o.falta!=null?' · Falta: <b style="color:var(--alta)">'+esc(o.falta)+'</b>':difDe(o)!=null?' · Dif: '+difHTML(difDe(o)):''}${totalMin(o)!=null?' · '+brl(totalMin(o)):''}</div>`:''}
+  <div class="b"><div class="row"><span class="t">${esc(o.categoria==='Minucioso'?(o.produto||o.sku||'Relatório minucioso'):o.categoria==='Avaria'?(avTipo(o)[1].replace(' (MLV)','')+((o.dados&&o.dados.ref)?' · Ref. '+o.dados.ref:'')+' · '+(o.produto||o.sku||'')):o.tipo)}</span>${catBadge(o.categoria)}</div>${ehRel(o)?`<div class="line">${relBadge(o)}</div>`:''}${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.origem?' · Origem: '+esc(o.origem):''}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}${o.categoria==='Minucioso'?`<div class="line"><span class="gst e">✓ Concluído</span></div><div class="line"><b style="color:var(--min)">${esc(o.setor||'Sem setor')}</b>${o.chefe?' · Chefe: '+esc(o.chefe):''}${o.falta!=null?' · Falta: <b style="color:var(--alta)">'+esc(o.falta)+'</b>':difDe(o)!=null?' · Dif: '+difHTML(difDe(o)):''}${totalMin(o)!=null?' · '+brl(totalMin(o)):''}</div>`:''}
   ${o.endereco||o.sku?`<div class="line">${o.endereco?`<span class="addr">${esc(o.endereco)}</span> `:''}${esc(o.sku||'')}</div>`:''}
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
   <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
@@ -2027,6 +1986,87 @@ function bindMinDet(o){$('voltar').onclick=()=>{ui.det=null;render()};$('imprimi
   const n=$('delNao');if(n)n.onclick=()=>{ui.confDel=false;render()};
   const s=$('delSim');if(s)s.onclick=async()=>{const {error}=await sb.from('ocorrencias').delete().eq('id',o.id);if(error){toast(erroMsg(error));return}ocs=ocs.filter(x=>x.id!==o.id);toast('Relatório apagado');go('lista')}}
 
+/* ---------- Relatório de Avaria ---------- */
+const AV_SQL="alter table public.ocorrencias add column if not exists dados jsonb;";
+const AV_CAMPOS={ref:'av_ref',sku:'avsku',produto:'avdesc',caso:'av_caso',custo:'av_custo',fab:'av_fab',oc:'av_oc',cons:'av_cons',conc:'av_conc',n1:'av_n1',n2:'av_n2',env:'av_env',g1:'av_g1',g2:'av_g2',conf:'av_conf'};
+function avProxRef(){const n=ocs.filter(o=>o.categoria==='Avaria').map(o=>parseInt(o.dados&&o.dados.ref,10)).filter(x=>!isNaN(x));return n.length?String(Math.max(...n)+1):''}
+const AV_TIPOS=[['Avaria','Avaria normal','RELATÓRIO DE AVARIA'],['Mercado Livre','Mercado Livre (MLV)','RELATÓRIO DE AVARIA - MERCADO LIVRE'],['Shopee','Shopee','RELATÓRIO DE AVARIA - SHOPEE']];
+const avTipo=o=>AV_TIPOS.find(x=>x[0]===((o.dados&&o.dados.tipo)||'Avaria'))||AV_TIPOS[0];
+function avNovo(){return{tipo:'Avaria',ref:avProxRef(),sku:'',produto:'',caso:'',custo:'',fab:'',oc:'',cons:'',conc:'',n1:'',n2:'',env:'',g1:'',g2:'',conf:''}}
+function avFormHTML(){const d=draft;if(!d.av)d.av=avNovo();const a=d.av;
+  const inp=(k,lbl,extra='')=>`<div class="field"><label class="lbl" for="${AV_CAMPOS[k]}">${lbl}</label><input id="${AV_CAMPOS[k]}" value="${esc(a[k])}" ${extra}></div>`;
+  const ta=(k,lbl,ph,h=5)=>`<div class="field"><label class="lbl" for="${AV_CAMPOS[k]}">${lbl}</label><textarea id="${AV_CAMPOS[k]}" rows="${h}" placeholder="${esc(ph||'')}">${esc(a[k])}</textarea></div>`;
+  return`<form class="stack" id="fav" novalidate>
+  <h2>${d.editId?'Editar relatório de avaria':'Novo registro'}</h2>
+  <div class="fhead">${catBadge('Avaria')}<span class="muted">${esc(CATS.Avaria)}</span><button type="button" class="btn link" data-abremenu="1" style="margin-left:auto">Trocar no menu</button></div>
+  <div class="box stack"><b>Tipo do relatório</b><div class="chips">${AV_TIPOS.map(x=>`<button type="button" class="chip" data-avt="${x[0]}" aria-pressed="${(a.tipo||'Avaria')===x[0]}">${x[1]}</button>`).join('')}</div></div>
+  <div class="box stack"><b>Dados da peça</b>
+  <div class="two">${inp('ref','Nº da REF','inputmode="numeric"')}${inp('sku','Código da peça *','autocapitalize="characters" class="mono"')}</div>
+  <div class="field"><label class="lbl" for="avdesc">Descrição</label><input id="avdesc" value="${esc(a.produto)}" placeholder="Preenche sozinho ao digitar o código"></div>
+  ${inp('caso','Caso','placeholder="Ex.: Material voltou incompleto da loja"')}
+  <div class="two">${inp('custo','Custo (R$)','inputmode="decimal" placeholder="0,00"')}${inp('fab','Fabricante')}</div></div>
+  <div class="box stack"><b>Texto do relatório</b><span class="muted small">Para deixar uma palavra em <b style="color:#e00000">vermelho</b>, coloque entre asteriscos: *Fulano*.</span>
+  ${ta('oc','Descrição do ocorrido','Ex.: No dia 20/07, *Fulano* deu entrada de 50 unidades...',6)}
+  ${ta('cons','Constatação','',4)}${ta('conc','Conclusão','',5)}
+  <div class="field"><label class="lbl" for="av_n1">Observação em destaque (amarelo, no fim)</label><input id="av_n1" value="${esc(a.n1)}" placeholder="Ex.: Comprador Paulinho disse que tem garantia"><input id="av_n2" value="${esc(a.n2)}" placeholder="Ex.: Produto sem a possibilidade para venda." style="margin-top:6px"></div></div>
+  <div class="box stack"><b>Assinaturas (podem ficar em branco para escrever à mão)</b>
+  ${inp('env','Envolvido')}<div class="two">${inp('g1','Gerente 1')}${inp('g2','Gerente 2')}</div>${inp('conf','Conferente')}</div>
+  <div class="err" id="ferr" hidden></div>
+  <button class="btn primary" type="submit" data-imp="1">🖨 Salvar e imprimir</button>
+  <button class="btn" type="submit" data-imp="0">Só salvar</button>
+  <button class="btn" type="button" id="limpar">${d.editId?'Cancelar':'Limpar'}</button></form>`}
+function lerAv(){if(!draft.av)draft.av=avNovo();for(const k in AV_CAMPOS){const e=$(AV_CAMPOS[k]);if(e)draft.av[k]=e.value.trim()}}
+function bindAvForm(){const fm=$('fav');document.querySelectorAll('[data-avt]').forEach(b=>b.onclick=()=>{lerAv();draft.av.tipo=b.dataset.avt;render()});document.querySelectorAll('[data-abremenu]').forEach(b=>b.onclick=()=>{lerAv();abreMenu(true)});fm.addEventListener('input',lerAv);
+  $('limpar').onclick=()=>{const id=draft.editId;draft=novo();draft.cat='Avaria';if(id){draft=null;ui.det=id;go('lista');return}render()};
+  let imp=true;fm.querySelectorAll('[data-imp]').forEach(b=>b.addEventListener('click',()=>{imp=b.dataset.imp==='1'}));
+  fm.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;lerAv();const er=$('ferr'),a=draft.av,custo=numBR(a.custo);
+    const m=!a.sku?'Informe o código da peça.':(a.custo!==''&&custo==null)?'O custo está em formato inválido. Use, por exemplo, 15,00.':'';
+    if(m){er.textContent=m;er.hidden=false;return}
+    const dados={tipo:a.tipo||'Avaria',ref:a.ref,caso:a.caso,oc:a.oc,cons:a.cons,conc:a.conc,n1:a.n1,n2:a.n2,env:a.env,g1:a.g1,g2:a.g2,conf:a.conf};
+    const o={categoria:'Avaria',tipo:'Relatório de Avaria',endereco:'',sku:a.sku,produto:a.produto||null,fab:a.fab||null,custo,dados};
+    saving=true;let reg,error;
+    if(draft.editId){const r=await sb.from('ocorrencias').update(o).eq('id',draft.editId).select().single();error=r.error;reg=r.data||{...ocs.find(x=>x.id===draft.editId),...o}}
+    else{Object.assign(o,{fotos:[],videos:[],autor:uid,status:'registrada',hist:[{t:new Date().toISOString(),por:uid,txt:'Registrado'}]});const r=await sb.from('ocorrencias').insert(o).select().single();error=r.error;reg=r.data||{...o,id:'tmp'+Date.now(),criado:new Date().toISOString()}}
+    saving=false;
+    if(error){er.innerHTML=/dados|schema cache/i.test(error.message||'')?'O banco precisa de uma atualização (Relatório de Avaria). No Supabase, abra o SQL Editor e rode:<br><code>'+AV_SQL+'</code>':esc(erroMsg(error));er.hidden=false;return}
+    if(draft.editId)ocs=ocs.map(x=>x.id===reg.id?reg:x);else ocs.unshift(reg);
+    const editou=!!draft.editId;draft=null;toast(editou?'Relatório atualizado':'Relatório de avaria salvo');ui={...ui,tab:'lista',cat:'Avaria',det:reg.id};render();scrollTo(0,0);
+    if(imp)setTimeout(()=>imprimirAv([reg]),300)})}
+const avRich=s=>esc(s||'').replace(/\*([^*\n]+)\*/g,'<span class="avr">$1</span>').replace(/\n/g,'<br>');
+function folhaAv(o){const d=o.dados||{},cu=o.custo!=null&&o.custo!==''?Number(o.custo).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'';
+  const sec=(t,v)=>v?`<h3 class="avh">${t}</h3><p class="avp">${avRich(v)}</p>`:`<h3 class="avh">${t}</h3><p class="avp">&nbsp;</p>`;
+  const ln=(l,v)=>`<div>${l}<i>${esc(v||'')}</i></div>`;
+  const quem=nome(o.autor)||'';
+  return`<div class="folha avfolha">
+  <h1 class="avt">${avTipo(o)[2]}</h1>
+  <div class="avbox"><span class="avref">REF: ${esc(d.ref||'')}</span><p>Descrição: ${esc(o.sku||'')}${o.produto?' - '+esc(o.produto):''}</p><p>Caso: ${esc(d.caso||'')}</p><p>Custo: ${cu}</p><p>Fab: ${esc(o.fab||'')}</p></div>
+  ${sec('Descrição do Ocorrido:',d.oc)}${sec('Constatação:',d.cons)}${sec('Conclusão:',d.conc)}
+  ${(d.n1||d.n2)?`<div class="avnota">${d.n1?`<span>${avRich(d.n1)}</span>`:''}${d.n1&&d.n2?'<br>':''}${d.n2?`<span>${avRich(d.n2)}</span>`:''}</div>`:'<div class="avnota">&nbsp;</div>'}
+  <div class="avass">${ln('Envolvido:',d.env)}<div>Gerentes:<i>${esc(d.g1||'')}</i>/<i>${esc(d.g2||'')}</i></div>${ln('Conferente:',d.conf)}</div>
+  <div class="avspc"></div>
+  <div class="avcorte"><span>✂ &nbsp;DESTACAR AQUI&nbsp; ✂</span></div>
+  <div class="avterm"><b class="tt">TERMO DE ENTREGA DE RELATÓRIO</b>
+    <p>Declaro que recebi de <b>${esc(quem||'__________________')}</b> (Inventário) o <b>Relatório de Avaria${d.ref?' Ref. '+esc(d.ref):''}</b>, referente à peça <b>${esc(o.sku||'')}${o.produto?' - '+esc(o.produto):''}</b>, em ____/____/________.</p>
+    <p>Supervisor(a): ______________________________________________</p>
+    <div class="sg"><span>Assinatura do supervisor</span><span>Data</span></div></div>
+  </div>`}
+function imprimirAv(lista){let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+  a.innerHTML=lista.map(folhaAv).join('');document.body.classList.add('imprimindo');
+  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);
+  setTimeout(()=>{try{print()}catch(e){toast('Não foi possível abrir a impressão neste navegador.')}},80)}
+function avDetHTML(o){const d=o.dados||{};
+  return`<div class="stack"><button class="btn sm" id="voltar" style="align-self:flex-start">← Voltar</button>
+  <div>${catBadge('Avaria')}<h2 style="margin-top:6px">${d.ref?'Ref. '+esc(d.ref)+' · ':''}${esc(o.sku||'')} · ${esc(o.produto||'Sem descrição')}</h2><div class="muted small">Registrado por <b>${esc(nome(o.autor))}</b> em ${fData(o.criado)}</div></div>
+  <button class="btn primary" id="imprimir">🖨 Imprimir / Salvar PDF</button>
+  <div class="prevwrap"><div class="prev">${folhaAv(o)}</div></div>
+  ${(pode('garantia')||o.autor===uid)?'<button class="btn sm" id="editar" style="align-self:flex-start">✎ Editar relatório</button>':''}
+  ${pode('apagar')?(ui.confDel?`<div class="box stack"><b>Apagar este relatório de avaria?</b><div class="actions"><button class="btn danger" id="delSim">Apagar</button><button class="btn" id="delNao">Cancelar</button></div></div>`:'<button class="btn sm danger" id="del" style="align-self:flex-start">Apagar relatório</button>'):''}</div>`}
+function bindAvDet(o){$('voltar').onclick=()=>{ui.det=null;render()};$('imprimir').onclick=()=>imprimirAv([o]);
+  const ed=$('editar');if(ed)ed.onclick=()=>{const d=o.dados||{};draft=novo();draft.cat='Avaria';draft.editId=o.id;draft.av={tipo:d.tipo||'Avaria',ref:d.ref||'',sku:o.sku||'',produto:o.produto||'',caso:d.caso||'',custo:o.custo!=null?String(o.custo).replace('.',','):'',fab:o.fab||'',oc:d.oc||'',cons:d.cons||'',conc:d.conc||'',n1:d.n1||'',n2:d.n2||'',env:d.env||'',g1:d.g1||'',g2:d.g2||'',conf:d.conf||''};ui.det=null;go('nova')};
+  const d=$('del');if(d)d.onclick=()=>{ui.confDel=true;render()};
+  const n=$('delNao');if(n)n.onclick=()=>{ui.confDel=false;render()};
+  const s=$('delSim');if(s)s.onclick=async()=>{const {error}=await sb.from('ocorrencias').delete().eq('id',o.id);if(error){toast(erroMsg(error));return}ocs=ocs.filter(x=>x.id!==o.id);toast('Relatório apagado');go('lista')}}
+
 /* ---------- Detalhe ---------- */
 function detHTML(){const o=ocs.find(x=>x.id===ui.det);if(!o){ui.det=null;return listaHTML()}
   return`<div class="stack"><button class="btn sm" id="voltar" style="align-self:flex-start">← Voltar</button>
@@ -2125,8 +2165,8 @@ function painelHTML(){
     <section class="wpn wpn2" style="--i:5"><div class="wpn-h"><b>Últimos registros</b><span class="wpn-t">tempo real</span></div>${recentes.length?`<ul class="wfeed2">${recentes.slice(0,6).map((o,i)=>`<li data-id="${esc(o.id)}" style="--i:${i}"><span class="wq2-av" style="background:${corNome(nome(o.autor))}">${esc(iniciais(nome(o.autor)))}</span><span class="wf-x"><span class="wf-l"><b>${esc(nome(o.autor))}</b> registrou <b>${esc(cat(o)==='Minucioso'?'ficha Minucioso':cat(o)==='Consertos Baiano'?'conserto':o.tipo||cat(o))}</b></span><small>${catBadge(cat(o))}${o.sku?` <span class="mono">${esc(o.sku)}</span>`:''}</small></span><span class="wf-t mono">${idade(o.criado)}</span></li>`).join('')}</ul>`:'<div class="w-vazio2">Nenhum registro ainda.</div>'}</section>
   </div>
   </div>`}
-const NOVO_DESC={'Garantia':'Peça quebrada ou com defeito','Relatório':'Avaria ou devolução','Minucioso':'Ficha de falta de produtos','Consertos Baiano':'Peças para conserto'};
-const NOVO_COR={'Garantia':'var(--gar)','Relatório':'var(--accent)','Minucioso':'var(--min)','Consertos Baiano':'var(--bai)'};
+const NOVO_DESC={'Garantia':'Peça quebrada ou com defeito','Relatório':'Avaria ou devolução','Minucioso':'Ficha de falta de produtos','Consertos Baiano':'Peças para conserto','Avaria':'Relatório de avaria + termo'};
+const NOVO_COR={'Garantia':'var(--gar)','Relatório':'var(--accent)','Minucioso':'var(--min)','Consertos Baiano':'var(--bai)','Avaria':'#e11d48'};
 function novoMenuHTML(){const mods=Object.keys(CATS).filter(podeMod);
   return`<div class="wnovo"><button type="button" class="btn sm primary" id="wNovo" aria-haspopup="menu" aria-expanded="false">+ Novo registro <span class="wn-car">▾</span></button>
   <div class="wn-menu" id="wnMenu" role="menu" hidden><div class="wn-tit">O que você quer registrar?</div>${mods.map((m,i)=>`<button type="button" role="menuitem" class="wn-op" data-novocat="${esc(m)}" style="--c:${NOVO_COR[m]};--i:${i}"><span class="wn-ic">${svgI(icMod[m])}</span><span class="wn-tx"><b>${esc(m)}</b><small>${NOVO_DESC[m]||''}</small></span><span class="wn-go">›</span></button>`).join('')}</div></div>`}
@@ -2248,7 +2288,7 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   <div class="kpis">${kpi('pend','Aguardando',pend.length,'#e0a100')}${kpi('ativos','Com acesso',ativos.length,'var(--baixa)')}${kpi('recus','Não liberados',recus.length,'var(--alta)')}${kpi('chefes','Chefes definidos',tabs[3][2],'var(--min)')}</div>
   ${corpo}</div>`}
 const PERM_IC={'registrar':'<path d="M12 5v14M5 12h14"/>','resumo':'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>','garantia':'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>','apagar':'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
-const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','registrar':'#0d9488','resumo':'#0ea5e9','garantia':'#d97706','apagar':'var(--alta)'};
+const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','mod:Avaria':'#e11d48','registrar':'#0d9488','resumo':'#0ea5e9','garantia':'#d97706','apagar':'var(--alta)'};
 const geraSenha=()=>{const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];for(let i=0;i<4;i++)s+=n[Math.floor(Math.random()*n.length)];return s};
 function senhaBox(p){if(ui.senhaOk&&ui.senhaOk.id===p.id)return`<div class="sbox ok"><span class="lbl">Nova senha de ${esc(p.nome)}</span><div class="snova"><b class="mono" id="snTxt">${esc(ui.senhaOk.s)}</b><button type="button" class="btn sm" data-scopy="1">Copiar</button></div><small>Passe essa senha para a pessoa. Ela não fica salva em lugar nenhum, então anote se precisar.</small><button type="button" class="btn sm" data-sfim="1">Pronto</button></div>`;
   if(ui.senhaDe!==p.id)return`<button class="btn sm" data-senha="${esc(p.id)}">🔑 Redefinir senha</button>`;
@@ -2370,274 +2410,13 @@ function telaConfig(){document.body.classList.add('auth');
     toast('Arquivo baixado. Abra o inventario-cd.html da pasta Downloads.')};
 }
 
-
-/* ---------- Assistente IA ---------- */
-const IC_IA='<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>';
-const IA_COLS='id,categoria,tipo,endereco,sku,produto,fab,qtd,obs,fornecedor,id_quebra,gar_status,origem,status,setor,chefe,qtd_sistema,qtd_contada,custo,falta,motivo_chefe,motivo_inventario,requisitante,valor_conserto,data_ref,autor,criado,fotos,videos';
-const IA_SUG=['O que está pendente?','Quais fornecedores tiveram mais garantias este mês?','Quais endereços mais tiveram avaria nos últimos 30 dias?','Quanto deu a falta do Minucioso por setor este mês?','Quem mais registrou esta semana?','Qual o nome do código 40?'];
-const IA_PASSO={buscar_registros:'Consultou os registros',estatisticas:'Calculou os totais',pendencias:'Verificou as pendências',consultar_produto:'Procurou no cadastro de produtos'};
-let IA={msgs:[],busy:false,passo:'',erro:'',dono:null,ctx:null};
-const iaChave=()=>'inv_ia_'+(uid||'');
-function iaCarrega(){if(IA.dono===uid)return;IA={msgs:[],busy:false,passo:'',erro:'',dono:uid,ctx:null};try{const s=localStorage.getItem(iaChave());if(s)IA.msgs=JSON.parse(s)||[]}catch(e){}}
-function iaGrava(){try{localStorage.setItem(iaChave(),JSON.stringify(IA.msgs.slice(-40)))}catch(e){}}
-const iaDia=d=>{const x=new Date(d+'T12:00:00');x.setDate(x.getDate()+1);return x.toISOString().slice(0,10)};
-const iaLimpo=t=>String(t||'').replace(/[,()%*\\]/g,' ').trim();
-function iaFiltra(q,a){
-  if(a.categoria)q=q.eq('categoria',a.categoria);
-  if(a.de&&/^\d{4}-\d{2}-\d{2}$/.test(a.de))q=q.gte('criado',a.de+'T00:00:00-03:00');
-  if(a.ate&&/^\d{4}-\d{2}-\d{2}$/.test(a.ate))q=q.lt('criado',iaDia(a.ate)+'T00:00:00-03:00');
-  if(a.sku)q=q.eq('sku',String(a.sku).trim());
-  if(a.endereco)q=q.ilike('endereco',iaLimpo(a.endereco)+'%');
-  if(a.tipo)q=q.ilike('tipo','%'+iaLimpo(a.tipo)+'%');
-  if(a.setor)q=q.eq('setor',a.setor);
-  if(a.fornecedor)q=q.ilike('fornecedor',iaLimpo(a.fornecedor));
-  if(a.autor)q=q.eq('autor',a.autor);
-  if(a.origem)q=q.eq('origem',a.origem);
-  if(a.gar_status)q=a.gar_status==='Pendente'?q.or('gar_status.is.null,gar_status.eq.Pendente'):q.eq('gar_status',a.gar_status);
-  if(a.texto){const t=iaLimpo(a.texto);if(t)q=q.or(['produto','obs','fornecedor','tipo','sku'].map(c=>`${c}.ilike.%${t}%`).join(','))}
-  return q}
-function iaLinha(o){const r={id:o.id,categoria:o.categoria||'Relatório',data:fData(o.criado),registrado_por:nome(o.autor)};
-  ['tipo','endereco','sku','produto','fab','qtd','obs','fornecedor','id_quebra','origem','setor','chefe','qtd_sistema','qtd_contada','custo','falta','motivo_chefe','motivo_inventario','requisitante','valor_conserto','data_ref'].forEach(k=>{if(o[k]!=null&&o[k]!=='')r[k]=o[k]});
-  if(r.categoria==='Garantia')r.situacao_garantia=o.gar_status||'Pendente';
-  if(r.categoria==='Relatório')r.situacao=relResolvido(o)?'resolvido':relAtrasado(o)?`atrasado (${diasDesde(o)} dias úteis)`:'no prazo';
-  if(r.categoria==='Minucioso'){const d=difDe(o);if(d!=null)r.diferenca=d;const t=totalMin(o);if(t!=null)r.total_falta_reais=+t.toFixed(2)}
-  if(r.categoria==='Consertos Baiano'){const t=totalBai(o);if(t!=null)r.total_conserto_reais=+t.toFixed(2)}
-  const nf=(o.fotos||[]).length,nv=(o.videos||[]).length;if(nf)r.fotos=nf;if(nv)r.videos=nv;return r}
-const IA_SEM=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
-function iaGrupo(o,g){switch(g){
-  case'categoria':return o.categoria||'Relatório';case'autor':return nome(o.autor);
-  case'andar':{const a=andarDe(o.endereco);return a?ANDARES[a]:'Sem andar'}
-  case'endereco':return(o.endereco||'').trim().toUpperCase()||'Sem endereço';
-  case'produto':return o.sku?`${o.sku} · ${o.produto||''}`.trim():(o.produto||'(vazio)');
-  case'mes':return new Date(o.criado).toLocaleDateString('pt-BR',{month:'2-digit',year:'numeric'});
-  case'dia_semana':return IA_SEM[new Date(o.criado).getDay()];
-  case'gar_status':return o.categoria==='Garantia'?(o.gar_status||'Pendente'):'(não é garantia)';
-  default:return o[g]==null||o[g]===''?'(vazio)':String(o[g])}}
-async function iaFerramenta(nomeF,a){a=a||{};
-  if(nomeF==='buscar_registros'){const lim=Math.max(1,Math.min(50,+a.limite||20));
-    const {data,error}=await iaFiltra(sb.from('ocorrencias').select(IA_COLS),a).order('criado',{ascending:false}).limit(lim);
-    if(error)return{erro:erroMsg(error)};return{quantidade:data.length,registros:data.map(iaLinha)}}
-  if(nomeF==='estatisticas'){const g=a.agrupar_por||'categoria';
-    const {data,error}=await iaFiltra(sb.from('ocorrencias').select(IA_COLS),a).order('criado',{ascending:false}).range(0,4999);
-    if(error)return{erro:erroMsg(error)};const m=new Map();
-    data.forEach(o=>{const k=iaGrupo(o,g);let x=m.get(k);if(!x){x={grupo:k,registros:0,pecas:0,valor_reais:0};m.set(k,x)}
-      x.registros++;x.pecas+=Number(o.qtd)||0;const v=o.categoria==='Minucioso'?totalMin(o):o.categoria==='Consertos Baiano'?totalBai(o):null;if(v!=null)x.valor_reais+=v});
-    const grupos=[...m.values()].sort((p,q)=>q.registros-p.registros).slice(0,40).map(x=>({...x,valor_reais:+x.valor_reais.toFixed(2)}));
-    return{total_registros:data.length,agrupado_por:g,grupos,observacao:data.length>=5000?'Limitado aos 5000 registros mais recentes':undefined}}
-  if(nomeF==='pendencias'){
-    const gp=await sb.from('ocorrencias').select(IA_COLS).eq('categoria','Garantia').or('gar_status.is.null,gar_status.eq.Pendente').order('criado',{ascending:true}).limit(15);
-    const mz=await sb.from('ocorrencias').select(IA_COLS).eq('categoria','Minucioso').not('qtd_contada','is',null).is('falta',null).order('criado',{ascending:true}).limit(15);
-    const at=relAtrasados().sort((p,q)=>ts(p.criado)-ts(q.criado));
-    return{garantias_pendentes:gp.error?{erro:erroMsg(gp.error)}:gp.data.map(iaLinha),
-      relatorios_atrasados:{quantidade:at.length,mais_antigos:at.slice(0,15).map(iaLinha)},
-      minucioso_sem_falta_preenchida:mz.error?{erro:erroMsg(mz.error)}:mz.data.map(iaLinha)}}
-  if(nomeF==='consultar_produto'){const P=window.PRODUTOS||{};
-    if(a.codigo){const c=String(a.codigo).trim(),n=P[c.replace(/^0+(?=\d)/,'')]||P[c];return n?{codigo:c,nome:n}:{codigo:c,encontrado:false}}
-    if(a.nome){const tira=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase();const ps=tira(a.nome).split(/\s+/).filter(Boolean);
-      const r=[];for(const k in P){const t=tira(P[k]);if(ps.every(p=>t.includes(p))){r.push({codigo:k,nome:P[k]});if(r.length>=15)break}}
-      return{quantidade:r.length,produtos:r}}
-    return{erro:'Informe codigo ou nome'}}
-  return{erro:'Ferramenta desconhecida'}}
-function iaMd(t){const linhas=esc(t).split('\n');let h='',lista='';
-  const inl=s=>s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>')
-    .replace(/\[\[reg:([0-9a-f-]{36})\]\]/gi,'<button type="button" class="ia-reg" data-reg="$1">Abrir ›</button>');
-  const fecha=()=>{if(lista){h+=`</${lista}>`;lista=''}};
-  for(const l of linhas){let m;
-    if(m=l.match(/^\s*[-*•]\s+(.*)/)){if(lista!=='ul'){fecha();h+='<ul>';lista='ul'}h+=`<li>${inl(m[1])}</li>`}
-    else if(m=l.match(/^\s*\d+[.)]\s+(.*)/)){if(lista!=='ol'){fecha();h+='<ol>';lista='ol'}h+=`<li>${inl(m[1])}</li>`}
-    else if(m=l.match(/^#{1,4}\s+(.*)/)){fecha();h+=`<span class="h">${inl(m[1])}</span>`}
-    else if(l.trim()){fecha();h+=`<p>${inl(l)}</p>`}else fecha()}
-  fecha();return h}
-function iaMsgsHTML(){let h='';
-  if(!IA.msgs.length&&!IA.busy)h+=`<div class="ia-vazio"><b>Pergunte qualquer coisa sobre o CD</b><span class="muted small">A IA do Facilita CD lê as garantias, relatórios, fichas do Minucioso e o cadastro de produtos, só o que o seu cargo pode ver, e responde na hora. Não usa serviço pago.</span>
-    <div class="ia-sug">${IA_SUG.map(s=>`<button type="button" data-sug="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>`;
-  IA.msgs.forEach(m=>{
-    if(m.role==='user'){if(typeof m.content==='string')h+=`<div class="ia-b eu">${esc(m.content)}</div>`;return}
-    (m.content||[]).forEach(b=>{if(b.type==='text'&&b.text.trim())h+=`<div class="ia-b ai">${iaMd(b.text)}</div>`;
-      else if(b.type==='tool_use')h+=`<div class="ia-passo">${svgI('<path d="M20 6 9 17l-5-5"/>')}${esc(IA_PASSO[b.name]||'Consultou o app')}</div>`})});
-  if(IA.busy)h+=`<div class="ia-pens"><span class="ia-dots"><i></i><i></i><i></i></span>${esc(IA.passo||'Pensando…')}</div>`;
-  if(IA.erro)h+=`<div class="ia-erro" role="alert">${esc(IA.erro)}</div>`;
-  return h}
-function iaHTML(){iaCarrega();return`<div class="ia-ph"><span class="ia-av">${svgI(IC_IA)}</span><div class="tx"><b>Assistente IA</b><small>IA própria do Facilita CD</small></div>
-  <button type="button" class="ia-ib" id="iaNova" title="Nova conversa" aria-label="Nova conversa" ${IA.msgs.length?'':'hidden'}>${svgI('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>')}</button>
-  <button type="button" class="ia-ib" id="iaFecha" title="Fechar" aria-label="Fechar">${svgI('<path d="M18 6 6 18M6 6l12 12"/>')}</button></div>
-  <div class="ia-msgs" id="iaMsgs" aria-live="polite">${iaMsgsHTML()}</div>
-  <div class="ia-pf"><form class="ia-form" id="iaForm"><textarea id="iaTxt" rows="1" placeholder="Pergunte sobre o CD…" aria-label="Sua pergunta" ${IA.busy?'disabled':''}></textarea>
-  <button type="submit" id="iaEnv" aria-label="Enviar" ${IA.busy?'disabled':''}>${svgI('<path d="M5 12h14M13 6l6 6-6 6"/>')}</button></form>
-  <p class="ia-nota">Calculado direto dos registros. Digite <b>ajuda</b> para ver o que ela entende.</p></div>`}
-const iaAberto=()=>!$('iaPanel').hidden;
-const iaRola=(suave)=>{const box=$('iaMsgs');if(box)box.scrollTo({top:box.scrollHeight,behavior:suave?'smooth':'auto'})};
-function iaPinta(){if(!iaAberto())return;const box=$('iaMsgs');if(!box)return;box.innerHTML=iaMsgsHTML();iaBindMsgs();
-  const t=$('iaTxt'),b=$('iaEnv'),nv=$('iaNova');if(t)t.disabled=IA.busy;if(b)b.disabled=IA.busy;if(nv)nv.hidden=!IA.msgs.length;
-  if(!IA.busy&&t)t.focus();iaRola(true)}
-function iaBindMsgs(){const box=$('iaMsgs');if(!box)return;
-  box.querySelectorAll('[data-sug]').forEach(b=>b.onclick=()=>iaEnviar(b.dataset.sug));
-  box.querySelectorAll('[data-reg]').forEach(b=>b.onclick=()=>iaAbre(b.dataset.reg))}
-async function iaAbre(id){if(!ocs.find(x=>x.id===id)){const {data,error}=await sb.from('ocorrencias').select('*').eq('id',id).maybeSingle();
-    if(error||!data){toast(error?erroMsg(error):'Registro não encontrado.');return}ocs.push(data)}
-  if(matchMedia('(max-width:640px)').matches)iaPainel(false);
-  ui={...ui,det:id,confDel:false};render();scrollTo(0,0)}
-function iaPainel(on){const p=$('iaPanel'),f=$('iaFab');if(!p)return;
-  if(on){p.innerHTML=iaHTML();p.hidden=false;f.setAttribute('aria-expanded','true');document.body.classList.add('ia-on');bindIA()}
-  else{p.hidden=true;f.setAttribute('aria-expanded','false');document.body.classList.remove('ia-on')}}
-function iaFab(ok){const f=$('iaFab');if(!f)return;f.hidden=!ok;if(!ok&&iaAberto())iaPainel(false)}
-function bindIA(){const f=$('iaForm'),t=$('iaTxt');iaBindMsgs();
-  const cresce=()=>{t.style.height='auto';t.style.height=Math.min(140,t.scrollHeight)+'px'};
-  t.addEventListener('input',cresce);
-  t.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();f.requestSubmit()}});
-  f.onsubmit=e=>{e.preventDefault();const q=t.value.trim();if(!q||IA.busy)return;t.value='';cresce();iaEnviar(q)};
-  $('iaNova').onclick=()=>{if(IA.busy)return;IA.msgs=[];IA.erro='';IA.ctx=null;iaGrava();iaPinta()};
-  $('iaFecha').onclick=()=>{iaPainel(false);$('iaFab').focus()};
-  if(!IA.busy)t.focus();iaRola(false)}
-$('iaFab').addEventListener('click',()=>iaPainel(!iaAberto()));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&iaAberto()){iaPainel(false);$('iaFab').focus()}});
-/* IA própria: entende a pergunta em português e calcula a resposta direto dos registros (sem chave, sem custo) */
-const iaN=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-const iaISO=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
-const IA_MESES=['janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-const iaPl=(n,s,p)=>`${n} ${n===1?s:(p||s+'s')}`;
-const iaDM=s=>s.split('-').reverse().slice(0,2).join('/');
-function iaPeriodo(t){const h=new Date();h.setHours(12,0,0,0);const d=n=>{const x=new Date(h);x.setDate(x.getDate()+n);return x};const seg=(h.getDay()+6)%7;let m;
-  const datas=[...t.matchAll(/\b(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\b/g)].map(x=>{let y=x[3]?+x[3]:h.getFullYear();if(y<100)y+=2000;return new Date(y,+x[2]-1,+x[1],12)});
-  if(datas.length>=2)return{de:iaISO(datas[0]),ate:iaISO(datas[1]),rot:`de ${iaDM(iaISO(datas[0]))} a ${iaDM(iaISO(datas[1]))}`};
-  if(datas.length===1)return{de:iaISO(datas[0]),ate:iaISO(datas[0]),rot:`em ${iaDM(iaISO(datas[0]))}`};
-  if(/\bhoje\b/.test(t))return{de:iaISO(h),ate:iaISO(h),rot:'hoje'};
-  if(/\bontem\b/.test(t))return{de:iaISO(d(-1)),ate:iaISO(d(-1)),rot:'ontem'};
-  if(m=t.match(/ultim[oa]s?\s+(\d{1,3})\s+dias?/))return{de:iaISO(d(-(+m[1]-1))),ate:iaISO(h),rot:`nos últimos ${m[1]} dias`};
-  if(/semana passada/.test(t))return{de:iaISO(d(-seg-7)),ate:iaISO(d(-seg-1)),rot:'na semana passada'};
-  if(/\bsemana\b/.test(t))return{de:iaISO(d(-seg)),ate:iaISO(h),rot:'nesta semana'};
-  if(/mes passado/.test(t))return{de:iaISO(new Date(h.getFullYear(),h.getMonth()-1,1)),ate:iaISO(new Date(h.getFullYear(),h.getMonth(),0)),rot:'no mês passado'};
-  for(let i=0;i<12;i++)if(new RegExp('\\b'+IA_MESES[i]+'\\b').test(t)){const y=h.getFullYear()-(i>h.getMonth()?1:0);return{de:iaISO(new Date(y,i,1)),ate:iaISO(new Date(y,i+1,0)),rot:`em ${['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'][i]}`}}
-  if(/\bmes\b/.test(t))return{de:iaISO(new Date(h.getFullYear(),h.getMonth(),1)),ate:iaISO(h),rot:'neste mês'};
-  if(/ano passado/.test(t))return{de:(h.getFullYear()-1)+'-01-01',ate:(h.getFullYear()-1)+'-12-31',rot:'no ano passado'};
-  if(/\bano\b/.test(t))return{de:h.getFullYear()+'-01-01',ate:iaISO(h),rot:'neste ano'};
-  return null}
-function iaEntidades(t){const f={};let m;
-  if(/garanti/.test(t))f.categoria='Garantia';else if(/relatori/.test(t))f.categoria='Relatório';
-  else if(/minucios|contagem|\bfaltas?\b(?! fazer| resolver)/.test(t))f.categoria='Minucioso';else if(/consert|baiano/.test(t))f.categoria='Consertos Baiano';
-  if(m=t.match(/(?:codigo|cod|sku|skuid)\.?\s*[:#]?\s*(\d{1,8})/))f.sku=m[1];
-  const st=SETORES.find(s=>t.includes(iaN(s)));
-  if(m=t.match(/\b(1[123])\s*-?\s*([a-i])\b/))f.endereco=m[1]+m[2].toUpperCase();
-  else if(st&&(f.categoria==='Minucioso'||!/andar/.test(iaN(st))))f.setor=st;
-  else if(m=t.match(/\b([123])\s*(?:º|o|ª)?\s*andar\b|\bandar\s*([123])\b/))f.endereco='1'+(m[1]||m[2]);
-  if(st&&!f.setor&&f.categoria==='Minucioso')f.setor=st;
-  const forn=[...new Set([...ocs.map(o=>o.fornecedor).filter(Boolean),'PLASTIRON','R2A','BIBAS','DTS'])];
-  const fo=forn.find(x=>iaN(x).length>1&&new RegExp('\\b'+iaN(x).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b').test(t));if(fo)f.fornecedor=fo;
-  const ps=Object.values(perfis).filter(p=>p.nome);
-  const pf=ps.find(p=>t.includes(iaN(p.nome)))||(()=>{const c=ps.filter(p=>{const pn=iaN(p.nome).split(/\s+/)[0];return pn.length>2&&new RegExp('\\b'+pn+'\\b').test(t)});return c.length===1?c[0]:null})();
-  if(pf)f.autor=pf.id;
-  const tipos=[[/quebr/,'quebr','peça quebrada'],[/defeito/,'defeito','peça com defeito'],[/embalage/,'mbalage','embalagem violada'],[/kit|incomplet/,'incomplet','kit incompleto'],[/devoluc|devolv/,'devol','devolução'],[/avaria/,'avaria','avaria']];
-  const tp=tipos.find(x=>x[0].test(t));if(tp){f.tipo=tp[1];f.tipoRot=tp[2]}
-  if(/fabrica\b|de fabrica|do fabricante/.test(t)&&!/fabricante(s)?\s+(com|que)/.test(t))f.origem='Fábrica';else if(/transporte|frete|transportadora/.test(t))f.origem='Transporte';else if(/na loja|da loja|pela loja/.test(t))f.origem='Loja';
-  if(/pendent/.test(t)){f.gar_status='Pendente';if(!f.categoria)f.categoria='Garantia'}
-  const p=iaPeriodo(t);if(p){f.de=p.de;f.ate=p.ate;f.rotPer=p.rot}
-  return f}
-const IA_GRUPOS=[[/fornecedor|marca/,'fornecedor'],[/setor/,'setor'],[/endereco|local|posic|prateleira|\brua\b/,'endereco'],[/andar/,'andar'],[/\btipos?\b|motivo/,'tipo'],[/origem|de onde/,'origem'],[/produto|\bpecas?\b|\bitens?\b|\bsku\b/,'produto'],[/\bquem\b|pessoa|funcionari|usuari|colaborador|auxiliar|registrou|registra/,'autor'],[/por mes|cada mes|meses|mensal/,'mes'],[/dia da semana|dias da semana/,'dia_semana'],[/situac|status/,'gar_status'],[/categoria|modulo/,'categoria']];
-function iaEntende(texto){const t=iaN(texto).replace(/\s+/g,' ').trim();
-  const f=iaEntidades(t),tg=t.replace(/\b(d?[oa]s?\s+)?[123]\s*(º|o|ª)?\s*andar\b/g,' ').replace(/\bandar\s*[123]\b/g,' '),g=(IA_GRUPOS.find(x=>x[0].test(tg))||[])[1]||'';
-  const catExpl=/garanti|relatori|minucios|consert/.test(t);
-  const temFiltro=['sku','endereco','setor','fornecedor','autor','tipo','origem','de'].some(k=>f[k]);
-  let intent='';
-  if(/^(oi|ola|opa|bom dia|boa tarde|boa noite|e ai|ajuda|help|menu)\b|o que (voce|vc) (faz|sabe)|como (te )?(usar|uso|funciona)/.test(t)&&t.length<40)intent='ajuda';
-  else if(/obrigad|valeu|show|top demais|perfeito/.test(t)&&t.length<30)intent='obrigado';
-  else if((/(nome|qual|que)\b.*\b(codigo|cod|sku)\b|o que e o (codigo|sku)|existe|cadastr/.test(t)&&(f.sku||/produto|peca|item|codigo/.test(t)))||(/^(procur|pesquis|busc|ache|acha)/.test(t)&&!catExpl&&!/registr/.test(t))||(f.sku&&!g&&!/quant|registr|garanti|relatori/.test(t)))intent='produto';
-  else if(/pendenc|pendent|atrasad|o que falta|falta fazer|falta resolver|precisa de atencao|em aberto|pra resolver|para resolver|o que tem pra hoje/.test(t)&&!catExpl&&!g&&!f.fornecedor&&!f.endereco&&!f.autor&&!f.sku&&!f.setor&&!f.de)intent='pendencias';
-  else if(g&&/\bmais\b|ranking|\btop\b|maior|menos|menor|campe|lider|\bpor\b|cada|quais|qual/.test(t))intent='ranking';
-  else if(/quant[oa]s?\b|total|numero de|soma|quanto (deu|da|foi|tem)/.test(t))intent='contar';
-  else if(/ultim|recente|mostr|list|ver |veja|quais|registro/.test(t)||temFiltro||f.categoria)intent='listar';
-  const valor=/valor|r\$|reais|dinheiro|custo|quanto (deu|da|foi)|prejuizo/.test(t)||(f.categoria==='Minucioso'&&/quanto/.test(t));
-  let busca='';if(intent==='produto'&&!f.sku){const SW=new Set('qual quais o a os as e nome da do de das dos produto produtos peca pecas item itens procure procura procurar pesquise pesquisa pesquisar busque busca buscar ache acha achar existe cadastrado cadastrada cadastro tem algum alguma no na um uma pra para por favor me'.split(' '));busca=t.replace(/[?!.,]/g,' ').split(' ').filter(w=>w&&!SW.has(w)).join(' ')}
-  return{t,intent,f,g,valor,continua:/^(e|so|somente|apenas|agora)\b/.test(t)&&t.split(' ').length<=8,busca}}
-const IA_CAT_NOME={Garantia:['garantia','garantias'],'Relatório':['relatório','relatórios'],Minucioso:['ficha do Minucioso','fichas do Minucioso'],'Consertos Baiano':['conserto','consertos']};
-const iaCoisa=(f,n)=>{const c=IA_CAT_NOME[f.categoria]||['registro','registros'];return n===1?c[0]:c[1]};
-function iaFiltrosTxt(f){const p=[];if(f.gar_status)p.push('pendentes');if(f.fornecedor)p.push('da '+f.fornecedor);if(f.setor)p.push('do setor '+f.setor);
-  if(f.endereco)p.push(f.endereco.length===2?'no '+ANDARES[f.endereco]:'no endereço '+f.endereco);if(f.sku)p.push('do código '+f.sku);if(f.tipo)p.push('de '+(f.tipoRot||f.tipo));
-  if(f.origem)p.push('com origem '+f.origem);if(f.autor)p.push('registrados por '+nome(f.autor));if(f.rotPer)p.push(f.rotPer);return p.join(' ')}
-function iaItem(r){const tit=r.produto||r.tipo||r.categoria;const ex=[];
-  if(r.sku)ex.push('cód. '+r.sku);if(r.endereco)ex.push(r.endereco);if(r.setor&&r.categoria==='Minucioso')ex.push(r.setor);if(r.fornecedor)ex.push(r.fornecedor);
-  if(r.situacao_garantia)ex.push(r.situacao_garantia);if(r.situacao)ex.push(r.situacao);if(r.total_falta_reais!=null)ex.push('falta '+brl(r.total_falta_reais));
-  if(r.total_conserto_reais!=null)ex.push(brl(r.total_conserto_reais));ex.push(r.data);
-  return`- **${tit}** · ${ex.join(' · ')} [[reg:${r.id}]]`}
-const IA_GNOME={fornecedor:'Fornecedores',setor:'Setores',andar:'Andares',endereco:'Endereços',tipo:'Tipos',origem:'Origens',produto:'Peças',autor:'Pessoas',mes:'Meses',dia_semana:'Dias da semana',gar_status:'Situações',categoria:'Módulos'};
-function iaAjuda(){return`Sou a IA do Facilita CD. Eu leio os registros do app e respondo na hora, sem custo. Pergunte do seu jeito, por exemplo:
-- **O que está pendente?**
-- **Quais fornecedores tiveram mais garantias este mês?**
-- **Quantas garantias da PLASTIRON nos últimos 30 dias?**
-- **Quais endereços do 2º andar mais tiveram avaria?**
-- **Quanto deu a falta do Minucioso por setor este mês?**
-- **Quem mais registrou esta semana?**
-- **Qual o nome do código 40?** ou **procure braço capô**
-
-Dá para continuar a conversa: depois de uma resposta, pergunte **"e no mês passado?"** ou **"e da BIBAS?"**.`}
-async function iaResponde(texto){let q=iaEntende(texto);const passos=[];
-  if(q.continua&&IA.ctx&&q.intent!=='ajuda'){const novo={...q.f};if(novo.de)delete IA.ctx.f.rotPer;q={...q,intent:(q.intent==='listar'?'':q.intent)||IA.ctx.intent,g:q.g||IA.ctx.g,valor:q.valor||IA.ctx.valor,f:{...IA.ctx.f,...novo}}}
-  const {f,g}=q;let {intent}=q;
-  if(intent==='ajuda')return{passos,texto:iaAjuda()};
-  if(intent==='obrigado')return{passos,texto:'Por nada! Se precisar de mais alguma coisa do CD, é só perguntar.'};
-  if(intent==='produto'){passos.push('consultar_produto');
-    if(f.sku){const r=await iaFerramenta('consultar_produto',{codigo:f.sku});
-      if(r.nome){passos.push('estatisticas');const s=await iaFerramenta('estatisticas',{agrupar_por:'categoria',sku:f.sku});IA.ctx={intent:'listar',f:{sku:f.sku},g:'',valor:false};
-        const regs=s.grupos&&s.grupos.length?' Ele aparece em '+s.grupos.map(x=>iaPl(x.registros,(IA_CAT_NOME[x.grupo]||['registro'])[0],(IA_CAT_NOME[x.grupo]||[,'registros'])[1])).join(', ')+' no app. Pergunte **"mostre os registros"** para ver.':' Ele ainda não aparece em nenhum registro do app.';
-        return{passos,texto:`O código **${f.sku}** é **${r.nome}**.${regs}`}}
-      return{passos,texto:`Não achei o código **${f.sku}** no cadastro de produtos. Confira se o número está certo ou se o relatório de estoque do WMS foi atualizado no app.`}}
-    if(!q.busca)return{passos,texto:'Me diga o código ou parte do nome da peça. Exemplo: **qual o nome do código 40?** ou **procure braço capô**.'};
-    const r=await iaFerramenta('consultar_produto',{nome:q.busca});
-    if(!r.quantidade){passos.push('buscar_registros');const b=await iaFerramenta('buscar_registros',{texto:q.busca,limite:8});
-      if(b.quantidade)return{passos,texto:`Não achei "${q.busca}" no cadastro de produtos, mas tem ${iaPl(b.quantidade,'registro')} com esse texto:\n${b.registros.map(iaItem).join('\n')}`};
-      return{passos,texto:`Não encontrei nenhuma peça com "${q.busca}" no cadastro. Tente só uma palavra (ex.: "lanterna") ou o código.`}}
-    return{passos,texto:`Achei ${r.quantidade>=15?'pelo menos 15 peças':iaPl(r.quantidade,'peça')} com "${q.busca}":\n${r.produtos.map(p=>`- \`${p.codigo}\` ${p.nome}`).join('\n')}`}}
-  if(intent==='pendencias'){passos.push('pendencias');const r=await iaFerramenta('pendencias',{});IA.ctx={intent,f:{},g:'',valor:false};
-    const gp=Array.isArray(r.garantias_pendentes)?r.garantias_pendentes:[],ra=r.relatorios_atrasados||{quantidade:0,mais_antigos:[]},mz=Array.isArray(r.minucioso_sem_falta_preenchida)?r.minucioso_sem_falta_preenchida:[];
-    if(!gp.length&&!ra.quantidade&&!mz.length)return{passos,texto:'Tudo em dia! Não tem garantia pendente, relatório atrasado nem ficha do Minucioso esperando a falta.'};
-    let s='Isto precisa de atenção:\n';
-    if(gp.length)s+=`\n### ${gp.length>=15?'15 ou mais garantias pendentes':iaPl(gp.length,'garantia pendente','garantias pendentes')} (mais antigas primeiro)\n${gp.slice(0,8).map(iaItem).join('\n')}\n`;
-    if(ra.quantidade)s+=`\n### ${iaPl(ra.quantidade,'relatório atrasado','relatórios atrasados')} (mais de 2 dias úteis)\n${ra.mais_antigos.slice(0,8).map(iaItem).join('\n')}\n`;
-    if(mz.length)s+=`\n### ${iaPl(mz.length,'ficha do Minucioso sem a falta preenchida','fichas do Minucioso sem a falta preenchida')}\n${mz.slice(0,8).map(iaItem).join('\n')}\n`;
-    s+='\n'+(ra.quantidade?'Sugestão: comece pelos relatórios atrasados, que já passaram do prazo.':'Sugestão: comece pelas garantias mais antigas.');
-    return{passos,texto:s}}
-  if(intent==='ranking'||intent==='contar'){const ag=intent==='ranking'?g:(g||(f.categoria?'':'categoria'));
-    passos.push('estatisticas');const r=await iaFerramenta('estatisticas',{...f,agrupar_por:ag||'categoria'});if(r.erro)throw new Error(r.erro);
-    IA.ctx={intent,f,g:ag,valor:q.valor};const ft=iaFiltrosTxt(f),tot=r.total_registros;
-    if(!tot)return{passos,texto:`Não encontrei ${iaCoisa(f,2)}${ft?' '+ft:''}.`};
-    const somaV=r.grupos.reduce((a,x)=>a+x.valor_reais,0),somaP=r.grupos.reduce((a,x)=>a+x.pecas,0);
-    const temV=r.grupos.some(x=>x.valor_reais),porV=q.valor&&temV;
-    if(intent==='contar'&&!g){let s=`Foram **${iaPl(tot,iaCoisa(f,1),iaCoisa(f,2))}**${ft?' '+ft:''}`;
-      if(somaP)s+=`, somando **${iaPl(somaP,'peça')}**`;if(temV)s+=`. Valor total: **${brl(somaV)}**`;s+='.';
-      if(!f.categoria&&r.grupos.length>1)s+='\n\n'+r.grupos.map(x=>`- ${x.grupo}: **${x.registros}**`).join('\n');
-      if(r.observacao)s+='\n\n('+r.observacao+')';return{passos,texto:s}}
-    const gs=[...r.grupos].filter(x=>!/^\((vazio|não é garantia)\)$/.test(x.grupo)||r.grupos.length===1);
-    if(porV)gs.sort((a,b)=>b.valor_reais-a.valor_reais);if(/\bmenos\b|menor/.test(q.t))gs.reverse();
-    const top=gs.slice(0,10),vazio=r.grupos.find(x=>x.grupo==='(vazio)');
-    let s=`**${IA_GNOME[ag]||'Grupos'} ${/\bmenos\b|menor/.test(q.t)?'com menos':'com mais'} ${iaCoisa(f,2)}${ft?' '+ft:''}** (${iaPl(tot,'registro')} no total${porV?', '+brl(somaV):''}):\n`;
-    s+=top.map((x,i)=>`${i+1}. **${x.grupo}**: ${porV?brl(x.valor_reais)+' · ':''}${iaPl(x.registros,'registro')}${x.pecas&&!porV?' · '+iaPl(x.pecas,'peça'):''}`).join('\n');
-    if(gs.length>10)s+=`\n\n…e mais ${gs.length-10}.`;if(vazio&&ag!=='categoria')s+=`\n\n${iaPl(vazio.registros,'registro')} sem ${ag==='fornecedor'?'fornecedor':ag==='setor'?'setor':ag==='produto'?'peça':'essa informação'}.`;
-    if(top[0]&&top.length>1&&(porV?top[0].valor_reais>top[1].valor_reais:top[0].registros>top[1].registros)&&!/\bmenos\b|menor/.test(q.t)){const pc=Math.round((porV?top[0].valor_reais/somaV:top[0].registros/tot)*100);if(pc>=30)s+=`\n\n**${top[0].grupo}** sozinho responde por ${pc}% do total. Vale olhar de perto.`}
-    if(r.observacao)s+='\n\n('+r.observacao+')';return{passos,texto:s}}
-  if(intent==='listar'){passos.push('buscar_registros');
-    const r=await iaFerramenta('buscar_registros',{...f,limite:10});if(r.erro)throw new Error(r.erro);IA.ctx={intent,f,g:'',valor:false};const ft=iaFiltrosTxt(f);
-    if(!r.quantidade)return{passos,texto:`Não encontrei ${iaCoisa(f,2)}${ft?' '+ft:''}.`};
-    let tot=r.quantidade;if(r.quantidade>=10){passos.push('estatisticas');const s=await iaFerramenta('estatisticas',{...f,agrupar_por:'categoria'});tot=s.total_registros||tot}
-    return{passos,texto:`${tot>r.quantidade?`São **${iaPl(tot,iaCoisa(f,1),iaCoisa(f,2))}**${ft?' '+ft:''}. Os ${r.quantidade} mais recentes`:`**${iaPl(tot,iaCoisa(f,1),iaCoisa(f,2))}**${ft?' '+ft:''}`}:\n${r.registros.map(iaItem).join('\n')}`}}
-  // Não reconheceu: tenta achar a palavra nos registros e no cadastro de produtos
-  const pal=q.t.replace(/[?!.,]/g,' ').split(' ').filter(w=>w.length>3&&!/^(qual|quais|como|onde|quando|porque|sobre|para|essa|esse|isso|voce|tenho|temos|esta|estao|tudo|algum|alguma|coisa|fazer|pode|saber|quero|queria|preciso|mostra)$/.test(w)).join(' ');
-  if(pal){passos.push('buscar_registros');const r=await iaFerramenta('buscar_registros',{texto:pal,limite:8});
-    if(r.quantidade){IA.ctx={intent:'listar',f:{texto:pal},g:'',valor:false};return{passos,texto:`Encontrei ${iaPl(r.quantidade,'registro')} com "${pal}":\n${r.registros.map(iaItem).join('\n')}`}}
-    passos.push('consultar_produto');const p=await iaFerramenta('consultar_produto',{nome:pal});
-    if(p.quantidade)return{passos,texto:`Não há registros com "${pal}", mas achei no cadastro de produtos:\n${p.produtos.slice(0,8).map(x=>`- \`${x.codigo}\` ${x.nome}`).join('\n')}`}}
-  return{passos,texto:'Não entendi bem essa. Eu respondo sobre **pendências**, **totais**, **rankings** (fornecedor, endereço, setor, pessoa, peça) e **produtos**. Exemplos:\n- O que está pendente?\n- Quantas garantias este mês?\n- Quais endereços mais tiveram avaria?\n- Qual o nome do código 40?'}}
-async function iaEnviar(texto){if(IA.busy)return;iaCarrega();
-  IA.msgs.push({role:'user',content:texto});IA.busy=true;IA.erro='';IA.passo='Lendo os registros…';iaPinta();
-  try{const r=await iaResponde(texto);IA.msgs.push({role:'assistant',content:[...r.passos.map(n=>({type:'tool_use',name:n})),{type:'text',text:r.texto}]})}
-  catch(e){IA.msgs.push({role:'assistant',content:[{type:'text',text:'Não consegui consultar os registros agora: '+(e&&e.message||e)+'. Tente de novo.'}]})}
-  IA.busy=false;IA.passo='';iaGrava();iaPinta()}
-
 init();
 
 /* Preenche o nome da peça ao digitar o código (catálogo do WMS em produtos.js) */
 const ultAuto={};
 document.addEventListener('input',e=>{
   const el=e.target,id=el.id||'';let dest=null;
-  if(id==='sku')dest='produto';else if(id==='msku')dest='mdesc';else if(/^bs\d+$/.test(id))dest='bp'+id.slice(2);
+  if(id==='sku')dest='produto';else if(id==='msku')dest='mdesc';else if(/^bs\d+$/.test(id))dest='bp'+id.slice(2);else if(id==='avsku')dest='avdesc';
   if(!dest||!window.PRODUTOS)return;
   const alvo=document.getElementById(dest);if(!alvo)return;
   const nome=window.PRODUTOS[el.value.trim().replace(/^0+(?=\d)/,'')]||window.PRODUTOS[el.value.trim()];
