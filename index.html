@@ -1080,6 +1080,8 @@ table th{text-transform:uppercase;letter-spacing:.07em;font-size:.66rem;color:va
 .pcrow .cpill{color:#fff!important;background:var(--k)!important}
 @media (max-width:700px){.homebtn h1{display:none}}
 .bar.rk{border:0;background:none;color:var(--fg);font:inherit;text-align:left;padding:0;cursor:pointer;width:100%;min-height:0}.bar.rk:hover .n{color:var(--accent)}
+.atvrow{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line)}.atvrow:last-child{border-bottom:0}.atvrow .cpill{color:#fff!important;background:var(--k)!important}.kpi b:empty{display:none}
+.eqtela .kpis{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))!important}
 </style>
 </head>
 <body>
@@ -1335,6 +1337,23 @@ grant execute on function public.admin_redefinir_senha(uuid, text) to authentica
 -- Relatório de Avaria
 alter table public.ocorrencias add column if not exists dados jsonb;
 
+-- Log de atividade (quem criou, editou ou apagou)
+create table if not exists public.atividade (
+  id bigint generated always as identity primary key,
+  quando timestamptz not null default now(),
+  usuario uuid default auth.uid(),
+  acao text not null,
+  categoria text,
+  ref_id text,
+  resumo text
+);
+create index if not exists atividade_quando_idx on public.atividade (quando desc);
+alter table public.atividade enable row level security;
+drop policy if exists "grava atividade" on public.atividade;
+drop policy if exists "admin ve atividade" on public.atividade;
+create policy "grava atividade" on public.atividade for insert to authenticated with check (public.is_aprovado() and usuario = auth.uid());
+create policy "admin ve atividade" on public.atividade for select to authenticated using (public.is_admin());
+
 notify pgrst, 'reload schema';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
@@ -1387,7 +1406,7 @@ async function init(){
   const CFG=window.INV_CONFIG||{},URL_=SUPABASE_URL||CFG.url,KEY_=SUPABASE_KEY||CFG.key;
   if(!URL_||!KEY_){telaConfig();return}
   if(!window.supabase){$('view').innerHTML='<div class="center box stack"><h2>Sem conexão</h2><p>Não foi possível carregar o app. Verifique se este computador tem acesso à internet e abra o arquivo de novo.</p></div>';return}
-  sb=window.supabase.createClient(URL_,KEY_);
+  sb=window.supabase.createClient(URL_,KEY_);instalaLog();
   sb.auth.onAuthStateChange((ev,s)=>{const novo=s?.user?.id||null;if(novo!==uid){uid=novo;setTimeout(entrouOuSaiu,0)}});
   const {data}=await sb.auth.getSession();uid=data.session?.user?.id||null;entrouOuSaiu();
   setInterval(()=>{if(eu&&(eu.aprovado||eu.admin)&&!document.hidden&&!ui.det&&ui.tab!=='nova')carregar()},30000);
@@ -2632,6 +2651,27 @@ function rankingHTML(){const per=ui.rkPer||'30',de=per==='todos'?'0000':diasAtra
 function fazerBackup(){const d={app:'INVENTRA',gerado:new Date().toISOString(),por:eu.nome,registros:ocs,equipe:Object.values(perfis).map(p=>({id:p.id,nome:p.nome,usuario:p.usuario,cargo:p.cargo}))};
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,1)],{type:'application/json'}));a.download='inventra-backup-'+hoje()+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast('Backup baixado ('+ocs.length+' registros)')}
 
+/* ---------- Log de atividade ---------- */
+let atv=null,atvErro='';
+function instalaLog(){if(sb._logOk)return;sb._logOk=true;const orig=sb.from.bind(sb);
+  const grava=(acao,p,id,res)=>{try{if(!uid)return;const a=Array.isArray(p)?p[0]:p,r=ocs.find(x=>String(x.id)===String(id))||{},d=(res&&(Array.isArray(res)?res[0]:res))||{};
+    const cat=(a&&a.categoria)||d.categoria||r.categoria||'Relatório',sku=(a&&a.sku)||d.sku||r.sku||'',prod=(a&&a.produto)||d.produto||r.produto||'';
+    let ex='';if(acao==='editou'&&a){const k=Object.keys(a);ex=a.gar_status?' · situação: '+a.gar_status:k.includes('dados')&&k.length===1?' · impressão registrada':k.length===1&&k[0]==='hist'?' · anotação':''}
+    const n=Array.isArray(p)&&p.length>1?p.length+' itens':[sku,prod].filter(Boolean).join(' · ');
+    orig('atividade').insert({acao,categoria:cat,ref_id:String(id||d.id||''),resumo:(n||'registro')+ex}).then(()=>{atv=null},()=>{})}catch(e){}};
+  sb.from=t=>{const q=orig(t);if(t!=='ocorrencias')return q;
+    [['insert','criou'],['update','editou'],['delete','apagou']].forEach(([m,acao])=>{const f=q[m].bind(q);q[m]=(...a)=>{const r=f(...a);let id=null;
+      const e=r.eq.bind(r);r.eq=(c,v)=>{if(c==='id')id=v;return e(c,v)};
+      const th=r.then.bind(r);r.then=(ok,no)=>th(v=>{if(v&&!v.error)grava(acao,a[0],id,v.data);return ok?ok(v):v},no);return r}});return q}}
+function atvHTML(){const q=(ui.atvQ||'').toLowerCase(),
+  cor={criou:'var(--baixa)',editou:'#d97706',apagou:'var(--alta)'};
+  if(atvErro)return`<div class="box"><b>Não foi possível carregar o log</b><p class="muted small" style="margin:6px 0 0">${esc(atvErro)}<br>Se for a primeira vez, rode o SQL do log de atividade no Supabase.</p></div>`;
+  if(atv===null)return'<div class="box"><p class="muted" style="margin:0">Carregando atividade…</p></div>';
+  const L=atv.filter(x=>!q||[x.resumo,x.categoria,x.acao,nome(x.usuario)].join(' ').toLowerCase().includes(q));
+  return`<div class="box stack" style="gap:10px"><input id="atvq" type="search" placeholder="Filtrar por pessoa, peça ou ação" value="${esc(ui.atvQ||'')}" aria-label="Filtrar atividade"><div class="muted small">Últimas ${atv.length} ações · só o Chefe vê esta lista</div>
+   ${L.length?L.map(x=>`<div class="atvrow"><span class="cpill" style="--k:${cor[x.acao]||'#64748b'}">${esc(x.acao)}</span><span class="pcm"><b>${esc(nome(x.usuario))} · ${esc(nomeCat(x.categoria||''))}</b><small>${esc(x.resumo||'')}</small></span><span class="muted small">${fData(x.quando)}</span></div>`).join(''):'<p class="muted small" style="margin:0">Nada por aqui ainda.</p>'}</div>`}
+async function carregaAtv(){atvErro='';try{const {data,error}=await sb.from('atividade').select('*').order('quando',{ascending:false}).limit(200);if(error)throw error;atv=data||[]}catch(e){atvErro=erroMsg(e)||'Erro desconhecido';atv=[]}if(ui.tab==='equipe'&&ui.eqTab==='atv')render()}
+
 /* ---------- Equipe ---------- */
 const CARGO_COR={'Chefe de Inventário':'#e2621b','Auxiliar de Inventário':'#0d9488','Visitante':'#7c3aed'};
 function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)-ts(a.criado));
@@ -2671,8 +2711,9 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
     <div class="pgrid">${lista.map(fn).join('')||`<div class="empty" style="grid-column:1/-1">${q?'Ninguém encontrado com essa busca.':vazio}</div>`}</div>
     ${ui.eqTab==='ativos'?permHTML():''}`;
   }
+  if(ui.eqTab==='atv')corpo=atvHTML();
   return`<div class="stack eqtela"><div class="listhead"><h2>Equipe</h2><span class="muted small">${todos.length} pessoa${todos.length===1?'':'s'} cadastrada${todos.length===1?'':'s'}</span></div>
-  <div class="kpis">${kpi('pend','Aguardando',pend.length,'#e0a100')}${kpi('ativos','Com acesso',ativos.length,'var(--baixa)')}${kpi('recus','Não liberados',recus.length,'var(--alta)')}${kpi('chefes','Chefes definidos',tabs[3][2],'var(--min)')}</div>
+  <div class="kpis">${kpi('pend','Aguardando',pend.length,'#e0a100')}${kpi('ativos','Com acesso',ativos.length,'var(--baixa)')}${kpi('recus','Não liberados',recus.length,'var(--alta)')}${kpi('chefes','Chefes definidos',tabs[3][2],'var(--min)')}${kpi('atv','Atividade','','#6366f1')}</div>
   ${corpo}</div>`}
 const PERM_IC={'registrar':'<path d="M12 5v14M5 12h14"/>','resumo':'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>','garantia':'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>','apagar':'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
 const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','mod:Avaria':'#e11d48','registrar':'#0d9488','resumo':'#14b8a6','garantia':'#d97706','apagar':'var(--alta)'};
@@ -2712,7 +2753,8 @@ function bindEquipe(){
     const nm=PERMS.find(p=>p[0]===c.dataset.perm)[1];salvaPerms(TODAS.filter(k=>atual.has(k)),(c.checked?'Liberado: ':'Bloqueado: ')+nm)}));
   document.querySelectorAll('[data-pcg]').forEach(b=>b.addEventListener('click',()=>{ui.permCargo=b.dataset.pcg;const y=scrollY;render();scrollTo(0,y)}));
   document.querySelectorAll('[data-pall]').forEach(b=>b.addEventListener('click',()=>salvaPerms(b.dataset.pall==='1'?[...TODAS]:[],b.dataset.pall==='1'?'Tudo liberado para '+(ui.permCargo||'o Auxiliar'):'Tudo bloqueado para '+(ui.permCargo||'o Auxiliar'))));
-  document.querySelectorAll('[data-eqtab]').forEach(b=>b.addEventListener('click',()=>{ui.eqTab=b.dataset.eqtab;ui.eqBusca='';ui.confExcl=null;render()}));
+  document.querySelectorAll('[data-eqtab]').forEach(b=>b.addEventListener('click',()=>{ui.eqTab=b.dataset.eqtab;ui.eqBusca='';ui.confExcl=null;if(ui.eqTab==='atv')atv=null;render()}));
+  if(ui.eqTab==='atv'){if(atv===null&&!atvErro)carregaAtv();const aq=$('atvq');if(aq)aq.oninput=()=>{ui.atvQ=aq.value;const p=aq.selectionStart;render();const n=$('atvq');n.focus();n.setSelectionRange(p,p)}}
   const eb=$('eqBusca');if(eb)eb.addEventListener('input',()=>{ui.eqBusca=eb.value;const p=eb.selectionStart;render();const n=$('eqBusca');n.focus();n.setSelectionRange(p,p)});
   document.querySelectorAll('[data-chef]').forEach(b=>b.addEventListener('click',async()=>{const i=+b.dataset.chef,s=SETORES[i],v=$('chef'+i).value.trim();b.disabled=true;
     const {error}=await sb.from('setores').upsert({nome:s,chefe:v||null,ordem:i});b.disabled=false;
