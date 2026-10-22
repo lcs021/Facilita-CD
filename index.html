@@ -2426,26 +2426,16 @@ function painelHTML(){
   <div class="w-hero"><div class="w-hero-tx"><span class="w-kick">Central de operações</span><h2>${saud}${pnome?', '+esc(pnome):''}</h2><span class="muted small"><span id="wRelogio">${relogio[0].toUpperCase()+relogio.slice(1)}</span> · ${fila.length?`<b style="color:var(--alta)">${fila.length} pendência${fila.length===1?'':'s'}</b> para olhar`:'<b style="color:var(--baixa)">tudo em dia</b>'}</span></div>
     <div class="w-acts"><span class="cc-estado ${estado[0]}"><i></i>${estado[1]}</span><button type="button" class="btn sm wbtn-at" id="wAtual"><span class="wrot">↻</span> Atualizar</button>${pode('registrar')?novoMenuHTML():''}</div></div>
   <div class="wk-grid cc-k">
-    ${card(0,'Registros hoje',hojeN,'n',`<span class="${delta>0?'up':delta<0?'dn':''}">${delta>0?'▲':delta<0?'▼':'■'} ${Math.abs(delta)}</span> vs ontem`,'#14b8a6','<path d="M12 5v14M5 12h14"/>','lista',false,porDia(()=>true))}
     ${podeMod('Garantia')?card(1,'Garantias pendentes',gPend.length,'n',gPend.length?'aguardando envio à loja':'tudo enviado','#f97316','<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/>','Garantia',gPend.length>0,porDia(o=>o.categoria==='Garantia')):''}
     ${podeMod('Relatório')?card(2,'Relatórios atrasados',rAtr.length,'n',rAtr.length?'mais de 2 dias úteis sem resolver':'nada atrasado','#ef4444','<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>','relatr',rAtr.length>0,porDia(ehRel)):''}
     ${kpiBai}
     ${podeMod('Minucioso')?card(3,'Falta no mês',Math.round(faltaMes*100)/100,'brl',`${minMes.length} ficha${minMes.length===1?'':'s'} do Minucioso`,'#22c55e','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/>','Minucioso',false,porDia(o=>o.categoria==='Minucioso')):''}
   </div>
-  <div class="w-2col cc-a">
-    <section class="wpn wpn2" style="--i:4"><div class="wpn-h"><b>Movimentação · 14 dias</b><span class="wpn-t">${totalMes} no mês${totalAnt?` · ${totalMes>=totalAnt?'▲':'▼'} ${Math.abs(totalMes-totalAnt)} vs mês anterior`:''}</span></div><div style="padding:14px 16px">${graf}</div></section>
-    <section class="wpn wpn2" style="--i:5"><div class="wpn-h"><b>Por módulo</b><span class="wpn-t">hoje · mês · total</span></div><div class="wt-scroll"><table class="wt"><thead><tr><th>Módulo</th><th class="r">Hoje</th><th class="r">Mês</th><th class="r">Total</th><th class="r">Atenção</th></tr></thead><tbody>${MODS.map(([m])=>linhaMod(m)).join('')}</tbody></table></div></section>
-  </div>
   <div class="w-2col cc-b">
     <section class="wpn wpn2" style="--i:6"><div class="wpn-h"><b>Pendências</b><span class="wpn-cnt${fila.length?' tem':''}">${fila.length}</span></div>${filaS}</section>
     <section class="wpn wpn2" style="--i:7"><div class="wpn-h"><b>🔧 Baiano em campo</b><span class="wpn-t">prazo de 1 semana</span></div>${baiCampo.length?`<ul class="wbl">${baiCampo.slice(0,7).map(baiLinha).join('')}</ul>`:'<div class="w-vazio2"><span>✓</span>Nenhuma peça no Baiano agora.</div>'}</section>
   </div>
-  ${podeMod('Minucioso')?`<section class="wpn wpn2" style="--i:8"><div class="wpn-h"><b>Mapa de setores · Minucioso</b><span class="wpn-t">falta em R$ no mês</span></div><div class="wz-grid">${porSet.map(zona).join('')}</div></section>`:''}
-  <div class="w-2col cc-b">
-    <section class="wpn wpn2" style="--i:9"><div class="wpn-h"><b>Equipe no mês</b><span class="wpn-t">registros por pessoa</span></div>${pessoasMes.length?`<ul class="wrk">${pessoasMes.map((x,i)=>`<li style="--i:${i}"><span class="wq2-av" style="background:${corNome(x.p.nome)}">${esc(iniciais(x.p.nome))}</span><span class="wrk-n">${esc(x.p.nome)}</span><span class="wrk-b"><i style="width:${x.n/mxp*100}%"></i></span><b class="mono">${x.n}</b></li>`).join('')}</ul>`:'<div class="w-vazio2">Sem registros neste mês.</div>'}</section>
-    <section class="wpn wpn2" style="--i:10"><div class="wpn-h"><b>Últimos registros</b><span class="wpn-t">tempo real</span></div>${recentes.length?`<ul class="wfeed2">${recentes.slice(0,6).map((o,i)=>`<li data-id="${esc(o.id)}" style="--i:${i}"><span class="wq2-av" style="background:${corNome(nome(o.autor))}">${esc(iniciais(nome(o.autor)))}</span><span class="wf-x"><span class="wf-l"><b>${esc(nome(o.autor))}</b> registrou <b>${esc(cat(o)==='Minucioso'?'ficha Minucioso':cat(o)==='Consertos Baiano'?'conserto':o.tipo||cat(o))}</b></span><small>${catBadge(cat(o))}${o.sku?` <span class="mono">${esc(o.sku)}</span>`:''}</small></span><span class="wf-t mono">${idade(o.criado)}</span></li>`).join('')}</ul>`:'<div class="w-vazio2">Nenhum registro ainda.</div>'}</section>
-  </div>
-  </div>`}
+    </div>`}
 const NOVO_DESC={'Garantia':'Peça quebrada ou com defeito','Relatório':'Avaria ou devolução','Minucioso':'Ficha de falta de produtos','Consertos Baiano':'Peças para conserto','Avaria':'Relatório de avaria + termo'};
 const NOVO_COR={'Garantia':'var(--gar)','Relatório':'var(--accent)','Minucioso':'var(--min)','Consertos Baiano':'var(--bai)','Avaria':'#e11d48'};
 function novoMenuHTML(){const mods=Object.keys(CATS).filter(podeMod);
