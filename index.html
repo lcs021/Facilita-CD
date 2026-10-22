@@ -1044,6 +1044,16 @@ table th{text-transform:uppercase;letter-spacing:.07em;font-size:.66rem;color:va
 .wz{border-radius:6px!important}
 @media (max-width:900px){.cc .w-2col,.cc .cc-b{grid-template-columns:1fr}}
 .cc-k .wk2:last-child .wsp{display:none}
+
+#alertas{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:min(380px,calc(100vw - 36px));z-index:40;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+#alertas:empty{display:none}
+#alertas .alerta{pointer-events:auto;margin:0;background:var(--surface);box-shadow:0 12px 32px rgba(0,0,0,.22);animation:rise .35s both}
+@media (max-width:900px){#alertas{right:12px;left:12px;width:auto;bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+#alertas .alerta{flex-wrap:wrap;gap:10px;padding:12px}
+#alertas .alerta .atx{flex:1 1 150px}
+#alertas .alerta .btn{order:3;width:calc(100% - 46px);margin-left:46px;padding:7px 10px}
+#alertas .alerta .ax{position:absolute;top:6px;right:6px}
+#alertas .alerta{position:relative;padding-right:34px}
 </style>
 </head>
 <body>
