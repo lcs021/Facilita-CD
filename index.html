@@ -1054,10 +1054,35 @@ table th{text-transform:uppercase;letter-spacing:.07em;font-size:.66rem;color:va
 #alertas .alerta .btn{order:3;width:calc(100% - 46px);margin-left:46px;padding:7px 10px}
 #alertas .alerta .ax{position:absolute;top:6px;right:6px}
 #alertas .alerta{position:relative;padding-right:34px}
+
+.gs{position:relative;display:flex;align-items:center;gap:8px;flex:1;max-width:340px;margin-right:12px;padding:0 12px;height:38px;border:1px solid var(--line);border-radius:10px;background:var(--sunken);color:var(--muted)}
+.gs svg{width:16px;height:16px;flex:none}
+.gs input{flex:1;min-width:0;border:0;background:none;outline:0;color:var(--fg);font:inherit;font-size:.88rem;height:100%;padding:0}
+.gs:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.gsres{position:absolute;top:calc(100% + 6px);left:0;right:0;min-width:min(420px,92vw);background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,.28);padding:6px;z-index:60;display:flex;flex-direction:column}
+.gsres[hidden]{display:none}
+.gsi{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;text-align:left;border:0;background:none;color:var(--fg);padding:9px 10px;border-radius:8px;cursor:pointer;font:inherit}
+.gsi:hover,.gsi:focus{background:var(--sunken)}
+.gsc{font-family:ui-monospace,monospace;font-weight:800;font-size:.8rem;color:var(--accent)}
+.gsn{font-size:.86rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gsb{font-size:.72rem;color:var(--muted);white-space:nowrap}
+.gsv{padding:12px;color:var(--muted);font-size:.86rem}
+.pcrow{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:var(--fg);padding:12px 4px;cursor:pointer;font:inherit}
+.pcrow:last-child{border-bottom:0}.pcrow:hover{background:var(--sunken)}
+.pcm{display:flex;flex-direction:column;min-width:0}.pcm small{color:var(--muted);font-size:.78rem}
+@media (max-width:700px){.gs{max-width:none;margin-right:6px}.gs input::placeholder{font-size:.8rem}.who{display:none}}
+@media print{.gs{display:none!important}#printArea .rst td{padding:6px 4px;border-bottom:1px solid #ddd}}
+.gs input{border:0!important;background:none!important;box-shadow:none!important;height:100%!important;padding:0!important;border-radius:0!important}
+.gs input::-webkit-search-cancel-button{display:none}
+.gsi,.pcrow{color:var(--fg)!important;background:none!important;box-shadow:none!important;min-height:0}
+.gsi:hover,.gsi:focus,.pcrow:hover{background:var(--sunken)!important}
+.gsc{color:var(--accent)!important}.gsn,.pcm b{color:var(--fg)!important}.gsb,.pcm small{color:var(--muted)!important}
+.pcrow .cpill{color:#fff!important;background:var(--k)!important}
+@media (max-width:700px){.homebtn h1{display:none}}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="INVENTRA, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBgH" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0F3B3A"/><stop offset="1" stop-color="#06181B"/></linearGradient><linearGradient id="lgTopH" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0D9488"/><stop offset="1" stop-color="#5EEAD4"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBgH)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTopH)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTopH)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/></svg></span><h1>INVENTRA</h1></button></div><div class="hdr"><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="INVENTRA, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBgH" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0F3B3A"/><stop offset="1" stop-color="#06181B"/></linearGradient><linearGradient id="lgTopH" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0D9488"/><stop offset="1" stop-color="#5EEAD4"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBgH)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTopH)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTopH)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/></svg></span><h1>INVENTRA</h1></button></div><div class="hdr"><div class="gs" id="gs" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="gsq" type="search" placeholder="Buscar peça por código ou nome  ( / )" autocomplete="off" aria-label="Buscar peça"><div id="gsres" class="gsres" hidden></div></div><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <div id="alertas"></div>
@@ -1427,7 +1452,7 @@ function renderSide(){const s=$('side');s.innerHTML=sideHTML();s.querySelectorAl
   const mw=s.querySelector('.mwrap');if(mw){const pos=()=>{if(!mqHover.matches)return;const sub=mw.querySelector('.subitems');if(!sub)return;sub.style.top='-8px';
       requestAnimationFrame(()=>{const r=mw.getBoundingClientRect(),h=sub.offsetHeight,lim=innerHeight-12,topo=Math.max(72,Math.min(r.top-8,lim-h));sub.style.top=(topo-r.top)+'px'})};
     mw.addEventListener('mouseenter',pos);mw.addEventListener('focusin',pos);pos()}}
-function escolheMenu(cat,setor){ui={...ui,cat,setor:setor||'',gst:'',tipo:'',det:null,confDel:false};
+function escolheMenu(cat,setor){ui={...ui,cat,peca:null,setor:setor||'',gst:'',tipo:'',det:null,confDel:false};
   if(ui.tab==='nova'){if(!draft)draft=novo();draft.cat=cat;if(cat!=='Garantia')draft.origem='';if(!(TIPOS_CAT[cat]||[]).includes(draft.tipo))draft.tipo='';
     if(cat==='Minucioso'){draft.setor=ui.setor;draft.chefe=chefeDe(ui.setor)||''}}
   else if(ui.tab!=='lista')ui.tab='lista';
@@ -1440,7 +1465,7 @@ const hoverAbre=()=>{if(!mqHover.matches||$('side').hidden)return;clearTimeout(t
 const hoverFecha=()=>{if(!mqHover.matches)return;clearTimeout(tFecha);tFecha=setTimeout(()=>abreMenu(false),280)};
 ['menuBtn','side','hoverzone'].forEach(id=>{$(id).addEventListener('mouseenter',hoverAbre);$(id).addEventListener('mouseleave',hoverFecha)});
 $('sideBack').addEventListener('click',()=>abreMenu(false));
-function go(tab){ui={...ui,tab,det:null,confDel:false};if(tab==='nova'&&!draft)draft=novo();render();scrollTo(0,0);if(tab!=='nova')carregar()}
+function go(tab){ui={...ui,tab,peca:null,det:null,confDel:false};if(tab==='nova'&&!draft)draft=novo();render();scrollTo(0,0);if(tab!=='nova')carregar()}
 const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia','Minucioso':'Relatório de falta de produtos por setor, para o chefe assinar','Consertos Baiano':'Peças sem garantia enviadas para conserto','Avaria':'Relatório de avaria no formato oficial, com termo de entrega para o supervisor assinar'};
 let SETORES=['Expedição','Shopee','Mercado Livre','Cofre','1º andar','2º andar','3º andar','Carga e descarga','Recebimento','Parachoque'];
 let chefes={},cargosOk=true;
@@ -1484,7 +1509,7 @@ function novo(){return{cat:ui.cat||'Garantia',setor:ui.cat==='Minucioso'?ui.seto
 
 function render(){
   {const rf=$('rodape');if(rf&&!rf.innerHTML)rf.innerHTML=rodapeHTML()}
-  const v=$('view'),fora=()=>{const al=$('alertas');if(al)al.innerHTML='';$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';$('side').hidden=true;abreMenu(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
+  const v=$('view'),fora=()=>{const al=$('alertas');if(al)al.innerHTML='';$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';$('side').hidden=true;if($('gs'))$('gs').hidden=true;abreMenu(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
   if(!sb)return;
   document.body.classList.toggle('auth',!uid);
   if(!uid){fora();if(tela==='cadastro'){v.innerHTML=cadastroHTML();bindCadastro()}else{v.innerHTML=loginHTML();bindLogin()}return}
@@ -1492,7 +1517,7 @@ function render(){
   if(!eu){fora();v.innerHTML='<div class="center box stack"><h2>Perfil não encontrado</h2><p>Sua conta existe, mas o perfil não foi criado. Peça ao administrador para conferir a configuração do banco (passo do SQL).</p></div>';return}
   if(!eu.aprovado&&!eu.admin&&eu.recusado){fora();v.innerHTML=`<div class="center box stack"><h2>Acesso não liberado</h2><p>Olá, ${esc(eu.nome)}. O administrador não liberou seu acesso ao app. Se acha que é um engano, fale com ele.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
   if(!eu.aprovado&&!eu.admin){fora();v.innerHTML=`<div class="center box stack"><h2>Cadastro enviado</h2><p>Olá, ${esc(eu.nome)}. Seu cadastro foi recebido e está aguardando o administrador liberar o acesso.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
-  $('nav').hidden=false;$('sair').hidden=false;$('side').hidden=false;$('menuBtn').hidden=false;document.body.classList.add('withside');renderSide();$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo);
+  $('nav').hidden=false;$('gs').hidden=false;$('sair').hidden=false;$('side').hidden=false;$('menuBtn').hidden=false;document.body.classList.add('withside');renderSide();$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo);
   const pend=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
   $('badge').hidden=!(eu.admin&&pend);$('badge').textContent=pend;{let mb=$('menuBtn').querySelector('.mb');if(eu.admin&&pend){if(!mb){mb=document.createElement('span');mb.className='mb';$('menuBtn').appendChild(mb)}mb.textContent=pend}else if(mb)mb.remove()}
   document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;
@@ -1512,6 +1537,7 @@ function render(){
      al.querySelector('[data-balver]').onclick=()=>{ui={...ui,tab:'lista',cat:'Garantia',gst:'Conserto Baiano',setor:'',det:null};render();scrollTo(0,0)};
      al.querySelector('[data-balx]').onclick=()=>{ui.alertaBaiVisto=bt.length;render()}}}
   if(ui.det){const od=ocs.find(x=>x.id===ui.det);if(od&&od.categoria==='Avaria'){v.innerHTML=avDetHTML(od);bindAvDet(od)}else if(od&&od.categoria==='Consertos Baiano'){v.innerHTML=baiDetHTML(od);bindBaiDet(od)}else if(od&&od.categoria==='Minucioso'&&!(od.qtd_contada!=null&&od.falta==null)){v.innerHTML=minDetHTML(od);bindMinDet(od)}else{v.innerHTML=detHTML();bindDet()}}
+  else if(ui.peca){v.innerHTML=pecaHTML();bindPeca()}
   else if(ui.tab==='lista'){v.innerHTML=listaHTML();bindLista()}
   else if(ui.tab==='nova'){if(draft.cat==='Avaria'){v.innerHTML=avFormHTML();bindAvForm()}else if(draft.cat==='Consertos Baiano'){v.innerHTML=baiFormHTML();bindBaiForm()}else if(draft.cat==='Minucioso'){v.innerHTML=minFormHTML();bindMinForm()}else{v.innerHTML=formHTML();bindForm()}}
   else if(ui.tab==='painel'){v.innerHTML=painelHTML();bindPainel()}
@@ -2508,12 +2534,12 @@ function mensalHTML(){
    <div class="chartwrap"><svg viewBox="0 0 ${W} ${H}" class="mchart" role="img" aria-label="Gráfico mês a mês do ano">${svg}</svg></div>
    <div class="legend"><span><span class="dot bg"></span>Garantia</span><span><span class="dot br"></span>Relatório</span><span><span class="dot bm"></span>Minucioso</span><span class="muted">Ano de ${ano}: ${totAno.g} garantias, ${totAno.r} relatórios e ${totAno.m} minuciosos</span></div>
   </div>`}
-function bindResumo(){const ex=$('exportar');if(ex)ex.onclick=()=>exportarExcel(ocs,{cat:'Geral',periodo:'Todos os registros carregados'});const a=$('rano'),m=$('rmes');if(a)a.onchange=()=>{ui.mes=a.value+'-'+ui.mes.slice(5);render()};if(m)m.onchange=()=>{ui.mes=ui.mes.slice(0,4)+'-'+m.value;render()};
+function bindResumo(){const sx=$('semXls');if(sx)sx.onclick=()=>{const D=dadosSemana();if(!D.L.length){toast('Nenhum registro nos últimos 7 dias');return}exportarExcel(D.L,{cat:'Geral',periodo:'Semana de '+D.de+' a '+D.ate,btn:'semXls'})};const sp=$('semPrt');if(sp)sp.onclick=imprimirSemana;const ex=$('exportar');if(ex)ex.onclick=()=>exportarExcel(ocs,{cat:'Geral',periodo:'Todos os registros carregados'});const a=$('rano'),m=$('rmes');if(a)a.onchange=()=>{ui.mes=a.value+'-'+ui.mes.slice(5);render()};if(m)m.onchange=()=>{ui.mes=ui.mes.slice(0,4)+'-'+m.value;render()};
   document.querySelectorAll('.mg').forEach(g=>{const f=()=>{ui.mes=g.dataset.mes;render()};g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f()}})})}
 function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{const d=dia(o.criado);if(d===hoje())c.hoje++;if(d>=diasAtras(6))c.sete++});
   const cont=f=>{const m={};ocs.forEach(o=>{const k=f(o);m[k]=(m[k]||0)+1});return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,8)};
   const bars=a=>{const mx=Math.max(1,...a.map(x=>x[1]));return a.length?a.map(([n,v])=>`<div class="bar"><span class="n">${esc(n)}</span><div class="tr"><div class="f" style="width:${v/mx*100}%"></div></div><span class="v">${v}</span></div>`).join(''):'<span class="muted small">Sem dados</span>'};
-  return`<div class="stack"><div class="box exgeral"><div><b>Relatório geral</b><div class="muted small">Excel com todos os módulos: números, gráficos, destaques e a lista completa.</div></div><button type="button" class="btn sm primary" id="exportar" ${ocs.length?'':'disabled'}>⬇ Exportar relatório geral</button></div><div class="stats">${[['hoje','Hoje'],['sete','Últimos 7 dias'],['total','Total']].map(([k,t])=>`<div class="stat"><div class="v">${c[k]}</div><div class="muted small">${t}</div></div>`).join('')}</div>
+  return`<div class="stack"><div class="box exgeral"><div><b>Relatório geral</b><div class="muted small">Excel com todos os módulos: números, gráficos, destaques e a lista completa.</div></div><button type="button" class="btn sm primary" id="exportar" ${ocs.length?'':'disabled'}>⬇ Exportar relatório geral</button></div><div class="box exgeral"><div><b>Resumo da semana</b><div class="muted small">Últimos 7 dias: registros, pendências e peças que mais aparecem. Para entregar ao supervisor.</div></div><div class="row" style="gap:8px"><button type="button" class="btn sm" id="semXls">⬇ Excel</button><button type="button" class="btn sm primary" id="semPrt">🖨 Imprimir</button></div></div><div class="stats">${[['hoje','Hoje'],['sete','Últimos 7 dias'],['total','Total']].map(([k,t])=>`<div class="stat"><div class="v">${c[k]}</div><div class="muted small">${t}</div></div>`).join('')}</div>
   ${mensalHTML()}
   ${(()=>{const g=ocs.filter(o=>o.categoria==='Garantia');if(!g.length)return'';const k={};GST.forEach(s=>k[s]=0);g.forEach(o=>k[o.gar_status||'Pendente']++);
     const pf={};g.forEach(o=>{const f=o.fornecedor||'Sem fornecedor';pf[f]=(pf[f]||0)+1});
@@ -2526,6 +2552,62 @@ function resumoHTML(){const c={hoje:0,sete:0,total:ocs.length};ocs.forEach(o=>{c
   <span class="lbl">Por categoria</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.categoria||'Relatório'))}</div>
   <span class="lbl">Por tipo</span><div class="box stack" style="gap:8px">${bars(cont(o=>o.categoria==='Minucioso'||o.categoria==='Consertos Baiano'?null:o.tipo).filter(x=>x[0]!=='null'))}</div>
   <span class="lbl">Por pessoa</span><div class="box stack" style="gap:8px">${bars(cont(o=>nome(o.autor)))}</div></div>`}
+
+/* ---------- Busca global, histórico da peça e resumo semanal ---------- */
+const catDe=o=>o.categoria||'Relatório';
+const codPeca=o=>String(o.sku||'').trim().toUpperCase().replace(/^0+(?=\d)/,'');
+const nomeCat=c=>c==='Consertos Baiano'?'Baiano':c;
+function nomePeca(c){return(window.PRODUTOS&&window.PRODUTOS[c])||(ocs.find(o=>codPeca(o)===c&&o.produto)||{}).produto||''}
+function buscaGlobal(q){q=q.trim().toLowerCase().replace(/^0+(?=\d)/,'');if(q.length<2)return[];
+  const m={};ocs.filter(o=>podeMod(catDe(o))&&codPeca(o)).forEach(o=>{const c=codPeca(o);(m[c]=m[c]||{c,n:0}).n++;
+    m[c].txt=((m[c].txt||'')+' '+[o.produto,o.endereco,o.id_quebra].join(' ')).toLowerCase()});
+  let r=Object.values(m).filter(x=>x.c.toLowerCase().includes(q)||x.txt.includes(q));
+  if(window.PRODUTOS&&q.length>=3){let k=0;for(const c in window.PRODUTOS){if(k>=6)break;if(!m[c]&&(c===q||window.PRODUTOS[c].toLowerCase().includes(q))){r.push({c,n:0});k++}}}
+  r.sort((a,b)=>(b.c.toLowerCase()===q)-(a.c.toLowerCase()===q)||b.n-a.n);return r.slice(0,8)}
+function pintaGs(){const q=$('gsq').value,r=buscaGlobal(q),b=$('gsres');
+  if(q.trim().length<2){b.hidden=true;return}
+  b.innerHTML=r.length?r.map(x=>`<button type="button" class="gsi" data-peca="${esc(x.c)}"><span class="gsc">${esc(x.c)}</span><span class="gsn">${esc(nomePeca(x.c)||'Sem nome no catálogo')}</span><span class="gsb">${x.n?x.n+' registro'+(x.n===1?'':'s'):'sem registro'}</span></button>`).join(''):'<div class="gsv">Nada encontrado</div>';b.hidden=false}
+function abrePeca(c){ui.peca=c;ui.det=null;if(ui.tab==='nova')ui.tab='lista';$('gsres').hidden=true;$('gsq').value='';render();scrollTo(0,0)}
+document.addEventListener('input',e=>{if(e.target.id==='gsq')pintaGs()});
+document.addEventListener('focusin',e=>{if(e.target.id==='gsq')pintaGs()});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-peca]');if(b){abrePeca(b.dataset.peca);return}
+  if(!e.target.closest('#gs')){const r=$('gsres');if(r)r.hidden=true}});
+document.addEventListener('keydown',e=>{if(e.target.id==='gsq'){if(e.key==='Enter'){const x=buscaGlobal(e.target.value)[0];if(x)abrePeca(x.c)}if(e.key==='Escape'){$('gsres').hidden=true;e.target.blur()}}
+  if((e.key==='/'||(e.key==='k'&&(e.ctrlKey||e.metaKey)))&&!/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||''))&&$('gs')&&!$('gs').hidden){e.preventDefault();$('gsq').focus()}});
+function pecaHTML(){const c=ui.peca,L=ocs.filter(o=>podeMod(catDe(o))&&codPeca(o)===c).sort((a,b)=>ts(b.criado)-ts(a.criado));
+  const n=cat=>L.filter(o=>catDe(o)===cat).length,qt=L.reduce((s,o)=>s+(Number(o.qtd)||0),0);
+  const rein=n('Garantia')+n('Avaria')>=2,nm=nomePeca(c);
+  const cats=['Garantia','Relatório','Minucioso','Avaria','Consertos Baiano'].filter(k=>podeMod(k));
+  const st=o=>catDe(o)==='Garantia'?(o.gar_status||'Pendente'):catDe(o)==='Avaria'?(avTipo(o)[1]||''):catDe(o)==='Minucioso'?(o.falta!=null?o.falta+' em falta':''):(o.tipo||'');
+  return`<div class="stack"><div class="box"><button type="button" class="btn sm" id="pvolta">‹ Voltar</button>
+   <div style="margin-top:14px"><span class="muted small">HISTÓRICO DA PEÇA</span><h2 style="margin:2px 0 4px"><span class="addr">${esc(c)}</span> ${esc(nm||'Sem nome no catálogo')}</h2>
+   <div class="muted small">${L.length} registro${L.length===1?'':'s'} no total${qt?' · '+qt+' peça'+(qt===1?'':'s')+' envolvida'+(qt===1?'':'s'):''}${L.length?' · último em '+fData(L[0].criado):''}</div></div>
+   ${rein?`<div class="alerta" style="margin:14px 0 0"><div class="aic">${svgI('<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>')}</div><div class="atx"><b>Peça reincidente</b><small>${n('Garantia')} garantia(s) e ${n('Avaria')} avaria(s) registradas. Vale conversar com compras ou fornecedor.</small></div></div>`:''}</div>
+   <div class="stats g4">${cats.map(k=>`<div class="stat"><div class="v">${n(k)}</div><div class="muted small">${nomeCat(k)}</div></div>`).join('')}</div>
+   <div class="box stack" style="gap:0">${L.length?L.map(o=>`<button type="button" class="pcrow" data-pid="${esc(o.id)}"><span class="cpill" style="--k:${CARGO_COR_CAT(catDe(o))}">${esc(nomeCat(catDe(o)))}</span><span class="pcm"><b>${esc(st(o)||'—')}</b><small>${esc(nome(o.autor))}${o.endereco?' · '+esc(o.endereco):''}${o.fornecedor?' · '+esc(o.fornecedor):''}</small></span><span class="muted small">${fData(o.criado)}</span></button>`).join(''):'<p class="muted" style="margin:6px 0">Nenhum registro desta peça ainda.</p>'}</div></div>`}
+const CARGO_COR_CAT=c=>({'Garantia':'#e2621b','Relatório':'#0d9488','Minucioso':'#65a30d','Avaria':'#dc2626','Consertos Baiano':'#7c3aed'}[c]||'#64748b');
+function bindPeca(){$('pvolta').onclick=()=>{ui.peca=null;render();scrollTo(0,0)};document.querySelectorAll('[data-pid]').forEach(b=>b.onclick=()=>{ui.det=b.dataset.pid;render();scrollTo(0,0)})}
+/* resumo semanal */
+function dadosSemana(){const de=diasAtras(6),ate=hoje(),L=ocs.filter(o=>podeMod(catDe(o))&&dia(o.criado)>=de&&dia(o.criado)<=ate);
+  const por={};L.forEach(o=>{por[catDe(o)]=(por[catDe(o)]||0)+1});
+  const pc={};L.filter(o=>codPeca(o)).forEach(o=>{const c=codPeca(o);pc[c]=(pc[c]||0)+1});
+  const top=Object.entries(pc).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const falta=L.filter(o=>catDe(o)==='Minucioso').reduce((s,o)=>s+(totalMin(o)||0),0);
+  const fmt=d=>d.split('-').reverse().join('/');
+  return{L,de:fmt(de),ate:fmt(ate),por,top,falta,
+   garPend:podeMod('Garantia')?ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')==='Pendente').length:0,
+   relAtr:relAtrasados().length,
+   baiCampo:podeMod('Garantia')?ocs.filter(emBaiano).length:0,baiAtr:podeMod('Garantia')?ocs.filter(baiAtrasado).length:0}}
+function folhaSemana(D){const li=(t,v)=>`<tr><td>${t}</td><td style="text-align:right"><b>${v}</b></td></tr>`;
+  return`<div class="folha" style="padding:10mm 14mm;font-family:Arial,sans-serif;color:#111"><h1 style="margin:0;font-size:20pt">INVENTRA · Resumo da semana</h1>
+  <div style="color:#555;margin:2mm 0 8mm">Período: ${D.de} a ${D.ate} · Emitido por ${esc(eu.nome)} em ${new Date().toLocaleString('pt-BR')}</div>
+  <h3>Registros criados na semana: ${D.L.length}</h3><table style="width:100%;border-collapse:collapse" class="rst">${Object.entries(D.por).map(([k,v])=>li(esc(k),v)).join('')||li('Nenhum registro','0')}</table>
+  <h3>Situação atual</h3><table style="width:100%;border-collapse:collapse" class="rst">${li('Garantias pendentes (aguardando envio)',D.garPend)}${li('Relatórios atrasados (mais de 2 dias úteis)',D.relAtr)}${li('Consertos no Baiano em campo',D.baiCampo)}${li('Baiano com prazo vencido',D.baiAtr)}${li('Valor em falta (Minucioso da semana)',brl(D.falta))}</table>
+  <h3>Peças com mais registros na semana</h3><table style="width:100%;border-collapse:collapse" class="rst">${D.top.map(([c,n])=>li(esc(c)+' · '+esc(nomePeca(c)||'—'),n+' registro'+(n===1?'':'s'))).join('')||li('—','')}</table>
+  <div style="margin-top:22mm;display:flex;gap:16mm"><div style="flex:1;border-top:1px solid #111;padding-top:2mm;font-size:10pt">${esc(eu.nome)}<br><span style="color:#555">${esc(cargoNome(eu.cargo))}</span></div><div style="flex:1;border-top:1px solid #111;padding-top:2mm;font-size:10pt">Supervisor<br><span style="color:#555">Data: ____/____/______</span></div></div></div>`}
+function imprimirSemana(){const D=dadosSemana();let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+  a.innerHTML=folhaSemana(D);document.body.classList.add('imprimindo');
+  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);setTimeout(()=>print(),50)}
 
 /* ---------- Equipe ---------- */
 const CARGO_COR={'Chefe de Inventário':'#e2621b','Auxiliar de Inventário':'#0d9488','Visitante':'#7c3aed'};
