@@ -970,6 +970,50 @@ table th{text-transform:uppercase;letter-spacing:.07em;font-size:.66rem;color:va
 .wn-menu{border-radius:8px!important}
 .wq2-av,.wsp-av,.av{border-radius:6px!important}
 .wk2-val{font-size:clamp(1.15rem,1.9vw,1.6rem)!important;white-space:nowrap}.wk2-mid svg{max-width:36%!important}
+
+/* ===== Tela de login INVENTRA ===== */
+.authshell.a2{display:grid;grid-template-columns:1fr;min-height:100vh;min-height:100dvh;padding:0!important;gap:0;align-items:stretch;background:var(--bg)}
+.a2-brand{display:none}
+.a2-side{display:grid;place-items:center;padding:28px 18px;position:relative}
+.authshell.a2 .acard{margin:0 auto}
+.authshell.a2 .alogo{align-items:flex-start;text-align:left;flex-direction:row;gap:14px}
+.authshell.a2 .alogo h1{font-size:1.7rem}
+.authshell.a2 .apanel{border-top:3px solid var(--accent);border-radius:10px;padding:26px 24px}
+.authshell.a2 .temaflut{position:fixed;top:14px;right:14px;z-index:5}
+@media (min-width:920px){
+  .authshell.a2{grid-template-columns:minmax(0,1.15fr) minmax(420px,1fr)}
+  .a2-brand{display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:100vh;min-height:100dvh;align-self:stretch;position:relative;overflow:hidden;padding:44px 52px;color:#e8fbf8;background:linear-gradient(160deg,#0b3a39 0%,#06222a 55%,#041216 100%)}
+  .a2-brand::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(94,234,212,.28) 1px,transparent 1.3px);background-size:26px 26px;mask-image:linear-gradient(180deg,#000,transparent 85%);-webkit-mask-image:linear-gradient(180deg,#000,transparent 85%)}
+  .a2-glow{position:absolute;width:620px;height:620px;right:-220px;top:-180px;border-radius:50%;background:radial-gradient(closest-side,rgba(45,212,191,.38),transparent);animation:a2glow 9s ease-in-out infinite alternate}
+  .authshell.a2 .alogo .logo{display:none}
+  .authshell.a2 .alogo h1{font-size:2rem}
+}
+.a2-brand>*:not(.a2-glow){position:relative;z-index:1}
+.a2-top{display:flex;align-items:center;gap:12px;font:700 1.15rem var(--head);letter-spacing:.2em}
+.a2-logo{width:44px;height:44px;border-radius:12px;overflow:hidden;display:block;box-shadow:0 0 0 1px rgba(94,234,212,.25),0 8px 30px rgba(13,148,136,.4)}
+.a2-logo svg{width:100%;height:100%;display:block}
+.a2-mid h2{font:700 clamp(2rem,3.2vw,3rem)/1.08 var(--head);letter-spacing:-.02em;margin:0 0 14px;color:#fff}
+.a2-mid h2 em{font-style:normal;color:#5eead4}
+.a2-mid p{margin:0 0 26px;max-width:46ch;color:#a9cfca;font-size:1.02rem}
+.a2-scan{position:relative;width:min(340px,100%);padding:20px 22px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(94,234,212,.22);color:#d9fbf5;backdrop-filter:blur(4px)}
+.a2-bc{display:block;width:100%;height:auto;opacity:.92}
+.a2-scan i{position:absolute;width:20px;height:20px;border:3px solid #2dd4bf;opacity:.95}
+.a2-scan .c1{left:-2px;top:-2px;border-right:0;border-bottom:0;border-radius:10px 0 0 0}
+.a2-scan .c2{right:-2px;top:-2px;border-left:0;border-bottom:0;border-radius:0 10px 0 0}
+.a2-scan .c3{left:-2px;bottom:-2px;border-right:0;border-top:0;border-radius:0 0 0 10px}
+.a2-scan .c4{right:-2px;bottom:-2px;border-left:0;border-top:0;border-radius:0 0 10px 0}
+.a2-laser{position:absolute;left:10px;right:10px;top:16px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#5eead4,transparent);box-shadow:0 0 18px 4px rgba(45,212,191,.7);animation:a2laser 2.6s ease-in-out infinite alternate}
+.a2-res{position:relative;height:46px;margin-top:14px;width:min(340px,100%)}
+.a2-r{position:absolute;inset:0;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:10px;background:rgba(45,212,191,.12);border:1px solid rgba(94,234,212,.35);font-size:.86rem;opacity:0;animation:a2res 9s infinite;animation-delay:calc(var(--d)*3s)}
+.a2-r .ok{color:#5eead4;font-weight:800}.a2-r b{font-family:var(--mono);color:#fff}.a2-r span:last-child{color:#a9cfca;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a2-feat{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.a2-feat li{border-top:2px solid rgba(94,234,212,.5);padding-top:10px}
+.a2-feat b{display:block;font:700 .95rem var(--head);color:#fff}.a2-feat span{font-size:.78rem;color:#8fb8b3}
+.a2-cred{font-size:.74rem;color:#6f9a95}.a2-cred b{color:#bfe9e3}
+@keyframes a2laser{from{top:16px}to{top:calc(100% - 19px)}}
+@keyframes a2res{0%{opacity:0;transform:translateY(8px)}6%,30%{opacity:1;transform:none}36%,100%{opacity:0;transform:translateY(-8px)}}
+@keyframes a2glow{from{transform:translate(0,0) scale(1)}to{transform:translate(-60px,50px) scale(1.15)}}
+@media (prefers-reduced-motion:reduce){.a2-laser,.a2-glow{animation:none}.a2-r{animation:none}.a2-r:first-child{opacity:1}}
 </style>
 </head>
 <body>
@@ -1464,11 +1508,24 @@ let logoN=0;const LOGO_BASE=`<svg class="lg" xmlns="http://www.w3.org/2000/svg" 
 const logoSVG=()=>{const k='lg'+(++logoN);return LOGO_BASE.replace(/lgBg/g,k+'b').replace(/lgTop/g,k+'t')};
 const IC_RD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>';
 const rodapeHTML=()=>`<span class="rd-logo">${logoSVG()}</span><span>INVENTRA</span><span class="rd-sep">·</span><span>Criado por <b>Lucas Carvalho</b></span><span class="rd-sep">·</span><span>© ${new Date().getFullYear()}</span>`;
-const authShell=(mode,titulo,sub,form)=>`<div class="authshell"><button type="button" class="temabtn temaflut" data-tflut="1"></button><div class="acard" id="acard">
+const A2_ITENS=[['12810','FORR NAPA GOL 88/94 PORTA'],['24761','LIMPA PNEU PRETINHO 2L'],['202513','TAPETE PVC UNIV VW S/BORDA']];
+const A2_BC=`<svg class="a2-bc" viewBox="0 0 300 120" aria-hidden="true"><g fill="currentColor"><rect x="10" y="14" width="3" height="92" rx="1"/><rect x="16" y="14" width="4" height="92" rx="1"/><rect x="22" y="14" width="2" height="92" rx="1"/><rect x="26" y="14" width="3" height="92" rx="1"/><rect x="31" y="14" width="2" height="92" rx="1"/><rect x="36" y="14" width="2" height="92" rx="1"/><rect x="40" y="14" width="4" height="92" rx="1"/><rect x="46" y="14" width="2" height="92" rx="1"/><rect x="51" y="14" width="2" height="92" rx="1"/><rect x="55" y="14" width="2" height="92" rx="1"/><rect x="59" y="14" width="2" height="92" rx="1"/><rect x="63" y="14" width="2" height="92" rx="1"/><rect x="67" y="14" width="2" height="92" rx="1"/><rect x="72" y="14" width="2" height="92" rx="1"/><rect x="77" y="14" width="3" height="92" rx="1"/><rect x="82" y="14" width="2" height="92" rx="1"/><rect x="86" y="14" width="2" height="92" rx="1"/><rect x="92" y="14" width="2" height="92" rx="1"/><rect x="97" y="14" width="2" height="92" rx="1"/><rect x="102" y="14" width="3" height="92" rx="1"/><rect x="107" y="14" width="2" height="92" rx="1"/><rect x="111" y="14" width="2" height="92" rx="1"/><rect x="115" y="14" width="2" height="92" rx="1"/><rect x="120" y="14" width="4" height="92" rx="1"/><rect x="126" y="14" width="3" height="92" rx="1"/><rect x="133" y="14" width="4" height="92" rx="1"/><rect x="139" y="14" width="3" height="92" rx="1"/><rect x="146" y="14" width="2" height="92" rx="1"/><rect x="151" y="14" width="5" height="92" rx="1"/><rect x="159" y="14" width="2" height="92" rx="1"/><rect x="165" y="14" width="2" height="92" rx="1"/><rect x="169" y="14" width="3" height="92" rx="1"/><rect x="174" y="14" width="3" height="92" rx="1"/><rect x="179" y="14" width="2" height="92" rx="1"/><rect x="183" y="14" width="2" height="92" rx="1"/><rect x="189" y="14" width="2" height="92" rx="1"/><rect x="193" y="14" width="4" height="92" rx="1"/><rect x="199" y="14" width="5" height="92" rx="1"/><rect x="206" y="14" width="3" height="92" rx="1"/><rect x="213" y="14" width="3" height="92" rx="1"/><rect x="220" y="14" width="2" height="92" rx="1"/><rect x="224" y="14" width="2" height="92" rx="1"/><rect x="228" y="14" width="2" height="92" rx="1"/><rect x="232" y="14" width="3" height="92" rx="1"/><rect x="237" y="14" width="5" height="92" rx="1"/><rect x="244" y="14" width="2" height="92" rx="1"/><rect x="250" y="14" width="5" height="92" rx="1"/><rect x="257" y="14" width="3" height="92" rx="1"/><rect x="262" y="14" width="5" height="92" rx="1"/><rect x="271" y="14" width="2" height="92" rx="1"/><rect x="275" y="14" width="3" height="92" rx="1"/><rect x="281" y="14" width="2" height="92" rx="1"/><rect x="285" y="14" width="4" height="92" rx="1"/></g></svg>`;
+const authShell=(mode,titulo,sub,form)=>`<div class="authshell a2"><button type="button" class="temabtn temaflut" data-tflut="1"></button>
+  <section class="a2-brand" aria-hidden="true"><div class="a2-glow"></div>
+    <div class="a2-top"><span class="a2-logo">${logoSVG()}</span><b>INVENTRA</b></div>
+    <div class="a2-mid">
+      <h2>Cada peça no lugar.<br><em>Cada registro sob controle.</em></h2>
+      <p>Garantias, contagens, avarias e consertos num só lugar, do bipe ao relatório assinado.</p>
+      <div class="a2-scan"><i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i>${A2_BC}<span class="a2-laser"></span></div>
+      <div class="a2-res">${A2_ITENS.map((x,i)=>`<div class="a2-r" style="--d:${i}"><span class="ok">✓</span><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>
+    </div>
+    <ul class="a2-feat"><li><b>Garantias</b><span>com prazo e cobrança</span></li><li><b>Minucioso</b><span>por setor, assinado</span></li><li><b>Avarias</b><span>com termo destacável</span></li></ul>
+    <div class="a2-cred">Criado por <b>Lucas Carvalho</b> · © 2026</div></section>
+  <div class="a2-side"><div class="acard" id="acard">
   <div class="alogo"><span class="logo">${logoSVG()}</span><div><h1>${titulo}</h1><p>${sub}</p></div></div>
   <div class="apanel">${form}</div>
   <p class="atroca">${mode==='login'?'Ainda não tem cadastro? <button class="btn link" type="button" id="irCad">Criar cadastro</button>':'Já tem cadastro? <button class="btn link" type="button" id="irLogin">Entrar</button>'}</p>
-  <footer class="rodape rodape-auth">${rodapeHTML()}</footer></div></div>`;
+  <footer class="rodape rodape-auth">${rodapeHTML()}</footer></div></div></div>`;
 const campo=(id,rot,tipo,ac,ico,extra='')=>`<div class="field"><label class="lbl" for="${id}">${rot}</label><div class="inp${tipo==='password'?' pw':''}">${IC[ico]}<input id="${id}" type="${tipo}" autocomplete="${ac}" ${extra}>${tipo==='password'?`<button type="button" class="eye" data-eye="${id}" aria-label="Mostrar senha" tabindex="-1">${IC.eye}</button>`:''}</div></div>`;
 const mostraEmail=p=>p.email&&!/\+u[0-9a-f]{10}@/.test(p.email);
 function authErr(er,msg){er.textContent=msg;er.hidden=false;const c=$('acard');if(c){c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')}}
