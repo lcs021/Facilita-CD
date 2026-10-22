@@ -1381,7 +1381,7 @@ function filtrar(){const q=ui.busca.trim().toLowerCase();
   .sort((a,b)=>ts(b.criado)-ts(a.criado))}
 function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<button class="card" data-id="${esc(o.id)}">
   <div class="thumb">${f?`<img data-path="${esc(f)}" alt="">`:nv?'▶ vídeo':'sem foto'}${f&&nv?'<span class="vb">▶</span>':''}</div>
-  <div class="b"><div class="row"><span class="t">${esc(o.categoria==='Minucioso'?(o.produto||o.sku||'Relatório minucioso'):o.categoria==='Avaria'?(avTipo(o)[1].replace(' (MLV)','')+((o.dados&&o.dados.ref)?' · Ref. '+o.dados.ref:'')+' · '+(o.produto||o.sku||'')):o.tipo)}</span>${catBadge(o.categoria)}</div>${ehRel(o)?`<div class="line">${relBadge(o)}</div>`:''}${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.origem?' · Origem: '+esc(o.origem):''}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}${o.categoria==='Minucioso'?`<div class="line"><span class="gst e">✓ Concluído</span></div><div class="line"><b style="color:var(--min)">${esc(o.setor||'Sem setor')}</b>${o.chefe?' · Chefe: '+esc(o.chefe):''}${o.falta!=null?' · Falta: <b style="color:var(--alta)">'+esc(o.falta)+'</b>':difDe(o)!=null?' · Dif: '+difHTML(difDe(o)):''}${totalMin(o)!=null?' · '+brl(totalMin(o)):''}</div>`:''}
+  <div class="b"><div class="row"><span class="t">${esc(o.categoria==='Minucioso'?(o.produto||o.sku||'Relatório minucioso'):o.categoria==='Avaria'?(avTipo(o)[1].replace(' (MLV)','')+((o.dados&&o.dados.ref)?' · Ref. '+o.dados.ref:'')+' · '+(o.produto||o.sku||'')):o.tipo)}</span>${catBadge(o.categoria)}</div>${ehRel(o)?`<div class="line">${relBadge(o)}</div>`:''}${o.categoria==='Avaria'?`<div class="line">${avImpBadge(o)}</div>`:''}${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.origem?' · Origem: '+esc(o.origem):''}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}${o.categoria==='Minucioso'?`<div class="line"><span class="gst e">✓ Concluído</span></div><div class="line"><b style="color:var(--min)">${esc(o.setor||'Sem setor')}</b>${o.chefe?' · Chefe: '+esc(o.chefe):''}${o.falta!=null?' · Falta: <b style="color:var(--alta)">'+esc(o.falta)+'</b>':difDe(o)!=null?' · Dif: '+difHTML(difDe(o)):''}${totalMin(o)!=null?' · '+brl(totalMin(o)):''}</div>`:''}
   ${o.endereco||o.sku?`<div class="line">${o.endereco?`<span class="addr">${esc(o.endereco)}</span> `:''}${esc(o.sku||'')}</div>`:''}
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
   <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
@@ -2050,14 +2050,19 @@ function folhaAv(o){const d=o.dados||{},cu=o.custo!=null&&o.custo!==''?Number(o.
     <p>Supervisor(a): ______________________________________________</p>
     <div class="sg"><span>Assinatura do supervisor</span><span>Data</span></div></div>
   </div>`}
-function imprimirAv(lista){let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+const avImpr=o=>((o.dados&&o.dados.impr)||[]);
+const avImpBadge=o=>{const l=avImpr(o);return l.length?`<span class="gst e">🖨 Impresso ${l.length}x · última ${fData(l[l.length-1].t)}</span>`:'<span class="gst p">Ainda não impresso</span>'};
+async function avMarcaImpresso(o){const impr=[...avImpr(o),{t:new Date().toISOString(),por:uid}];const dados={...(o.dados||{}),impr};
+  o.dados=dados;try{if(!String(o.id).startsWith('tmp')){const{error}=await sb.from('ocorrencias').update({dados}).eq('id',o.id);if(error)toast('A impressão não ficou registrada: '+erroMsg(error))}}catch(e){}}
+function imprimirAv(lista){lista.forEach(avMarcaImpresso);let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
   a.innerHTML=lista.map(folhaAv).join('');document.body.classList.add('imprimindo');
-  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);
+  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim);render()};addEventListener('afterprint',fim);
   setTimeout(()=>{try{print()}catch(e){toast('Não foi possível abrir a impressão neste navegador.')}},80)}
 function avDetHTML(o){const d=o.dados||{};
   return`<div class="stack"><button class="btn sm" id="voltar" style="align-self:flex-start">← Voltar</button>
   <div>${catBadge('Avaria')}<h2 style="margin-top:6px">${d.ref?'Ref. '+esc(d.ref)+' · ':''}${esc(o.sku||'')} · ${esc(o.produto||'Sem descrição')}</h2><div class="muted small">Registrado por <b>${esc(nome(o.autor))}</b> em ${fData(o.criado)}</div></div>
   <button class="btn primary" id="imprimir">🖨 Imprimir / Salvar PDF</button>
+  <div class="box stack"><b>Histórico de impressão</b>${avImpr(o).length?`<ul class="small" style="margin:0;padding-left:18px">${avImpr(o).map(i=>`<li>${fData(i.t)} · por <b>${esc(nome(i.por))}</b></li>`).join('')}</ul>`:'<span class="muted small">Ainda não foi impresso. A cada impressão o sistema anota aqui a data e quem imprimiu.</span>'}</div>
   <div class="prevwrap"><div class="prev">${folhaAv(o)}</div></div>
   ${(pode('garantia')||o.autor===uid)?'<button class="btn sm" id="editar" style="align-self:flex-start">✎ Editar relatório</button>':''}
   ${pode('apagar')?(ui.confDel?`<div class="box stack"><b>Apagar este relatório de avaria?</b><div class="actions"><button class="btn danger" id="delSim">Apagar</button><button class="btn" id="delNao">Cancelar</button></div></div>`:'<button class="btn sm danger" id="del" style="align-self:flex-start">Apagar relatório</button>'):''}</div>`}
