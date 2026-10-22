@@ -10,36 +10,36 @@
 <style>
 /* Layout: barra superior escura, conteúdo em coluna de 680px, navegação inferior com botão central de registrar */
 :root{
-  --bg:#f2f4f8; --surface:#ffffff; --sunken:#eef1f6; --line:#e3e7ee; --line2:#d3d9e3;
-  --fg:#111827; --muted:#667085; --ink:#0e1525; --ink-fg:#f5f7fb;
-  --accent:#2457d6; --accent-ink:#ffffff; --accent-soft:#e8eefc;
+  --bg:#eaf3f1; --surface:#ffffff; --sunken:#e1eeeb; --line:#d4e4e0; --line2:#bcd2cd;
+  --fg:#0f2224; --muted:#587270; --ink:#0a2326; --ink-fg:#effaf8;
+  --accent:#0f766e; --accent-ink:#ffffff; --accent-soft:#d8f1ed;
   --gar:#e2621b; --gar-soft:#fdeee4; --gar-ink:#9a3b07;
-  --min:#15803d; --min-soft:#e3f6e9; --min-ink:#14532d;
+  --min:#4d7c0f; --min-soft:#ecf6d6; --min-ink:#365314;
   --bai:#7c3aed; --bai-soft:#f1eafe; --bai-ink:#4c1d95;
   --alta:#d43d30; --baixa:#1f8a4c;
   --sh1:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.06);
   --sh2:0 4px 16px rgba(16,24,40,.08),0 1px 3px rgba(16,24,40,.06);
-  --r:14px;
+  --r:18px;
   --font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Consolas,Menlo,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0c111b; --surface:#151c29; --sunken:#1c2534; --line:#253045; --line2:#334058;
-  --fg:#e9edf5; --muted:#94a0b4; --ink:#070b13; --ink-fg:#f5f7fb;
-  --accent:#6f9bff; --accent-ink:#0b1220; --accent-soft:#1a2747;
+  --bg:#061416; --surface:#0d2124; --sunken:#12292d; --line:#1b3a3f; --line2:#27494f;
+  --fg:#e6f4f2; --muted:#8fb0ac; --ink:#04100f; --ink-fg:#effaf8;
+  --accent:#2dd4bf; --accent-ink:#04201d; --accent-soft:#0f3a38;
   --gar:#ff8a45; --gar-soft:#3a2216; --gar-ink:#ffc39d;
-  --min:#4ade80; --min-soft:#13301f; --min-ink:#a7f3c0;
+  --min:#a3e635; --min-soft:#26330f; --min-ink:#d9f99d;
   --bai:#b794ff; --bai-soft:#2a1f45; --bai-ink:#ddd0ff;
   --alta:#ff6b5e; --baixa:#4cc785;
   --sh1:0 1px 2px rgba(0,0,0,.3); --sh2:0 6px 20px rgba(0,0,0,.35);
   color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0c111b; --surface:#151c29; --sunken:#1c2534; --line:#253045; --line2:#334058;
-  --fg:#e9edf5; --muted:#94a0b4; --ink:#070b13; --ink-fg:#f5f7fb;
-  --accent:#6f9bff; --accent-ink:#0b1220; --accent-soft:#1a2747;
+  --bg:#061416; --surface:#0d2124; --sunken:#12292d; --line:#1b3a3f; --line2:#27494f;
+  --fg:#e6f4f2; --muted:#8fb0ac; --ink:#04100f; --ink-fg:#effaf8;
+  --accent:#2dd4bf; --accent-ink:#04201d; --accent-soft:#0f3a38;
   --gar:#ff8a45; --gar-soft:#3a2216; --gar-ink:#ffc39d;
-  --min:#4ade80; --min-soft:#13301f; --min-ink:#a7f3c0;
+  --min:#a3e635; --min-soft:#26330f; --min-ink:#d9f99d;
   --bai:#b794ff; --bai-soft:#2a1f45; --bai-ink:#ddd0ff;
   --alta:#ff6b5e; --baixa:#4cc785;
   --sh1:0 1px 2px rgba(0,0,0,.3); --sh2:0 6px 20px rgba(0,0,0,.35);
@@ -58,7 +58,7 @@ button,input,select,textarea{font-family:inherit}
 .logo svg{width:20px;height:20px;color:#fff}
 .logo:has(svg.lg),.rd-logo:has(svg.lg){background:none!important}
 .logo svg.lg,.hero .logo svg.lg,.alogo .logo svg.lg,.rd-logo svg.lg{width:100%!important;height:100%!important;display:block}
-.logo:has(svg.lg){box-shadow:0 4px 14px rgba(36,87,214,.35),0 0 0 1px rgba(255,255,255,.08)}
+.logo:has(svg.lg){box-shadow:0 4px 14px rgba(13,148,136,.35),0 0 0 1px rgba(255,255,255,.08)}
 h1{font-size:1.08rem;margin:0;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
 .hdr{display:flex;align-items:center;gap:10px;min-width:0}
 .who{font-size:.82rem;color:#b8c2d6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
@@ -324,7 +324,7 @@ details summary{cursor:pointer;list-style-position:inside}
 .bsvg .gl{stroke:var(--line);stroke-width:1}.bsvg text{font:600 11px var(--font);fill:var(--muted)}.bsvg .vl{fill:var(--fg);font-weight:800}
 .bsvg .hj{fill:var(--bai);font-weight:800}
 .bgraf .acts{display:flex;gap:8px;flex-wrap:wrap}
-.exgeral{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-color:color-mix(in srgb,#0ea5e9 35%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,#0ea5e9 9%,var(--surface)),var(--surface) 70%)}
+.exgeral{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-color:color-mix(in srgb,#14b8a6 35%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,#14b8a6 9%,var(--surface)),var(--surface) 70%)}
 .relbai{font-family:Arial,Helvetica,sans-serif;color:#000}
 .relbai h1{font-size:17pt;margin:0;padding:12pt 14pt 2pt;background:#0e1525;color:#fff;border-top:5pt solid #7c3aed;text-align:left}.relbai .sub{font-size:9.5pt;padding:0 14pt 10pt;background:#0e1525;color:#b8c2d6;margin-bottom:12pt;text-align:left}
 .relbai .kp{display:flex;gap:8pt;margin-bottom:12pt}.relbai .kp div{flex:1;padding:8pt 10pt;border:1px solid #e3e7ee;border-top:3pt solid #7c3aed;background:#fff;text-align:left;font-size:8.5pt;color:#667085}.relbai .kp b{display:block;font-size:13pt;color:#7c3aed;margin-bottom:2pt;white-space:nowrap}.relbai .kp div{min-width:0;box-sizing:border-box}.relbai,.relbai *{box-sizing:border-box}
@@ -736,7 +736,7 @@ body.withside .wrap:has(.wms){max-width:1180px}
 
 /* ===== Painel moderno e dinâmico ===== */
 .wms.moderno{gap:16px}
-.w-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:18px 20px;border-radius:18px;border:1px solid var(--line);background:radial-gradient(500px 200px at 0% 0%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),radial-gradient(400px 200px at 100% 100%,color-mix(in srgb,#0ea5e9 12%,transparent),transparent 70%),var(--surface);box-shadow:var(--sh1);animation:rise .45s both}
+.w-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:18px 20px;border-radius:18px;border:1px solid var(--line);background:radial-gradient(500px 200px at 0% 0%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),radial-gradient(400px 200px at 100% 100%,color-mix(in srgb,#14b8a6 12%,transparent),transparent 70%),var(--surface);box-shadow:var(--sh1);animation:rise .45s both}
 .w-hero h2{font-size:1.55rem;margin:2px 0 4px;letter-spacing:-.02em}
 .wbtn-at .wrot{display:inline-block;transition:transform .4s}.wbtn-at:hover .wrot{transform:rotate(180deg)}.wbtn-at.gira .wrot{animation:spin .8s linear infinite}
 .wk2{display:flex;flex-direction:column;gap:8px;text-align:left;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;cursor:pointer;position:relative;overflow:hidden;box-shadow:var(--sh1);transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s,border-color .2s;animation:rise .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*70ms)}
@@ -827,6 +827,13 @@ body.withside .wrap:has(.wms){max-width:1180px}
 .avterm .sg span{display:block;border-top:1px solid #000;padding-top:2px}
 @media print{#printArea .avfolha{min-height:268mm;display:flex;flex-direction:column;padding:0 18mm}#printArea .avterm{margin-top:0}#printArea .avspc{flex:1}}
 .avspc{display:none}
+/* Estilo INVENTRA: verde-água profundo */
+body{background:radial-gradient(1200px 500px at 85% -10%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 60%),var(--bg);background-attachment:fixed}
+.topbar{background:linear-gradient(135deg,#0f3b3a,#06181b);box-shadow:0 6px 24px rgba(6,24,27,.28)}
+.btn.primary,button.primary{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#14b8a6));border-color:transparent;color:var(--accent-ink);box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 32%,transparent)}
+.box,.card,.permbox{box-shadow:0 1px 2px rgba(6,40,40,.05),0 10px 28px rgba(6,40,40,.06)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 </style>
 </head>
 <body>
@@ -1644,7 +1651,7 @@ async function exportarExcel(lista,op={}){
   const agora=new Date();
   const nomeCat={'Garantia':'Garantias','Relatório':'Relatórios','Minucioso':'Minucioso','Consertos Baiano':'Consertos Baiano','Geral':'todos os módulos'}[cat]||cat;
   const sub=[`${lista.length} registro${lista.length===1?'':'s'}`,'Período: '+periodo,...filtros,'Gerado em '+agora.toLocaleDateString('pt-BR')+' às '+agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+(eu&&eu.nome?' por '+eu.nome:'')].join('   ·   ');
-  const cor={'Garantia':'E2621B','Relatório':'2457D6','Minucioso':'15803D','Consertos Baiano':'7C3AED','Geral':'0EA5E9'}[cat]||'2457D6';
+  const cor={'Garantia':'E2621B','Relatório':'0F766E','Minucioso':'15803D','Consertos Baiano':'7C3AED','Geral':'14B8A6'}[cat]||'0F766E';
   const pessoa=contaPor(lista,o=>nome(o.autor));
   let kpis,graficos,colunas,linhas,rankings=[];
   const top=(fn,peso,n)=>contaPor(lista,fn,peso).slice(0,n||8).map(([a,v])=>[a,Math.round(v*100)/100]);
@@ -2160,7 +2167,7 @@ function painelHTML(){
   <div class="w-hero"><div class="w-hero-tx"><span class="w-kick">Painel</span><h2>${saud}${pnome?', '+esc(pnome):''}</h2><span class="muted small"><span id="wRelogio">${relogio[0].toUpperCase()+relogio.slice(1)}</span> · ${fila.length?`<b style="color:var(--alta)">${fila.length} pendência${fila.length===1?'':'s'}</b> para olhar`:'<b style="color:var(--baixa)">tudo em dia</b>'}</span></div>
     <div class="w-acts"><button type="button" class="btn sm wbtn-at" id="wAtual"><span class="wrot">↻</span> Atualizar</button>${pode('registrar')?novoMenuHTML():''}</div></div>
   <div class="wk-grid">
-    ${card(0,'Registros hoje',hojeN,'n',`<span class="${delta>0?'up':delta<0?'dn':''}">${delta>0?'▲':delta<0?'▼':'■'} ${Math.abs(delta)}</span> vs ontem`,'#0ea5e9','<path d="M12 5v14M5 12h14"/>','lista',false,porDia(()=>true))}
+    ${card(0,'Registros hoje',hojeN,'n',`<span class="${delta>0?'up':delta<0?'dn':''}">${delta>0?'▲':delta<0?'▼':'■'} ${Math.abs(delta)}</span> vs ontem`,'#14b8a6','<path d="M12 5v14M5 12h14"/>','lista',false,porDia(()=>true))}
     ${podeMod('Garantia')?card(1,'Garantias pendentes',gPend.length,'n',gPend.length?'aguardando envio à loja':'tudo enviado','#f97316','<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/>','Garantia',gPend.length>0,porDia(o=>o.categoria==='Garantia')):''}
     ${podeMod('Relatório')?card(2,'Relatórios atrasados',rAtr.length,'n',rAtr.length?'mais de 2 dias sem resolver':'nada atrasado','#ef4444','<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>','relatr',rAtr.length>0,porDia(ehRel)):''}
     ${podeMod('Minucioso')?card(3,'Falta no mês',Math.round(faltaMes*100)/100,'brl',`${minMes.length} ficha${minMes.length===1?'':'s'} do Minucioso`,'#22c55e','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/>','Minucioso',false,porDia(o=>o.categoria==='Minucioso')):''}
@@ -2293,7 +2300,7 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   <div class="kpis">${kpi('pend','Aguardando',pend.length,'#e0a100')}${kpi('ativos','Com acesso',ativos.length,'var(--baixa)')}${kpi('recus','Não liberados',recus.length,'var(--alta)')}${kpi('chefes','Chefes definidos',tabs[3][2],'var(--min)')}</div>
   ${corpo}</div>`}
 const PERM_IC={'registrar':'<path d="M12 5v14M5 12h14"/>','resumo':'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>','garantia':'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>','apagar':'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
-const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','mod:Avaria':'#e11d48','registrar':'#0d9488','resumo':'#0ea5e9','garantia':'#d97706','apagar':'var(--alta)'};
+const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','mod:Avaria':'#e11d48','registrar':'#0d9488','resumo':'#14b8a6','garantia':'#d97706','apagar':'var(--alta)'};
 const geraSenha=()=>{const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];for(let i=0;i<4;i++)s+=n[Math.floor(Math.random()*n.length)];return s};
 function senhaBox(p){if(ui.senhaOk&&ui.senhaOk.id===p.id)return`<div class="sbox ok"><span class="lbl">Nova senha de ${esc(p.nome)}</span><div class="snova"><b class="mono" id="snTxt">${esc(ui.senhaOk.s)}</b><button type="button" class="btn sm" data-scopy="1">Copiar</button></div><small>Passe essa senha para a pessoa. Ela não fica salva em lugar nenhum, então anote se precisar.</small><button type="button" class="btn sm" data-sfim="1">Pronto</button></div>`;
   if(ui.senhaDe!==p.id)return`<button class="btn sm" data-senha="${esc(p.id)}">🔑 Redefinir senha</button>`;
