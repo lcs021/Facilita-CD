@@ -1082,10 +1082,20 @@ table th{text-transform:uppercase;letter-spacing:.07em;font-size:.66rem;color:va
 .bar.rk{border:0;background:none;color:var(--fg);font:inherit;text-align:left;padding:0;cursor:pointer;width:100%;min-height:0}.bar.rk:hover .n{color:var(--accent)}
 .atvrow{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line)}.atvrow:last-child{border-bottom:0}.atvrow .cpill{color:#fff!important;background:var(--k)!important}.kpi b:empty{display:none}
 .eqtela .kpis{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))!important}
+.scanwrap{position:relative;display:flex}.scanwrap input{flex:1;min-width:0;padding-right:46px!important}
+.scanbtn,.gscam{display:grid;place-items:center;border:0;background:none;color:var(--accent);cursor:pointer;padding:0}
+.scanbtn{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:8px}.scanbtn:hover,.gscam:hover{background:var(--sunken)}
+.scanbtn svg,.gscam svg{width:20px;height:20px}.gscam{width:30px;height:30px;border-radius:8px;flex:none}
+.scanov{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.82);display:grid;place-items:center;padding:16px}
+.scanbox{position:relative;width:min(560px,100%);display:flex;flex-direction:column;gap:12px;align-items:stretch}
+.scanbox video{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:16px;background:#000;border:2px solid var(--accent)}
+.scanline{position:absolute;left:8%;right:8%;top:35%;height:2px;background:var(--accent);box-shadow:0 0 12px var(--accent);animation:scanmv 1.6s ease-in-out infinite alternate;pointer-events:none}
+@keyframes scanmv{from{top:22%}to{top:62%}}
+.scanmsg{color:#fff;text-align:center;font-weight:600;font-size:.92rem}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="INVENTRA, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBgH" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0F3B3A"/><stop offset="1" stop-color="#06181B"/></linearGradient><linearGradient id="lgTopH" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0D9488"/><stop offset="1" stop-color="#5EEAD4"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBgH)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTopH)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTopH)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/></svg></span><h1>INVENTRA</h1></button></div><div class="hdr"><div class="gs" id="gs" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="gsq" type="search" placeholder="Buscar peça por código ou nome  ( / )" autocomplete="off" aria-label="Buscar peça"><div id="gsres" class="gsres" hidden></div></div><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="INVENTRA, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBgH" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0F3B3A"/><stop offset="1" stop-color="#06181B"/></linearGradient><linearGradient id="lgTopH" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0D9488"/><stop offset="1" stop-color="#5EEAD4"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBgH)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTopH)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTopH)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/></svg></span><h1>INVENTRA</h1></button></div><div class="hdr"><div class="gs" id="gs" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="gsq" type="search" placeholder="Buscar peça por código ou nome  ( / )" autocomplete="off" aria-label="Buscar peça"><button type="button" id="gscam" class="gscam" title="Ler código de barras com a câmera" aria-label="Ler código de barras com a câmera"></button><div id="gsres" class="gsres" hidden></div></div><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <div id="alertas"></div>
@@ -2842,6 +2852,42 @@ function telaConfig(){document.body.classList.add('auth');
 init();
 
 /* Preenche o nome da peça ao digitar o código (catálogo do WMS em produtos.js) */
+
+/* ---------- Leitura de código de barras pela câmera ---------- */
+const IC_CAM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M7 9v6M10 9v6M13 9v6M17 9v6"/></svg>';
+let scanAtivo=null;
+function carregaZxing(){return window.ZXingBrowser?Promise.resolve():new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/umd/zxing-browser.min.js';s.onload=res;s.onerror=()=>rej(new Error('zxing'));document.head.appendChild(s)})}
+function fechaScanner(){const s=scanAtivo;if(!s)return;scanAtivo=null;s.parou=true;try{s.stream&&s.stream.getTracks().forEach(t=>t.stop())}catch(e){}try{s.ctl&&s.ctl.stop()}catch(e){}const o=$('scanOv');if(o)o.remove()}
+async function abreScanner(cb){
+  if(scanAtivo)fechaScanner();
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('Este aparelho não permite usar a câmera aqui.');return}
+  const ov=document.createElement('div');ov.id='scanOv';ov.className='scanov';ov.innerHTML='<div class="scanbox"><video id="scanVid" playsinline muted></video><div class="scanline"></div><div class="scanmsg" id="scanMsg">Aponte a câmera para o código de barras</div><button type="button" class="btn" id="scanX">Fechar</button></div>';
+  document.body.appendChild(ov);const S=scanAtivo={parou:false};$('scanX').onclick=fechaScanner;ov.addEventListener('click',e=>{if(e.target===ov)fechaScanner()});
+  const achou=v=>{if(S.parou||!v)return;try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}fechaScanner();cb(String(v).trim())};
+  const msg=m=>{const e=$('scanMsg');if(e)e.textContent=m};
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});
+    if(S.parou){stream.getTracks().forEach(t=>t.stop());return}
+    S.stream=stream;const vid=$('scanVid');vid.srcObject=stream;await vid.play().catch(()=>{});
+    if('BarcodeDetector' in window){
+      let det;try{det=new BarcodeDetector({formats:['code_128','code_39','ean_13','ean_8','upc_a','upc_e','itf','codabar','qr_code']})}catch(e){det=new BarcodeDetector()}
+      const loop=async()=>{if(S.parou)return;try{const r=await det.detect(vid);if(r&&r.length){achou(r[0].rawValue);return}}catch(e){}setTimeout(loop,150)};loop()
+    }else{
+      msg('Preparando leitor…');await carregaZxing();if(S.parou)return;msg('Aponte a câmera para o código de barras');
+      const rd=new ZXingBrowser.BrowserMultiFormatReader();
+      S.ctl=await rd.decodeFromVideoElement(vid,(r,err,c)=>{if(r)achou(r.getText())});
+    }
+  }catch(e){fechaScanner();toast(e&&e.name==='NotAllowedError'?'Permita o acesso à câmera para ler o código.':'Não foi possível abrir a câmera.')}}
+{const gc=document.getElementById('gscam');if(gc)gc.innerHTML=IC_CAM}
+const SCAN_IDS=/^(sku|msku|avsku|bs\d+)$/;
+function poeBotoesScan(){document.querySelectorAll('#view input').forEach(el=>{if(!SCAN_IDS.test(el.id||'')||el.dataset.scan)return;el.dataset.scan='1';
+  const b=document.createElement('button');b.type='button';b.className='scanbtn';b.title='Ler código de barras com a câmera';b.setAttribute('aria-label','Ler código de barras com a câmera');b.innerHTML=IC_CAM;
+  const w=document.createElement('div');w.className='scanwrap';el.parentNode.insertBefore(w,el);w.appendChild(el);w.appendChild(b);
+  b.onclick=()=>abreScanner(v=>{el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));toast('Código lido: '+v)})})}
+new MutationObserver(()=>poeBotoesScan()).observe(document.getElementById('view'),{childList:true,subtree:true});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#gscam');if(b){abreScanner(v=>{const c=v.replace(/^0+(?=\d)/,'').toUpperCase();$('gsq').value=c;abrePeca(c)})}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&scanAtivo)fechaScanner()});
+
 const ultAuto={};
 document.addEventListener('input',e=>{
   const el=e.target,id=el.id||'';let dest=null;
