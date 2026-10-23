@@ -1274,6 +1274,19 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box
 .a2-feat li{border-top:.5px solid rgba(255,255,255,.3)!important}
 .authshell.a2 .apanel{border-top:0!important;border-radius:22px!important;padding:30px 26px}
 @media (prefers-reduced-motion:no-preference){.btn,.card,.wk2{transition:background .2s,transform .2s,box-shadow .2s}}
+
+/* ajustes finos do estilo Apple */
+input,select,textarea{background:var(--surface)!important;border:1px solid var(--line2)!important}
+:root[data-theme="dark"] input,:root[data-theme="dark"] select,:root[data-theme="dark"] textarea{background:var(--sunken)!important;border-color:transparent!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) input,:root:not([data-theme="light"]) select,:root:not([data-theme="light"]) textarea{background:var(--sunken)!important;border-color:transparent!important}}
+input[type=search],.gs input,.topbar input{background:transparent!important;border:0!important;box-shadow:none!important}
+.search input,.eqbusca input,[class*="busca"] input{background:transparent!important;border:0!important}
+.stat,.mg,.kpi{border-left:0!important}
+input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--fg) 38%,transparent)!important}
+.kpis .kpi{box-shadow:none!important;border:.5px solid var(--line)!important}
+h2+.muted,.listhead .muted{font-weight:500}
+select{background-image:none}
+.eqsearch input,#eqBusca,#atvq,#gsq{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important}.eqsearch{background:var(--surface)!important;border:1px solid var(--line2)!important;border-radius:12px!important}#atvq{background:var(--sunken)!important;border-radius:10px!important;padding:10px 12px!important}
 </style>
 </head>
 <body>
@@ -3062,7 +3075,7 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   }
   if(ui.eqTab==='atv')corpo=atvHTML();
   return`<div class="stack eqtela"><div class="listhead"><h2>Equipe</h2><span class="muted small">${todos.length} pessoa${todos.length===1?'':'s'} cadastrada${todos.length===1?'':'s'}</span></div>
-  <div class="kpis">${kpi('pend','Aguardando',pend.length,'#e0a100')}${kpi('ativos','Com acesso',ativos.length,'var(--baixa)')}${kpi('recus','Não liberados',recus.length,'var(--alta)')}${kpi('chefes','Chefes definidos',tabs[3][2],'var(--min)')}${kpi('atv','Atividade','','#6366f1')}</div>
+  <div class="kpis">${kpi('pend','Aguardando',pend.length,'#e0a100')}${kpi('ativos','Com acesso',ativos.length,'var(--baixa)')}${kpi('recus','Não liberados',recus.length,'var(--alta)')}${kpi('chefes','Chefes definidos',tabs[3][2],'var(--min)')}${kpi('atv','Atividade','Log','#6366f1')}</div>
   ${corpo}</div>`}
 const PERM_IC={'registrar':'<path d="M12 5v14M5 12h14"/>','resumo':'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>','garantia':'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>','apagar':'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
 const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','mod:Avaria':'var(--alta)','registrar':'var(--accent)','resumo':'var(--min)','garantia':'#d97706','apagar':'var(--alta)'};
