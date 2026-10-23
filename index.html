@@ -1280,10 +1280,6 @@ create policy "ver setores" on public.setores for select to authenticated using 
 drop policy if exists "admin edita setores" on public.setores;
 create policy "admin edita setores" on public.setores for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
-insert into public.setores (nome, ordem) values
-  ('Expedição',0),('Shopee',1),('Mercado Livre',2),('Cofre',3),('1º andar',4),
-  ('2º andar',5),('3º andar',6),('Carga e descarga',7),('Recebimento',8),('Parachoque',9)
-on conflict (nome) do nothing;
 
 -- Minucioso: ficha de falta de produtos
 alter table public.ocorrencias add column if not exists custo numeric;
@@ -1364,6 +1360,144 @@ drop policy if exists "admin ve atividade" on public.atividade;
 create policy "grava atividade" on public.atividade for insert to authenticated with check (public.is_aprovado() and usuario = auth.uid());
 create policy "admin ve atividade" on public.atividade for select to authenticated using (public.is_admin());
 
+-- =====================================================================
+-- Vários galpões no mesmo sistema (cada galpão só enxerga os próprios dados)
+-- Para criar um galpão novo:  insert into public.galpoes (nome) values ('Nome do galpão');
+-- A primeira pessoa que se cadastrar nele escolhendo esse galpão vira Chefe (administrador).
+-- =====================================================================
+create table if not exists public.galpoes (
+  id uuid primary key default gen_random_uuid(),
+  nome text not null,
+  criado timestamptz not null default now()
+);
+create unique index if not exists galpoes_nome_unico on public.galpoes (lower(nome));
+insert into public.galpoes (nome) select 'Galpão principal' where not exists (select 1 from public.galpoes);
+alter table public.galpoes enable row level security;
+
+alter table public.perfis add column if not exists galpao_id uuid references public.galpoes(id);
+alter table public.ocorrencias add column if not exists galpao_id uuid references public.galpoes(id);
+alter table public.setores add column if not exists galpao_id uuid references public.galpoes(id);
+alter table public.atividade add column if not exists galpao_id uuid references public.galpoes(id);
+
+-- tudo o que já existe passa a pertencer ao primeiro galpão
+update public.perfis set galpao_id = (select id from public.galpoes order by criado limit 1) where galpao_id is null;
+update public.ocorrencias set galpao_id = (select id from public.galpoes order by criado limit 1) where galpao_id is null;
+update public.setores set galpao_id = (select id from public.galpoes order by criado limit 1) where galpao_id is null;
+update public.atividade set galpao_id = (select id from public.galpoes order by criado limit 1) where galpao_id is null;
+
+create or replace function public.meu_galpao() returns uuid
+language sql stable security definer set search_path = public as $$
+  select galpao_id from public.perfis where id = auth.uid()
+$$;
+
+alter table public.ocorrencias alter column galpao_id set default public.meu_galpao();
+alter table public.setores alter column galpao_id set default public.meu_galpao();
+alter table public.atividade alter column galpao_id set default public.meu_galpao();
+alter table public.setores alter column galpao_id set not null;
+alter table public.setores drop constraint if exists setores_pkey;
+alter table public.setores add primary key (galpao_id, nome);
+
+-- lista de galpões para a tela de cadastro (só nome)
+create or replace function public.lista_galpoes() returns table (id uuid, nome text)
+language sql stable security definer set search_path = public as $$
+  select g.id, g.nome from public.galpoes g order by g.nome
+$$;
+grant execute on function public.lista_galpoes() to anon, authenticated;
+
+drop policy if exists "ver galpao" on public.galpoes;
+create policy "ver galpao" on public.galpoes for select to authenticated using (id = public.meu_galpao());
+
+-- Novo usuário: entra no galpão escolhido; o primeiro de cada galpão vira Chefe
+create or replace function public.novo_usuario() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare g uuid; primeiro boolean;
+begin
+  begin g := nullif(new.raw_user_meta_data->>'galpao', '')::uuid; exception when others then g := null; end;
+  if g is null or not exists (select 1 from public.galpoes where id = g) then
+    select id into g from public.galpoes order by criado limit 1;
+  end if;
+  select not exists (select 1 from public.perfis where galpao_id = g) into primeiro;
+  insert into public.perfis (id, nome, email, cargo, aprovado, admin, usuario, galpao_id)
+  values (new.id, coalesce(new.raw_user_meta_data->>'nome', ''), new.email,
+          case when primeiro then 'Chefe de Inventário' else 'Auxiliar de Inventário' end, primeiro, primeiro,
+          nullif(regexp_replace(trim(coalesce(new.raw_user_meta_data->>'usuario', '')), '\s+', ' ', 'g'), ''), g);
+  return new;
+end
+$$;
+
+-- Regras de acesso, agora separadas por galpão
+drop policy if exists "ver perfis" on public.perfis;
+create policy "ver perfis" on public.perfis for select to authenticated
+  using (id = auth.uid() or (public.is_aprovado() and galpao_id = public.meu_galpao()));
+drop policy if exists "admin altera perfis" on public.perfis;
+create policy "admin altera perfis" on public.perfis for update to authenticated
+  using (public.is_admin() and galpao_id = public.meu_galpao())
+  with check (public.is_admin() and galpao_id = public.meu_galpao());
+
+drop policy if exists "ver ocorrencias" on public.ocorrencias;
+create policy "ver ocorrencias" on public.ocorrencias for select to authenticated
+  using (public.is_aprovado() and galpao_id = public.meu_galpao() and public.tem_perm('mod:' || coalesce(categoria, 'Relatório')));
+drop policy if exists "registrar ocorrencias" on public.ocorrencias;
+create policy "registrar ocorrencias" on public.ocorrencias for insert to authenticated
+  with check (public.is_aprovado() and autor = auth.uid() and galpao_id = public.meu_galpao() and public.tem_perm('registrar') and public.tem_perm('mod:' || coalesce(categoria, 'Relatório')));
+drop policy if exists "tratar ocorrencias" on public.ocorrencias;
+create policy "tratar ocorrencias" on public.ocorrencias for update to authenticated
+  using (public.tem_perm('garantia') and galpao_id = public.meu_galpao())
+  with check (public.tem_perm('garantia') and galpao_id = public.meu_galpao());
+drop policy if exists "apagar ocorrencias" on public.ocorrencias;
+create policy "apagar ocorrencias" on public.ocorrencias for delete to authenticated
+  using (public.tem_perm('apagar') and galpao_id = public.meu_galpao());
+
+drop policy if exists "ver setores" on public.setores;
+create policy "ver setores" on public.setores for select to authenticated
+  using (public.is_aprovado() and galpao_id = public.meu_galpao());
+drop policy if exists "admin edita setores" on public.setores;
+create policy "admin edita setores" on public.setores for all to authenticated
+  using (public.is_admin() and galpao_id = public.meu_galpao())
+  with check (public.is_admin() and galpao_id = public.meu_galpao());
+
+drop policy if exists "grava atividade" on public.atividade;
+create policy "grava atividade" on public.atividade for insert to authenticated
+  with check (public.is_aprovado() and usuario = auth.uid() and galpao_id = public.meu_galpao());
+drop policy if exists "admin ve atividade" on public.atividade;
+create policy "admin ve atividade" on public.atividade for select to authenticated
+  using (public.is_admin() and galpao_id = public.meu_galpao());
+
+-- O administrador só mexe em usuários do próprio galpão
+create or replace function public.excluir_usuario(alvo uuid) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_admin() then raise exception 'Apenas o administrador pode excluir usuários'; end if;
+  if alvo = auth.uid() then raise exception 'Você não pode excluir a si mesmo'; end if;
+  if not exists (select 1 from public.perfis where id = alvo and galpao_id = public.meu_galpao()) then
+    raise exception 'Usuário de outro galpão';
+  end if;
+  if exists (select 1 from public.perfis where id = alvo and (admin or aprovado)) then
+    raise exception 'Só é possível excluir usuários não liberados';
+  end if;
+  delete from auth.users where id = alvo;
+end
+$$;
+create or replace function public.admin_redefinir_senha(alvo uuid, nova text) returns void
+language plpgsql security definer set search_path = public, extensions, auth as $$
+begin
+  if not public.is_admin() then raise exception 'Apenas o administrador pode redefinir senhas'; end if;
+  if length(coalesce(nova, '')) < 6 then raise exception 'A senha precisa ter pelo menos 6 caracteres'; end if;
+  if not exists (select 1 from public.perfis where id = alvo and galpao_id = public.meu_galpao()) then
+    raise exception 'Usuário de outro galpão';
+  end if;
+  update auth.users set encrypted_password = extensions.crypt(nova, extensions.gen_salt('bf')), updated_at = now() where id = alvo;
+  if not found then raise exception 'Usuário não encontrado'; end if;
+end
+$$;
+
+-- Setores iniciais do Minucioso (só se a lista estiver vazia)
+insert into public.setores (galpao_id, nome, ordem)
+select (select id from public.galpoes order by criado limit 1), v.nome, v.ordem
+from (values ('Expedição',0),('Shopee',1),('Mercado Livre',2),('Cofre',3),('1º andar',4),
+  ('2º andar',5),('3º andar',6),('Carga e descarga',7),('Recebimento',8),('Parachoque',9)) as v(nome, ordem)
+where not exists (select 1 from public.setores);
+
 notify pgrst, 'reload schema';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
@@ -1437,6 +1571,7 @@ async function carregar(){
     if(o.data)ocs=o.data.map(x=>x.gar_status==='Enviado ao fornecedor'?{...x,gar_status:'Enviado à garantia da loja'}:x);
     if(o.error)toast(erroMsg(o.error));
     const st=await sb.from('setores').select('*');if(st.data&&!st.error){chefes={};st.data.forEach(x=>chefes[x.nome]=x.chefe||'');if(st.data.length||carregou)SETORES=[...st.data].sort((a,b)=>(a.ordem||0)-(b.ordem||0)).map(x=>x.nome)}
+    try{const g=await sb.from('galpoes').select('*');if(g&&g.data&&!g.error&&g.data.length){multiOk=true;galpaoNome=g.data[0].nome}else{multiOk=false;galpaoNome=''}}catch(e){multiOk=false;galpaoNome=''}
     const cg=await sb.from('cargos').select('*');if(cg.data&&!cg.error){cargosOk=true;cg.data.forEach(x=>{if(x.nome==='Auxiliar de Inventário'||x.nome==='Visitante')CARGOS[x.nome]=x.perms||[]})}else cargosOk=false;
   }
   carregou=true;render();
@@ -1554,7 +1689,7 @@ function render(){
   if(!eu){fora();v.innerHTML='<div class="center box stack"><h2>Perfil não encontrado</h2><p>Sua conta existe, mas o perfil não foi criado. Peça ao administrador para conferir a configuração do banco (passo do SQL).</p></div>';return}
   if(!eu.aprovado&&!eu.admin&&eu.recusado){fora();v.innerHTML=`<div class="center box stack"><h2>Acesso não liberado</h2><p>Olá, ${esc(eu.nome)}. O administrador não liberou seu acesso ao app. Se acha que é um engano, fale com ele.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
   if(!eu.aprovado&&!eu.admin){fora();v.innerHTML=`<div class="center box stack"><h2>Cadastro enviado</h2><p>Olá, ${esc(eu.nome)}. Seu cadastro foi recebido e está aguardando o administrador liberar o acesso.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
-  $('nav').hidden=false;$('gs').hidden=false;$('sair').hidden=false;$('side').hidden=false;$('menuBtn').hidden=false;document.body.classList.add('withside');renderSide();$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo);
+  $('nav').hidden=false;$('gs').hidden=false;$('sair').hidden=false;$('side').hidden=false;$('menuBtn').hidden=false;document.body.classList.add('withside');renderSide();$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo)+(galpaoNome?' · '+galpaoNome:'');
   const pend=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
   $('badge').hidden=!(eu.admin&&pend);$('badge').textContent=pend;{let mb=$('menuBtn').querySelector('.mb');if(eu.admin&&pend){if(!mb){mb=document.createElement('span');mb.className='mb';$('menuBtn').appendChild(mb)}mb.textContent=pend}else if(mb)mb.remove()}
   document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;
@@ -1664,6 +1799,7 @@ function cadastroHTML(){return authShell('cad','Criar cadastro','Depois de criar
   <div class="err" id="cerr" hidden></div>
   <button class="btn primary go" type="submit"><span>Criar cadastro</span>${IC.arrow}</button></form>`)}
 function bindCadastro(){const f=$('fcad');$('cusuario').focus();authFx(f);
+  (async()=>{try{const r=await sb.rpc('lista_galpoes');if(r&&r.data&&r.data.length>1&&$('fcad')&&!$('cgalpao')){const d=document.createElement('div');d.className='field';d.innerHTML='<label class="lbl" for="cgalpao">Galpão</label><select id="cgalpao">'+r.data.map(g=>`<option value="${esc(g.id)}">${esc(g.nome)}</option>`).join('')+'</select>';f.insertBefore(d,f.firstChild)}}catch(e){}})();
   $('irLogin').onclick=()=>{tela='login';msgLogin='';render()};
   f.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;const er=$('cerr');
     const usu=$('cusuario').value.trim().replace(/\s+/g,' '),n=usu,s=$('csenha').value,s2=$('csenha2').value;
@@ -1675,7 +1811,7 @@ function bindCadastro(){const f=$('fcad');$('cusuario').focus();authFx(f);
     if(ex.data){saving=false;authErr(er,'Esse usuário já existe. Escolha outro.');bt.disabled=false;bt.classList.remove('busy');return}
     const en=await sb.rpc('email_novo_usuario',{u:usu});
     if(en.error||!en.data){saving=false;authErr(er,'O banco precisa de uma atualização (cadastro sem e-mail). Peça ao administrador para rodar o SQL novo.');bt.disabled=false;bt.classList.remove('busy');return}
-    const {data,error}=await sb.auth.signUp({email:en.data,password:s,options:{data:{nome:n,usuario:usu}}});saving=false;
+    const {data,error}=await sb.auth.signUp({email:en.data,password:s,options:{data:{nome:n,usuario:usu,...($('cgalpao')?{galpao:$('cgalpao').value}:{})}}});saving=false;
     if(error){authErr(er,erroMsg(error));bt.disabled=false;bt.classList.remove('busy');return}
     if(!data.session){tela='login';msgLogin='✓ Cadastro criado. Peça ao administrador para liberar seu acesso e depois entre com o usuário '+usu+'.';render()}})}
 
@@ -2662,7 +2798,7 @@ function fazerBackup(){const d={app:'INVENTRA',gerado:new Date().toISOString(),p
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,1)],{type:'application/json'}));a.download='inventra-backup-'+hoje()+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast('Backup baixado ('+ocs.length+' registros)')}
 
 /* ---------- Log de atividade ---------- */
-let atv=null,atvErro='';
+let atv=null,atvErro='',galpaoNome='',multiOk=false;
 function instalaLog(){if(sb._logOk)return;sb._logOk=true;const orig=sb.from.bind(sb);
   const grava=(acao,p,id,res)=>{try{if(!uid)return;const a=Array.isArray(p)?p[0]:p,r=ocs.find(x=>String(x.id)===String(id))||{},d=(res&&(Array.isArray(res)?res[0]:res))||{};
     const cat=(a&&a.categoria)||d.categoria||r.categoria||'Relatório',sku=(a&&a.sku)||d.sku||r.sku||'',prod=(a&&a.produto)||d.produto||r.produto||'';
@@ -2673,6 +2809,7 @@ function instalaLog(){if(sb._logOk)return;sb._logOk=true;const orig=sb.from.bind
     [['insert','criou'],['update','editou'],['delete','apagou']].forEach(([m,acao])=>{const f=q[m].bind(q);q[m]=(...a)=>{const r=f(...a);let id=null;
       const e=r.eq.bind(r);r.eq=(c,v)=>{if(c==='id')id=v;return e(c,v)};
       const th=r.then.bind(r);r.then=(ok,no)=>th(v=>{if(v&&!v.error)grava(acao,a[0],id,v.data);return ok?ok(v):v},no);return r}});return q}}
+const upSetor=o=>sb.from('setores').upsert(o,multiOk?{onConflict:'galpao_id,nome'}:undefined);
 function atvHTML(){const q=(ui.atvQ||'').toLowerCase(),
   cor={criou:'var(--baixa)',editou:'#d97706',apagou:'var(--alta)'};
   if(atvErro)return`<div class="box"><b>Não foi possível carregar o log</b><p class="muted small" style="margin:6px 0 0">${esc(atvErro)}<br>Se for a primeira vez, rode o SQL do log de atividade no Supabase.</p></div>`;
@@ -2767,7 +2904,7 @@ function bindEquipe(){
   if(ui.eqTab==='atv'){if(atv===null&&!atvErro)carregaAtv();const aq=$('atvq');if(aq)aq.oninput=()=>{ui.atvQ=aq.value;const p=aq.selectionStart;render();const n=$('atvq');n.focus();n.setSelectionRange(p,p)}}
   const eb=$('eqBusca');if(eb)eb.addEventListener('input',()=>{ui.eqBusca=eb.value;const p=eb.selectionStart;render();const n=$('eqBusca');n.focus();n.setSelectionRange(p,p)});
   document.querySelectorAll('[data-chef]').forEach(b=>b.addEventListener('click',async()=>{const i=+b.dataset.chef,s=SETORES[i],v=$('chef'+i).value.trim();b.disabled=true;
-    const {error}=await sb.from('setores').upsert({nome:s,chefe:v||null,ordem:i});b.disabled=false;
+    const {error}=await upSetor({nome:s,chefe:v||null,ordem:i});b.disabled=false;
     if(error){toast(/schema cache|does not exist|relation/i.test(error.message)?'O banco precisa de uma atualização (tabela setores). Rode o comando novo no SQL Editor. Detalhe: '+error.message:/row-level security/i.test(error.message)?'Sem permissão para salvar o chefe. Só o administrador pode. Detalhe: '+error.message:erroMsg(error));return}
     chefes[s]=v;toast(v?'Chefe de '+s+': '+v:'Chefe de '+s+' removido')}));
   document.querySelectorAll('[data-setdel]').forEach(b=>b.addEventListener('click',()=>{ui.confSet=+b.dataset.setdel;ui.confChef=null;render()}));
@@ -2780,7 +2917,7 @@ function bindEquipe(){
   document.querySelectorAll('[data-chefdel]').forEach(b=>b.addEventListener('click',()=>{ui.confChef=+b.dataset.chefdel;render()}));
   document.querySelectorAll('[data-chefnao]').forEach(b=>b.addEventListener('click',()=>{ui.confChef=null;render()}));
   document.querySelectorAll('[data-chefsim]').forEach(b=>b.addEventListener('click',async()=>{const i=+b.dataset.chefsim,s=SETORES[i];b.disabled=true;
-    const {error}=await sb.from('setores').upsert({nome:s,chefe:null,ordem:i});ui.confChef=null;
+    const {error}=await upSetor({nome:s,chefe:null,ordem:i});ui.confChef=null;
     if(error){toast(erroMsg(error));render();return}chefes[s]='';toast('Chefe de '+s+' excluído');render()}));
   document.querySelectorAll('select[data-ativo]').forEach(s=>s.addEventListener('change',()=>mudaPerfil(s.dataset.cg,{cargo:s.value},'Cargo alterado para '+s.value)));
   document.querySelectorAll('[data-ok]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;const cg=document.querySelector(`select[data-cg="${b.dataset.ok}"]`).value;mudaPerfil(b.dataset.ok,{aprovado:true,recusado:false,cargo:cg},'Acesso liberado como '+cg)}));
