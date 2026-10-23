@@ -6,7 +6,7 @@
 <script>try{var tm=localStorage.getItem("inv_tema");if(tm==="light"||tm==="dark")document.documentElement.dataset.theme=tm}catch(e){}</script>
 <title>INVENTRA</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2048%2048%22%20aria-hidden=%22true%22%3E%3Cdefs%3E%3ClinearGradient%20id=%22lgBg%22%20x1=%220%22%20y1=%220%22%20x2=%2248%22%20y2=%2248%22%20gradientUnits=%22userSpaceOnUse%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230F3B3A%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%2306181B%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id=%22lgTop%22%20x1=%228%22%20y1=%2240%22%20x2=%2240%22%20y2=%228%22%20gradientUnits=%22userSpaceOnUse%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230D9488%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%235EEAD4%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%2248%22%20height=%2248%22%20rx=%2212%22%20fill=%22url%28%23lgBg%29%22/%3E%3Cpath%20d=%22M12.5%2020v-5a2.5%202.5%200%200%201%202.5-2.5h5M28%2012.5h5a2.5%202.5%200%200%201%202.5%202.5v5M35.5%2028v5a2.5%202.5%200%200%201-2.5%202.5h-5M20%2035.5h-5a2.5%202.5%200%200%201-2.5-2.5v-5%22%20fill=%22none%22%20stroke=%22url%28%23lgTop%29%22%20stroke-width=%223%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3Crect%20x=%2217.8%22%20y=%2218%22%20width=%222.6%22%20height=%2212%22%20rx=%221.3%22%20fill=%22url%28%23lgTop%29%22/%3E%3Crect%20x=%2222%22%20y=%2218%22%20width=%224%22%20height=%2212%22%20rx=%221.6%22%20fill=%22url%28%23lgTop%29%22/%3E%3Crect%20x=%2227.6%22%20y=%2218%22%20width=%222.6%22%20height=%2212%22%20rx=%221.3%22%20fill=%22url%28%23lgTop%29%22/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&family=Alumni+Sans:wght@100;300;400&display=swap">
 <style>
 /* Layout: barra superior escura, conteúdo em coluna de 680px, navegação inferior com botão central de registrar */
 :root{
@@ -27,7 +27,7 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#061416; --surface:#0d2124; --sunken:#12292d; --line:#1b3a3f; --line2:#27494f;
   --fg:#e6f4f2; --muted:#8fb0ac; --ink:#04100f; --ink-fg:#effaf8;
-  --accent:#2dd4bf; --accent-ink:#04201d; --accent-soft:#0f3a38;
+  --accent:var(--accent); --accent-ink:#04201d; --accent-soft:#0f3a38;
   --gar:#ff8a45; --gar-soft:#3a2216; --gar-ink:#ffc39d;
   --min:#a3e635; --min-soft:#26330f; --min-ink:#d9f99d;
   --bai:#b794ff; --bai-soft:#2a1f45; --bai-ink:#ddd0ff;
@@ -37,7 +37,7 @@
 :root[data-theme="dark"]{
   --bg:#061416; --surface:#0d2124; --sunken:#12292d; --line:#1b3a3f; --line2:#27494f;
   --fg:#e6f4f2; --muted:#8fb0ac; --ink:#04100f; --ink-fg:#effaf8;
-  --accent:#2dd4bf; --accent-ink:#04201d; --accent-soft:#0f3a38;
+  --accent:var(--accent); --accent-ink:#04201d; --accent-soft:#0f3a38;
   --gar:#ff8a45; --gar-soft:#3a2216; --gar-ink:#ffc39d;
   --min:#a3e635; --min-soft:#26330f; --min-ink:#d9f99d;
   --bai:#b794ff; --bai-soft:#2a1f45; --bai-ink:#ddd0ff;
@@ -58,7 +58,7 @@ button,input,select,textarea{font-family:inherit}
 .logo svg{width:20px;height:20px;color:#fff}
 .logo:has(svg.lg),.rd-logo:has(svg.lg){background:none!important}
 .logo svg.lg,.hero .logo svg.lg,.alogo .logo svg.lg,.rd-logo svg.lg{width:100%!important;height:100%!important;display:block}
-.logo:has(svg.lg){box-shadow:0 4px 14px rgba(13,148,136,.35),0 0 0 1px rgba(255,255,255,.08)}
+.logo:has(svg.lg){box-shadow:0 4px 14px rgba(184,137,43,.35),0 0 0 1px rgba(255,255,255,.08)}
 h1{font-size:1.08rem;margin:0;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
 .hdr{display:flex;align-items:center;gap:10px;min-width:0}
 .who{font-size:.82rem;color:#b8c2d6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
@@ -324,7 +324,7 @@ details summary{cursor:pointer;list-style-position:inside}
 .bsvg .gl{stroke:var(--line);stroke-width:1}.bsvg text{font:600 11px var(--font);fill:var(--muted)}.bsvg .vl{fill:var(--fg);font-weight:800}
 .bsvg .hj{fill:var(--bai);font-weight:800}
 .bgraf .acts{display:flex;gap:8px;flex-wrap:wrap}
-.exgeral{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-color:color-mix(in srgb,#14b8a6 35%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,#14b8a6 9%,var(--surface)),var(--surface) 70%)}
+.exgeral{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-color:color-mix(in srgb,var(--accent) 35%,var(--line));background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 9%,var(--surface)),var(--surface) 70%)}
 .relbai{font-family:Arial,Helvetica,sans-serif;color:#000}
 .relbai h1{font-size:17pt;margin:0;padding:12pt 14pt 2pt;background:#0e1525;color:#fff;border-top:5pt solid #7c3aed;text-align:left}.relbai .sub{font-size:9.5pt;padding:0 14pt 10pt;background:#0e1525;color:#b8c2d6;margin-bottom:12pt;text-align:left}
 .relbai .kp{display:flex;gap:8pt;margin-bottom:12pt}.relbai .kp div{flex:1;padding:8pt 10pt;border:1px solid #e3e7ee;border-top:3pt solid #7c3aed;background:#fff;text-align:left;font-size:8.5pt;color:#667085}.relbai .kp b{display:block;font-size:13pt;color:#7c3aed;margin-bottom:2pt;white-space:nowrap}.relbai .kp div{min-width:0;box-sizing:border-box}.relbai,.relbai *{box-sizing:border-box}
@@ -592,12 +592,12 @@ nav#nav{display:none!important}
 .pc-sel{display:flex;flex-direction:column;gap:4px;font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .pc-sel select{padding:9px 10px;font-size:.9rem;text-transform:none;letter-spacing:0;font-weight:600}
 .permbox{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--sh2);overflow:hidden}
-.phead{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:20px 22px;background:linear-gradient(135deg,color-mix(in srgb,#0d9488 10%,var(--surface)),var(--surface) 65%);border-bottom:1px solid var(--line)}
-.pring{--p:0;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#0d9488 calc(var(--p)*1%),var(--line) 0);position:relative}
+.phead{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:20px 22px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 10%,var(--surface)),var(--surface) 65%);border-bottom:1px solid var(--line)}
+.pring{--p:0;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) calc(var(--p)*1%),var(--line) 0);position:relative}
 .pring::before{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--surface)}
-.pring span{position:relative;font-weight:800;font-size:1.15rem;color:#0d9488}.pring small{font-size:.75rem;color:var(--muted);font-weight:700}
+.pring span{position:relative;font-weight:800;font-size:1.15rem;color:var(--accent)}.pring small{font-size:.75rem;color:var(--muted);font-weight:700}
 .ptx h3{font-size:1.15rem;margin:2px 0 4px;letter-spacing:-.01em}.ptx p{margin:0;color:var(--muted);font-size:.84rem;line-height:1.45;max-width:52ch}
-.pkick{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#0d9488}
+.pkick{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 .pbulk{display:flex;gap:6px}.pbulk .btn{white-space:nowrap}
 .pgrp{padding:16px 22px 18px}.pgrp+.pgrp{border-top:1px dashed var(--line)}
 .pgh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}.pgh span{font-size:.74rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}.pgh small{font-size:.78rem;color:var(--muted)}
@@ -612,7 +612,7 @@ nav#nav{display:none!important}
 .prow.perigo.on{background:color-mix(in srgb,var(--alta) 6%,var(--surface))}
 .sw{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:999px;background:var(--line2);position:relative;flex:none;cursor:pointer;transition:background .2s;border:0;padding:0;margin:0}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .22s cubic-bezier(.3,1.4,.5,1)}
-.sw:checked{background:var(--c,#0d9488)}.sw:checked::after{transform:translateX(18px)}.sw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.sw:disabled{opacity:.5}
+.sw:checked{background:var(--c,var(--accent))}.sw:checked::after{transform:translateX(18px)}.sw:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.sw:disabled{opacity:.5}
 @media (max-width:620px){.phead{grid-template-columns:auto 1fr}.pbulk{grid-column:1/-1;flex-direction:row}.pbulk .btn{flex:1}.pst{display:none}.pgrp,.phead{padding-left:16px;padding-right:16px}}
 .cargos{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:4px}
 .cg{display:flex;flex-direction:column;gap:5px;align-items:flex-start;background:var(--surface);border:1px dashed var(--line2);border-radius:12px;padding:10px 12px}
@@ -736,7 +736,7 @@ body.withside .wrap:has(.wms){max-width:1180px}
 
 /* ===== Painel moderno e dinâmico ===== */
 .wms.moderno{gap:16px}
-.w-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:18px 20px;border-radius:18px;border:1px solid var(--line);background:radial-gradient(500px 200px at 0% 0%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),radial-gradient(400px 200px at 100% 100%,color-mix(in srgb,#14b8a6 12%,transparent),transparent 70%),var(--surface);box-shadow:var(--sh1);animation:rise .45s both}
+.w-hero{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:18px 20px;border-radius:18px;border:1px solid var(--line);background:radial-gradient(500px 200px at 0% 0%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),radial-gradient(400px 200px at 100% 100%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 70%),var(--surface);box-shadow:var(--sh1);animation:rise .45s both}
 .w-hero h2{font-size:1.55rem;margin:2px 0 4px;letter-spacing:-.02em}
 .wbtn-at .wrot{display:inline-block;transition:transform .4s}.wbtn-at:hover .wrot{transform:rotate(180deg)}.wbtn-at.gira .wrot{animation:spin .8s linear infinite}
 .wk2{display:flex;flex-direction:column;gap:8px;text-align:left;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:inherit;cursor:pointer;position:relative;overflow:hidden;box-shadow:var(--sh1);transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s,border-color .2s;animation:rise .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*70ms)}
@@ -829,8 +829,8 @@ body.withside .wrap:has(.wms){max-width:1180px}
 .avspc{display:none}
 /* Estilo INVENTRA: verde-água profundo */
 body{background:radial-gradient(1200px 500px at 85% -10%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 60%),var(--bg);background-attachment:fixed}
-.topbar{background:linear-gradient(135deg,#0f3b3a,#06181b);box-shadow:0 6px 24px rgba(6,24,27,.28)}
-.btn.primary,button.primary{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#14b8a6));border-color:transparent;color:var(--accent-ink);box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 32%,transparent)}
+.topbar{background:linear-gradient(135deg,#1D1810,#0A0907);box-shadow:0 6px 24px rgba(6,24,27,.28)}
+.btn.primary,button.primary{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 70%,var(--accent)));border-color:transparent;color:var(--accent-ink);box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 32%,transparent)}
 .box,.card,.permbox{box-shadow:0 1px 2px rgba(6,40,40,.05),0 10px 28px rgba(6,40,40,.06)}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
@@ -983,31 +983,31 @@ table th{text-transform:uppercase;letter-spacing:.07em;font-size:.66rem;color:va
 @media (min-width:920px){
   .authshell.a2{grid-template-columns:minmax(0,1.15fr) minmax(420px,1fr)}
   .a2-brand{display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:100vh;min-height:100dvh;align-self:stretch;position:relative;overflow:hidden;padding:44px 52px;color:#e8fbf8;background:linear-gradient(160deg,#0b3a39 0%,#06222a 55%,#041216 100%)}
-  .a2-brand::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(94,234,212,.28) 1px,transparent 1.3px);background-size:26px 26px;mask-image:linear-gradient(180deg,#000,transparent 85%);-webkit-mask-image:linear-gradient(180deg,#000,transparent 85%)}
-  .a2-glow{position:absolute;width:620px;height:620px;right:-220px;top:-180px;border-radius:50%;background:radial-gradient(closest-side,rgba(45,212,191,.38),transparent);animation:a2glow 9s ease-in-out infinite alternate}
+  .a2-brand::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(232,190,92,.28) 1px,transparent 1.3px);background-size:26px 26px;mask-image:linear-gradient(180deg,#000,transparent 85%);-webkit-mask-image:linear-gradient(180deg,#000,transparent 85%)}
+  .a2-glow{position:absolute;width:620px;height:620px;right:-220px;top:-180px;border-radius:50%;background:radial-gradient(closest-side,rgba(232,190,92,.38),transparent);animation:a2glow 9s ease-in-out infinite alternate}
   .authshell.a2 .alogo .logo{display:none}
   .authshell.a2 .alogo h1{font-size:2rem}
 }
 .a2-brand>*:not(.a2-glow){position:relative;z-index:1}
 .a2-top{display:flex;align-items:center;gap:12px;font:700 1.15rem var(--head);letter-spacing:.2em}
-.a2-logo{width:44px;height:44px;border-radius:12px;overflow:hidden;display:block;box-shadow:0 0 0 1px rgba(94,234,212,.25),0 8px 30px rgba(13,148,136,.4)}
+.a2-logo{width:44px;height:44px;border-radius:12px;overflow:hidden;display:block;box-shadow:0 0 0 1px rgba(232,190,92,.25),0 8px 30px rgba(184,137,43,.4)}
 .a2-logo svg{width:100%;height:100%;display:block}
 .a2-mid h2{font:700 clamp(2rem,3.2vw,3rem)/1.08 var(--head);letter-spacing:-.02em;margin:0 0 14px;color:#fff}
-.a2-mid h2 em{font-style:normal;color:#5eead4}
+.a2-mid h2 em{font-style:normal;color:var(--accent)}
 .a2-mid p{margin:0 0 26px;max-width:46ch;color:#a9cfca;font-size:1.02rem}
-.a2-scan{position:relative;width:min(340px,100%);padding:20px 22px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(94,234,212,.22);color:#d9fbf5;backdrop-filter:blur(4px)}
+.a2-scan{position:relative;width:min(340px,100%);padding:20px 22px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(232,190,92,.22);color:#d9fbf5;backdrop-filter:blur(4px)}
 .a2-bc{display:block;width:100%;height:auto;opacity:.92}
-.a2-scan i{position:absolute;width:20px;height:20px;border:3px solid #2dd4bf;opacity:.95}
+.a2-scan i{position:absolute;width:20px;height:20px;border:3px solid var(--accent);opacity:.95}
 .a2-scan .c1{left:-2px;top:-2px;border-right:0;border-bottom:0;border-radius:10px 0 0 0}
 .a2-scan .c2{right:-2px;top:-2px;border-left:0;border-bottom:0;border-radius:0 10px 0 0}
 .a2-scan .c3{left:-2px;bottom:-2px;border-right:0;border-top:0;border-radius:0 0 0 10px}
 .a2-scan .c4{right:-2px;bottom:-2px;border-left:0;border-top:0;border-radius:0 0 10px 0}
-.a2-laser{position:absolute;left:10px;right:10px;top:16px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#5eead4,transparent);box-shadow:0 0 18px 4px rgba(45,212,191,.7);animation:a2laser 2.6s ease-in-out infinite alternate}
+.a2-laser{position:absolute;left:10px;right:10px;top:16px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);box-shadow:0 0 18px 4px rgba(232,190,92,.7);animation:a2laser 2.6s ease-in-out infinite alternate}
 .a2-res{position:relative;height:46px;margin-top:14px;width:min(340px,100%)}
-.a2-r{position:absolute;inset:0;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:10px;background:rgba(45,212,191,.12);border:1px solid rgba(94,234,212,.35);font-size:.86rem;opacity:0;animation:a2res 9s infinite;animation-delay:calc(var(--d)*3s)}
-.a2-r .ok{color:#5eead4;font-weight:800}.a2-r b{font-family:var(--mono);color:#fff}.a2-r span:last-child{color:#a9cfca;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a2-r{position:absolute;inset:0;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:10px;background:rgba(232,190,92,.12);border:1px solid rgba(232,190,92,.35);font-size:.86rem;opacity:0;animation:a2res 9s infinite;animation-delay:calc(var(--d)*3s)}
+.a2-r .ok{color:var(--accent);font-weight:800}.a2-r b{font-family:var(--mono);color:#fff}.a2-r span:last-child{color:#a9cfca;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .a2-feat{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.a2-feat li{border-top:2px solid rgba(94,234,212,.5);padding-top:10px}
+.a2-feat li{border-top:2px solid rgba(232,190,92,.5);padding-top:10px}
 .a2-feat b{display:block;font:700 .95rem var(--head);color:#fff}.a2-feat span{font-size:.78rem;color:#8fb8b3}
 .a2-cred{font-size:.74rem;color:#6f9a95}.a2-cred b{color:#bfe9e3}
 @keyframes a2laser{from{top:16px}to{top:calc(100% - 19px)}}
@@ -1030,12 +1030,12 @@ table th{text-transform:uppercase;letter-spacing:.07em;font-size:.66rem;color:va
 .wb{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(70px,1fr) auto;align-items:center;gap:12px;padding:10px 10px;border-radius:6px;cursor:pointer}
 .wb:hover{background:var(--sunken)}
 .wb-t{display:flex;flex-direction:column;min-width:0}.wb-t b{font-family:var(--mono);font-size:.85rem}.wb-t span{font-size:.76rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wb-bar{height:8px;border-radius:2px;background:var(--sunken);overflow:hidden}.wb-bar i{display:block;height:100%;background:linear-gradient(90deg,#a855f7,#7c3aed);border-radius:2px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.wb-bar{height:8px;border-radius:2px;background:var(--sunken);overflow:hidden}.wb-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--bai),var(--bai));border-radius:2px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
 .wb.vence .wb-bar i{background:linear-gradient(90deg,#f59e0b,#f97316)}.wb.atr .wb-bar i{background:linear-gradient(90deg,#ef4444,#b91c1c)}
 .wb-d{font:700 .72rem var(--font);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}.wb.atr .wb-d{color:var(--alta)}.wb.vence .wb-d{color:#d97706}
 .wrk li{display:grid;grid-template-columns:30px minmax(80px,.9fr) minmax(60px,1.4fr) 34px;align-items:center;gap:10px;padding:8px 10px;animation:rise .5s both;animation-delay:calc(var(--i)*60ms)}
 .wrk-n{font-size:.86rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wrk-b{height:10px;border-radius:2px;background:var(--sunken);overflow:hidden}.wrk-b i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#5eead4)}
+.wrk-b{height:10px;border-radius:2px;background:var(--sunken);overflow:hidden}.wrk-b i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent))}
 .wrk b{text-align:right}
 .wz-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important}
 .wz.l1{background:color-mix(in srgb,#22c55e 10%,var(--surface));border-color:color-mix(in srgb,#22c55e 35%,var(--line))}
@@ -1109,10 +1109,84 @@ table th,.btab th,.wt th{text-transform:none!important;letter-spacing:0!importan
 /* números grandes */
 .wk-grid .big,.wk-grid b,.stat .v,.mesnum b,.setnums b,.acgeral b{font-family:var(--head)!important;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 @media (max-width:700px){.topin .brand{flex:none}.hdr{flex:1;min-width:0}.gs{flex:1;min-width:0;margin:0}}
+
+/* ===== Neo Kinpaku: laca escura, ouro kinpaku, verde-azulado ===== */
+:root{  --bg:oklch(96% .012 90); --surface:oklch(99% .004 90); --sunken:oklch(93% .012 90); --line:oklch(25% .01 95/.16); --line2:oklch(25% .01 95/.3);
+  --fg:oklch(20% .01 95); --muted:oklch(46% .01 95); --ink:oklch(15% .01 95); --ink-fg:oklch(96% .01 90);
+  --accent:oklch(49% .08 188); --accent-ink:oklch(98% 0 0); --accent-soft:oklch(92% .03 188);
+  --gold:oklch(77% .13 82); --gold-ink:oklch(18% .01 95);
+  --gar:oklch(55% .15 50); --gar-soft:oklch(94% .04 60); --gar-ink:oklch(40% .1 45);
+  --min:oklch(46% .09 150); --min-soft:oklch(94% .03 150); --min-ink:oklch(34% .07 150);
+  --bai:oklch(48% .06 250); --bai-soft:oklch(94% .015 250); --bai-ink:oklch(34% .05 250);
+  --alta:oklch(52% .17 32); --baixa:oklch(46% .09 170);
+  --sh1:none; --sh2:0 12px 36px oklch(20% .01 95/.1);
+  --topA:oklch(11% .006 95); --topB:oklch(5% .004 95);
+  --font:"Albert Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--head:"Alumni Sans","Albert Sans",Arial,sans-serif;--mono:SFMono-Regular,"Roboto Mono",Consolas,Menlo,monospace;--r:6px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){  --bg:oklch(7% .006 95); --surface:oklch(11% .006 95); --sunken:oklch(15% .008 95); --line:oklch(78% 0 0/.16); --line2:oklch(78% 0 0/.28);
+  --fg:oklch(91% 0 0); --muted:oklch(72% 0 0); --ink:oklch(4% .004 95); --ink-fg:oklch(91% 0 0);
+  --accent:oklch(84% .19 80.46); --accent-ink:oklch(15% .01 95); --accent-soft:oklch(24% .05 85);
+  --gold:oklch(84% .19 80.46); --gold-ink:oklch(15% .01 95);
+  --gar:oklch(70% .14 52); --gar-soft:oklch(24% .05 52); --gar-ink:oklch(82% .1 55);
+  --min:oklch(70% .12 188); --min-soft:oklch(22% .04 188); --min-ink:oklch(82% .07 188);
+  --bai:oklch(74% .05 250); --bai-soft:oklch(23% .02 250); --bai-ink:oklch(85% .04 250);
+  --alta:oklch(66% .17 35); --baixa:oklch(70% .12 188);
+  --sh1:none; --sh2:0 12px 36px oklch(2% .004 95/.5);
+  --topA:oklch(11% .006 95); --topB:oklch(5% .004 95);
+}}
+:root[data-theme="dark"]{  --bg:oklch(7% .006 95); --surface:oklch(11% .006 95); --sunken:oklch(15% .008 95); --line:oklch(78% 0 0/.16); --line2:oklch(78% 0 0/.28);
+  --fg:oklch(91% 0 0); --muted:oklch(72% 0 0); --ink:oklch(4% .004 95); --ink-fg:oklch(91% 0 0);
+  --accent:oklch(84% .19 80.46); --accent-ink:oklch(15% .01 95); --accent-soft:oklch(24% .05 85);
+  --gold:oklch(84% .19 80.46); --gold-ink:oklch(15% .01 95);
+  --gar:oklch(70% .14 52); --gar-soft:oklch(24% .05 52); --gar-ink:oklch(82% .1 55);
+  --min:oklch(70% .12 188); --min-soft:oklch(22% .04 188); --min-ink:oklch(82% .07 188);
+  --bai:oklch(74% .05 250); --bai-soft:oklch(23% .02 250); --bai-ink:oklch(85% .04 250);
+  --alta:oklch(66% .17 35); --baixa:oklch(70% .12 188);
+  --sh1:none; --sh2:0 12px 36px oklch(2% .004 95/.5);
+  --topA:oklch(11% .006 95); --topB:oklch(5% .004 95);
+}
+body{background-color:var(--bg)}
+body{line-height:1.6}
+/* títulos grandes em Alumni Sans; menores ficam em Albert Sans */
+h1,h2,.listhead h2,.hero h1,.a2-mid h2,.cc h1{font-family:var(--head)!important;letter-spacing:0!important}
+h2,.listhead h2{font-size:clamp(2rem,3.4vw,2.7rem)!important;font-weight:300!important;line-height:1.05}
+.hero h1,.cc h1{font-weight:300!important}
+h3,.wpn-h b,.pgh b{font-family:var(--font)!important;font-weight:600}
+.brand h1,.a2-top{font-family:var(--head)!important;font-weight:400!important;letter-spacing:.15em!important;font-size:1.35rem}
+.wk-val,.stat .v,.mesnum b,.setnums b,.acgeral b,.pring span{font-family:var(--head)!important;font-weight:300!important;font-size:clamp(1.9rem,4.6vw,2.6rem)!important;letter-spacing:0!important;line-height:1}
+.wk-val{font-size:clamp(1.9rem,4.6vw,2.6rem)!important}
+/* rótulos curtos continuam discretos */
+.addr{font-family:var(--mono)!important;font-weight:700!important;font-size:.78rem!important;letter-spacing:0}
+/* botões, campos e cartões: raios pequenos, sem sombra */
+.btn,button.btn,.btn.primary,button.primary,input,select,textarea{border-radius:3px!important}
+.box,.card,.wk,.stat,.pcard,.alerta,.gsres{border-radius:4px!important;box-shadow:none!important}
+.btn.primary,button.primary{background:var(--gold)!important;color:var(--gold-ink)!important;border:1px solid var(--gold)!important}
+.btn.primary:hover,button.primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn.primary:focus-visible,.btn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--min);outline-offset:3px}
+.topbar{background:linear-gradient(135deg,var(--topA),var(--topB))!important;border-bottom:1px solid var(--line2)}
+.topbar,.topbar *{color:oklch(91% 0 0)}
+.topbar .gs{background:oklch(15% .008 95);border-color:oklch(78% 0 0/.2)}
+.topbar .gs input{color:oklch(91% 0 0)!important}
+.addr{border-left-color:var(--gold)!important}
+.gsc{color:var(--accent)!important}
+.toast{border:1px solid var(--line2)}
+/* tela de entrada */
+.a2-brand{background:linear-gradient(160deg,oklch(11% .008 90) 0%,oklch(6% .005 95) 60%,oklch(9% .02 188) 100%)!important;color:oklch(91% 0 0)!important}
+.a2-brand::before{background-image:radial-gradient(oklch(84% .19 80.46/.22) 1px,transparent 1.3px)!important}
+.a2-glow{background:radial-gradient(closest-side,oklch(84% .19 80.46/.28),transparent)!important}
+.a2-mid h2{font-weight:300!important;font-size:clamp(2.8rem,4.6vw,4.4rem)!important;line-height:1}
+.a2-mid h2 em{color:var(--gold)!important}
+.a2-mid p,.a2-r span:last-child{color:oklch(72% 0 0)!important}
+.a2-scan,.a2-r{border-color:oklch(84% .19 80.46/.28)!important;border-radius:4px!important}
+.a2-scan i{border-color:var(--gold)!important}
+.a2-laser{background:linear-gradient(90deg,transparent,var(--gold),transparent)!important;box-shadow:0 0 16px 3px oklch(84% .19 80.46/.5)!important}
+.a2-r .ok{color:var(--min)!important}
+.a2-feat li{border-top-color:oklch(84% .19 80.46/.5)!important}
+.wk2-val,.cc-k .wk2-val{font-weight:300!important;font-size:clamp(2rem,4vw,2.6rem)!important;line-height:1}
+.wk2-val,.cc-k .wk2-val{font-size:clamp(1.7rem,2.6vw,2.2rem)!important}.a2-mid h2{font-size:clamp(2.4rem,3.8vw,3.6rem)!important}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="INVENTRA, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBgH" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0F3B3A"/><stop offset="1" stop-color="#06181B"/></linearGradient><linearGradient id="lgTopH" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0D9488"/><stop offset="1" stop-color="#5EEAD4"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBgH)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTopH)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTopH)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/></svg></span><h1>INVENTRA</h1></button></div><div class="hdr"><div class="gs" id="gs" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="gsq" type="search" placeholder="Buscar peça por código ou nome  ( / )" autocomplete="off" aria-label="Buscar peça"><button type="button" id="gscam" class="gscam" title="Ler código de barras com a câmera" aria-label="Ler código de barras com a câmera"></button><div id="gsres" class="gsres" hidden></div></div><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="INVENTRA, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBgH" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1D1810"/><stop offset="1" stop-color="#0A0907"/></linearGradient><linearGradient id="lgTopH" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B5852A"/><stop offset="1" stop-color="#F3D98C"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBgH)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTopH)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTopH)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/></svg></span><h1>INVENTRA</h1></button></div><div class="hdr"><div class="gs" id="gs" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="gsq" type="search" placeholder="Buscar peça por código ou nome  ( / )" autocomplete="off" aria-label="Buscar peça"><button type="button" id="gscam" class="gscam" title="Ler código de barras com a câmera" aria-label="Ler código de barras com a câmera"></button><div id="gsres" class="gsres" hidden></div></div><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <div id="alertas"></div>
@@ -1603,7 +1677,8 @@ const icMod={Garantia:'<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6
   'Consertos Baiano':'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.4-.4-2.4z"/>'};
 const svgI=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const iniciais=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'?';
-const corNome=n=>{let h=0;for(const c of String(n||''))h=(h*31+c.charCodeAt(0))%360;return`hsl(${h} 62% 46%)`};
+const AV_COR=['oklch(50% .1 82)','oklch(48% .09 188)','oklch(52% .12 50)','oklch(46% .05 250)','oklch(46% .08 150)','oklch(46% .1 25)'];
+const corNome=n=>{let h=0;for(const c of String(n||''))h=(h*31+c.charCodeAt(0))%AV_COR.length;return AV_COR[h]};
 function sideHTML(){const pendEq=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
   const navItem=(tab,txt,ic,badge)=>`<button class="snav" data-goto="${tab}" aria-current="${ui.tab===tab&&!ui.det}">${svgI(ic)}<span>${txt}</span>${badge?`<span class="nb">${badge}</span>`:''}</button>`;
 const n=c=>ocs.filter(o=>(o.categoria||'Relatório')===c).length,ns=s=>ocs.filter(o=>o.categoria==='Minucioso'&&o.setor===s).length;
@@ -1759,7 +1834,7 @@ const IC={
  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>'};
 const lerLembrado=()=>{try{return localStorage.getItem('inv_email')||''}catch(e){return''}};
 const gravaLembrado=v=>{try{v?localStorage.setItem('inv_email',v):localStorage.removeItem('inv_email')}catch(e){}};
-let logoN=0;const LOGO_BASE=`<svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0F3B3A"/><stop offset="1" stop-color="#06181B"/></linearGradient><linearGradient id="lgTop" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0D9488"/><stop offset="1" stop-color="#5EEAD4"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBg)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTop)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTop)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTop)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTop)"/></svg>`;
+let logoN=0;const LOGO_BASE=`<svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1D1810"/><stop offset="1" stop-color="#0A0907"/></linearGradient><linearGradient id="lgTop" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B5852A"/><stop offset="1" stop-color="#F3D98C"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBg)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTop)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTop)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTop)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTop)"/></svg>`;
 const logoSVG=()=>{const k='lg'+(++logoN);return LOGO_BASE.replace(/lgBg/g,k+'b').replace(/lgTop/g,k+'t')};
 const IC_RD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>';
 const rodapeHTML=()=>`<span class="rd-logo">${logoSVG()}</span><span>INVENTRA</span><span class="rd-sep">·</span><span>Criado por <b>Lucas Carvalho</b></span><span class="rd-sep">·</span><span>© ${new Date().getFullYear()}</span>`;
@@ -2647,15 +2722,15 @@ function painelHTML(){
     return`<li data-id="${esc(o.id)}" class="wb ${cls}"><div class="wb-t"><b>${esc(o.sku||'')}</b><span>${esc(o.produto||'')}</span></div><div class="wb-bar"><i style="width:${d<0?100:pct}%"></i></div><div class="wb-d">${d==null?'sem prazo':d<0?'atrasado '+(-d)+'d':d===0?'vence hoje':'faltam '+d+'d'}</div></li>`};
   const pessoasMes=Object.values(perfis).map(p=>({p,n:vis.filter(o=>o.autor===p.id&&mesKey(o.criado)===mesAt).length})).filter(x=>x.n).sort((a,b)=>b.n-a.n).slice(0,6),mxp=Math.max(1,...pessoasMes.map(x=>x.n));
   const totalMes=vis.filter(o=>mesKey(o.criado)===mesAt).length,totalAnt=vis.filter(o=>mesKey(o.criado)===mesKey(new Date(new Date().getFullYear(),new Date().getMonth()-1,15).getTime())).length;
-  const kpiBai=podeMod('Garantia')?card(4,'Baiano em campo',baiCampo.length,'n',baiCampo.length?(baiCampo.filter(baiAtrasado).length?'<span class="dn">'+baiCampo.filter(baiAtrasado).length+' atrasado(s)</span> · cobrar':'todos no prazo'):'nenhuma peça fora','#a855f7','<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.4-.4-2.4z"/>','baiano',baiCampo.some(baiAtrasado),porDia(o=>emBaiano(o))):'';
+  const kpiBai=podeMod('Garantia')?card(4,'Baiano em campo',baiCampo.length,'n',baiCampo.length?(baiCampo.filter(baiAtrasado).length?'<span class="dn">'+baiCampo.filter(baiAtrasado).length+' atrasado(s)</span> · cobrar':'todos no prazo'):'nenhuma peça fora','var(--bai)','<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.4-.4-2.4z"/>','baiano',baiCampo.some(baiAtrasado),porDia(o=>emBaiano(o))):'';
   return`<div class="wms simples moderno cc">
   <div class="w-hero"><div class="w-hero-tx"><span class="w-kick">Central de operações</span><h2>${saud}${pnome?', '+esc(pnome):''}</h2><span class="muted small"><span id="wRelogio">${relogio[0].toUpperCase()+relogio.slice(1)}</span> · ${fila.length?`<b style="color:var(--alta)">${fila.length} pendência${fila.length===1?'':'s'}</b> para olhar`:'<b style="color:var(--baixa)">tudo em dia</b>'}</span></div>
     <div class="w-acts"><span class="cc-estado ${estado[0]}"><i></i>${estado[1]}</span><button type="button" class="btn sm wbtn-at" id="wAtual"><span class="wrot">↻</span> Atualizar</button>${pode('registrar')?novoMenuHTML():''}</div></div>
   <div class="wk-grid cc-k">
-    ${podeMod('Garantia')?card(1,'Garantias pendentes',gPend.length,'n',gPend.length?'aguardando envio à loja':'tudo enviado','#f97316','<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/>','Garantia',gPend.length>0,porDia(o=>o.categoria==='Garantia')):''}
-    ${podeMod('Relatório')?card(2,'Relatórios atrasados',rAtr.length,'n',rAtr.length?'mais de 2 dias úteis sem resolver':'nada atrasado','#ef4444','<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>','relatr',rAtr.length>0,porDia(ehRel)):''}
+    ${podeMod('Garantia')?card(1,'Garantias pendentes',gPend.length,'n',gPend.length?'aguardando envio à loja':'tudo enviado','var(--gar)','<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/>','Garantia',gPend.length>0,porDia(o=>o.categoria==='Garantia')):''}
+    ${podeMod('Relatório')?card(2,'Relatórios atrasados',rAtr.length,'n',rAtr.length?'mais de 2 dias úteis sem resolver':'nada atrasado','var(--alta)','<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>','relatr',rAtr.length>0,porDia(ehRel)):''}
     ${kpiBai}
-    ${podeMod('Minucioso')?card(3,'Falta no mês',Math.round(faltaMes*100)/100,'brl',`${minMes.length} ficha${minMes.length===1?'':'s'} do Minucioso`,'#22c55e','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/>','Minucioso',false,porDia(o=>o.categoria==='Minucioso')):''}
+    ${podeMod('Minucioso')?card(3,'Falta no mês',Math.round(faltaMes*100)/100,'brl',`${minMes.length} ficha${minMes.length===1?'':'s'} do Minucioso`,'var(--min)','<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 11h6M9 15h4"/>','Minucioso',false,porDia(o=>o.categoria==='Minucioso')):''}
   </div>
   <div class="w-2col cc-b">
     <section class="wpn wpn2" style="--i:6"><div class="wpn-h"><b>Pendências</b><span class="wpn-cnt${fila.length?' tem':''}">${fila.length}</span></div>${filaS}</section>
@@ -2776,7 +2851,7 @@ function pecaHTML(){const c=ui.peca,L=ocs.filter(o=>podeMod(catDe(o))&&codPeca(o
    ${rein?`<div class="alerta" style="margin:14px 0 0"><div class="aic">${svgI('<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>')}</div><div class="atx"><b>Peça reincidente</b><small>${n('Garantia')} garantia(s) e ${n('Avaria')} avaria(s) registradas. Vale conversar com compras ou fornecedor.</small></div></div>`:''}</div>
    <div class="stats g4">${cats.map(k=>`<div class="stat"><div class="v">${n(k)}</div><div class="muted small">${nomeCat(k)}</div></div>`).join('')}</div>
    <div class="box stack" style="gap:0">${L.length?L.map(o=>`<button type="button" class="pcrow" data-pid="${esc(o.id)}"><span class="cpill" style="--k:${CARGO_COR_CAT(catDe(o))}">${esc(nomeCat(catDe(o)))}</span><span class="pcm"><b>${esc(st(o)||'—')}</b><small>${esc(nome(o.autor))}${o.endereco?' · '+esc(o.endereco):''}${o.fornecedor?' · '+esc(o.fornecedor):''}</small></span><span class="muted small">${fData(o.criado)}</span></button>`).join(''):'<p class="muted" style="margin:6px 0">Nenhum registro desta peça ainda.</p>'}</div></div>`}
-const CARGO_COR_CAT=c=>({'Garantia':'#e2621b','Relatório':'#0d9488','Minucioso':'#65a30d','Avaria':'#dc2626','Consertos Baiano':'#7c3aed'}[c]||'#64748b');
+const CARGO_COR_CAT=c=>({'Garantia':'var(--gar)','Relatório':'var(--accent)','Minucioso':'var(--min)','Avaria':'var(--alta)','Consertos Baiano':'var(--bai)'}[c]||'#64748b');
 function bindPeca(){$('pvolta').onclick=()=>{ui.peca=null;render();scrollTo(0,0)};document.querySelectorAll('[data-pid]').forEach(b=>b.onclick=()=>{ui.det=b.dataset.pid;render();scrollTo(0,0)})}
 /* resumo semanal */
 function dadosSemana(){const de=diasAtras(6),ate=hoje(),L=ocs.filter(o=>podeMod(catDe(o))&&dia(o.criado)>=de&&dia(o.criado)<=ate);
@@ -2856,7 +2931,7 @@ function atvHTML(){const q=(ui.atvQ||'').toLowerCase(),
 async function carregaAtv(){atvErro='';try{const {data,error}=await sb.from('atividade').select('*').order('quando',{ascending:false}).limit(200);if(error)throw error;atv=data||[]}catch(e){atvErro=erroMsg(e)||'Erro desconhecido';atv=[]}if(ui.tab==='equipe'&&ui.eqTab==='atv')render()}
 
 /* ---------- Equipe ---------- */
-const CARGO_COR={'Chefe de Inventário':'#e2621b','Auxiliar de Inventário':'#0d9488','Visitante':'#7c3aed'};
+const CARGO_COR={'Chefe de Inventário':'var(--gar)','Auxiliar de Inventário':'var(--accent)','Visitante':'var(--bai)'};
 function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)-ts(a.criado));
   const pend=todos.filter(p=>!p.aprovado&&!p.admin&&!p.recusado),ativos=todos.filter(p=>p.aprovado||p.admin),recus=todos.filter(p=>!p.aprovado&&!p.admin&&p.recusado);
   if(!ui.eqTab)ui.eqTab=pend.length?'pend':'ativos';
@@ -2899,7 +2974,7 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   <div class="kpis">${kpi('pend','Aguardando',pend.length,'#e0a100')}${kpi('ativos','Com acesso',ativos.length,'var(--baixa)')}${kpi('recus','Não liberados',recus.length,'var(--alta)')}${kpi('chefes','Chefes definidos',tabs[3][2],'var(--min)')}${kpi('atv','Atividade','','#6366f1')}</div>
   ${corpo}</div>`}
 const PERM_IC={'registrar':'<path d="M12 5v14M5 12h14"/>','resumo':'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>','garantia':'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>','apagar':'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
-const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','mod:Avaria':'#e11d48','registrar':'#0d9488','resumo':'#14b8a6','garantia':'#d97706','apagar':'var(--alta)'};
+const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','mod:Avaria':'var(--alta)','registrar':'var(--accent)','resumo':'var(--min)','garantia':'#d97706','apagar':'var(--alta)'};
 const geraSenha=()=>{const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];for(let i=0;i<4;i++)s+=n[Math.floor(Math.random()*n.length)];return s};
 function senhaBox(p){if(ui.senhaOk&&ui.senhaOk.id===p.id)return`<div class="sbox ok"><span class="lbl">Nova senha de ${esc(p.nome)}</span><div class="snova"><b class="mono" id="snTxt">${esc(ui.senhaOk.s)}</b><button type="button" class="btn sm" data-scopy="1">Copiar</button></div><small>Passe essa senha para a pessoa. Ela não fica salva em lugar nenhum, então anote se precisar.</small><button type="button" class="btn sm" data-sfim="1">Pronto</button></div>`;
   if(ui.senhaDe!==p.id)return`<button class="btn sm" data-senha="${esc(p.id)}">🔑 Redefinir senha</button>`;
