@@ -1287,6 +1287,37 @@ input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--fg) 38%,t
 h2+.muted,.listhead .muted{font-weight:500}
 select{background-image:none}
 .eqsearch input,#eqBusca,#atvq,#gsq{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important}.eqsearch{background:var(--surface)!important;border:1px solid var(--line2)!important;border-radius:12px!important}#atvq{background:var(--sunken)!important;border-radius:10px!important;padding:10px 12px!important}
+
+/* ===== Mais perto do visual iOS/macOS: ícones em blocos coloridos, filtros em pílula, interruptor verde ===== */
+.side .snav svg,.side .sitem .ico{width:28px!important;height:28px!important;padding:5px;border-radius:7px;color:#fff!important;flex:none;box-sizing:border-box}
+.side .sitem .ico{display:grid;place-items:center;background:var(--c)!important;padding:0}
+.side .sitem .ico svg{width:17px!important;height:17px!important;padding:0!important;background:none!important;color:#fff!important}
+.side .snav[data-goto="painel"] svg{background:#0a84ff}
+.side .snav[data-goto="lista"] svg{background:#8e8e93}
+.side .snav[data-goto="resumo"] svg{background:#ff9500}
+.side .snav[data-goto="equipe"] svg{background:#34c759}
+.side .snav[aria-current="true"] svg,.side .sitem[aria-current="true"] svg{color:#fff!important}
+.side .snav,.side .sitem{gap:10px;padding-block:7px!important;min-height:0}
+.side .snav[aria-current="true"],.side .sitem[aria-current="true"]{background:color-mix(in srgb,var(--fg) 9%,transparent)!important;color:var(--fg)!important;font-weight:600!important}
+.side .sitem .tx small{display:none}
+.side .sitem .tx b{font-weight:500}
+.side .sitem{border-left:0!important}
+.side .sitem::before,.side .sitem::after{display:none!important}
+/* filtros em pílula */
+.chip{background:color-mix(in srgb,var(--fg) 7%,transparent)!important;border:0!important;color:var(--fg)!important;border-radius:980px!important;padding:7px 14px!important;font-weight:500!important}
+.chip:hover{background:color-mix(in srgb,var(--fg) 12%,transparent)!important}
+.chip[aria-pressed="true"]{background:var(--accent)!important;color:#fff!important;font-weight:600!important}
+/* interruptor e seleção */
+.sw:checked{background:#34c759!important}
+.sw::after{box-shadow:0 2px 6px rgba(0,0,0,.3)}
+input[type=checkbox],input[type=radio]{accent-color:var(--accent)}
+/* título grande */
+h2,.listhead h2{font-size:clamp(1.9rem,3vw,2.25rem)!important;letter-spacing:-.03em!important}
+.listhead{align-items:baseline}
+/* cabeçalhos de seção pequenos e cinza, como nas listas do iOS */
+.lbl{color:var(--muted)!important;font-weight:500!important;font-size:.8rem!important;margin-left:4px}
+/* tabelas e listas com separadores finos */
+table td,table th{border-bottom:.5px solid var(--line)!important}
 </style>
 </head>
 <body>
