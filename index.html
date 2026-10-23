@@ -6,7 +6,7 @@
 <script>try{var tm=localStorage.getItem("inv_tema");if(tm==="light"||tm==="dark")document.documentElement.dataset.theme=tm}catch(e){}</script>
 <title>INVENTRA</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2048%2048%22%20aria-hidden=%22true%22%3E%3Cdefs%3E%3ClinearGradient%20id=%22lgBg%22%20x1=%220%22%20y1=%220%22%20x2=%2248%22%20y2=%2248%22%20gradientUnits=%22userSpaceOnUse%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230F3B3A%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%2306181B%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id=%22lgTop%22%20x1=%228%22%20y1=%2240%22%20x2=%2240%22%20y2=%228%22%20gradientUnits=%22userSpaceOnUse%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230D9488%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%235EEAD4%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%2248%22%20height=%2248%22%20rx=%2212%22%20fill=%22url%28%23lgBg%29%22/%3E%3Cpath%20d=%22M12.5%2020v-5a2.5%202.5%200%200%201%202.5-2.5h5M28%2012.5h5a2.5%202.5%200%200%201%202.5%202.5v5M35.5%2028v5a2.5%202.5%200%200%201-2.5%202.5h-5M20%2035.5h-5a2.5%202.5%200%200%201-2.5-2.5v-5%22%20fill=%22none%22%20stroke=%22url%28%23lgTop%29%22%20stroke-width=%223%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3Crect%20x=%2217.8%22%20y=%2218%22%20width=%222.6%22%20height=%2212%22%20rx=%221.3%22%20fill=%22url%28%23lgTop%29%22/%3E%3Crect%20x=%2222%22%20y=%2218%22%20width=%224%22%20height=%2212%22%20rx=%221.6%22%20fill=%22url%28%23lgTop%29%22/%3E%3Crect%20x=%2227.6%22%20y=%2218%22%20width=%222.6%22%20height=%2212%22%20rx=%221.3%22%20fill=%22url%28%23lgTop%29%22/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Archivo:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
 /* Layout: barra superior escura, conteúdo em coluna de 680px, navegação inferior com botão central de registrar */
 :root{
@@ -1094,6 +1094,21 @@ table th{text-transform:uppercase;letter-spacing:.07em;font-size:.66rem;color:va
 .scanmsg{color:#fff;text-align:center;font-weight:600;font-size:.92rem}
 .acgeral{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.acgeral b{font-size:2rem;font-weight:800;line-height:1}
 .acmes{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.acmes div{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border:1px solid var(--line);border-radius:10px}.acmes b{font-size:1rem}.acmes span{font-size:.72rem;color:var(--muted);text-transform:capitalize}
+
+/* ===== Passada de design: títulos em Archivo, rótulos em frase, etiqueta de prateleira ===== */
+:root{--head:"Archivo","Inter",system-ui,sans-serif}
+h1,h2,h3,.hero h1,.wk-hero h1,.listhead h2,.wpn-h b,.brand h1{font-family:var(--head)}
+h2,.listhead h2{font-weight:800;letter-spacing:-.01em}
+.lbl,.sidesec,.pkick,.listhead .muted,.pgh span,.wh-k,.hero .kick,.w-kick,.wk-rot,.wpn-h b,.wn-tit,.subhead,.dt,.pc-sel,.pst,.aparencia .lb,.wb-d,.cc-estado{text-transform:none!important;letter-spacing:0!important;font-size:.82rem!important;font-weight:650!important}
+table th,.btab th,.wt th{text-transform:none!important;letter-spacing:0!important;font-size:.78rem!important;font-weight:650!important}
+.cat,.gst,.chip{text-transform:none!important;letter-spacing:0!important;font-size:.76rem!important;font-weight:700!important}
+.btn.primary,button.primary{text-transform:none!important;letter-spacing:0!important;font-weight:700!important;font-size:.92rem}
+.brand h1{letter-spacing:.12em;font-weight:800}
+/* endereço do estoque como etiqueta de prateleira */
+.addr{background:#fff!important;color:#111!important;border:1.5px solid #111;border-left:6px solid var(--accent);border-radius:3px!important;padding:1px 8px 1px 7px!important;font-family:var(--head)!important;font-weight:800!important;font-size:.82rem!important;letter-spacing:.02em;white-space:nowrap;box-shadow:0 1px 0 rgba(0,0,0,.25)}
+/* números grandes */
+.wk-grid .big,.wk-grid b,.stat .v,.mesnum b,.setnums b,.acgeral b{font-family:var(--head)!important;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+@media (max-width:700px){.topin .brand{flex:none}.hdr{flex:1;min-width:0}.gs{flex:1;min-width:0;margin:0}}
 </style>
 </head>
 <body>
