@@ -1318,10 +1318,48 @@ h2,.listhead h2{font-size:clamp(1.9rem,3vw,2.25rem)!important;letter-spacing:-.0
 .lbl{color:var(--muted)!important;font-weight:500!important;font-size:.8rem!important;margin-left:4px}
 /* tabelas e listas com separadores finos */
 table td,table th{border-bottom:.5px solid var(--line)!important}
+
+/* ===== Acabamento corporativo ===== */
+.skip{position:absolute;left:-999px;top:8px;z-index:300;background:var(--accent);color:#fff;padding:10px 16px;border-radius:10px;font-weight:600}
+.skip:focus{left:12px}
+.iconbtn{position:relative;display:grid;place-items:center;width:38px;height:38px;border:0;border-radius:50%;background:rgba(120,120,128,.14);color:var(--fg);cursor:pointer;padding:0}
+.iconbtn:hover{background:rgba(120,120,128,.24)}.iconbtn svg{width:19px;height:19px}
+.bellN{position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--alta);color:#fff;font-size:.68rem;font-weight:700;display:grid;place-items:center;border:2px solid var(--bg)}
+.bellw,.umw{position:relative}
+.ubtn{border:0;background:none;padding:0;cursor:pointer;border-radius:50%;display:grid;place-items:center}
+.uav{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:.8rem;flex:none}.uav.big{width:42px;height:42px;font-size:.95rem}
+.pop{position:absolute;right:0;top:calc(100% + 10px);width:min(340px,92vw);background:color-mix(in srgb,var(--surface) 88%,transparent);-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);border:.5px solid var(--line2);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.22);padding:8px;z-index:90;display:flex;flex-direction:column;gap:2px}
+.pop[hidden]{display:none}
+.pop-h{font-weight:700;font-size:.95rem;padding:8px 10px 6px}
+.pop-i{display:flex;align-items:center;gap:12px;text-align:left;border:0;background:none;color:var(--fg);padding:10px;border-radius:10px;cursor:pointer;font:inherit}
+.pop-i:hover,.pop-i:focus-visible{background:color-mix(in srgb,var(--fg) 8%,transparent)}
+.pop-t{display:flex;flex-direction:column;min-width:0}.pop-t b{font-weight:600;font-size:.9rem}.pop-t small{color:var(--muted);font-size:.8rem}
+.pop-ic{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;flex:none;color:#fff;background:var(--accent)}.pop-ic svg{width:18px;height:18px}
+.pop-i.alta .pop-ic{background:var(--alta)}.pop-i.media .pop-ic{background:var(--gar)}.pop-i.info .pop-ic{background:var(--accent)}.pop-ic.ok{background:var(--min)}
+.pop-v{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 10px;text-align:center}.pop-v small{color:var(--muted)}
+.u-h{display:flex;align-items:center;gap:12px;padding:10px;border-bottom:.5px solid var(--line);margin-bottom:4px}
+.pop-i.danger b{color:var(--alta)}
+.topbar #sair{display:none!important}
+@media (max-width:1100px){.who{display:none!important}}
+@media (max-width:700px){.bellw,.umw{position:static}.pop{position:fixed;left:10px;right:10px;top:68px;width:auto}}
+/* migalhas */
+.migalhas{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:.82rem;color:var(--muted);margin:0 0 10px}
+.migalhas button{border:0;background:none;color:var(--accent);padding:0;font:inherit;cursor:pointer}.migalhas button:hover{text-decoration:underline}
+.migalhas .cur{color:var(--fg);font-weight:600}.migalhas .sep{opacity:.5}
+/* carregamento */
+.skelw{max-width:1180px;margin:28px auto;padding:0 16px;display:flex;flex-direction:column;gap:16px}
+.skel{border-radius:18px;background:linear-gradient(90deg,color-mix(in srgb,var(--fg) 6%,transparent) 25%,color-mix(in srgb,var(--fg) 12%,transparent) 50%,color-mix(in srgb,var(--fg) 6%,transparent) 75%);background-size:200% 100%;animation:skelmv 1.4s linear infinite}
+.skel.h{height:96px}.skel.c{height:120px}.skel.b{height:260px}.skel-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+@keyframes skelmv{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}}
+/* estados vazios */
+.empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:44px 20px!important;text-align:center;color:var(--muted);border:1px dashed var(--line2);border-radius:18px;background:transparent}
+.empty::before{content:"";width:46px;height:46px;border-radius:50%;background:color-mix(in srgb,var(--fg) 7%,transparent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-6l-2 3h-4l-2-3H2'/%3E%3Cpath d='M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1z'/%3E%3C/svg%3E") center/24px no-repeat}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="INVENTRA, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBgH" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2C2C2E"/><stop offset="1" stop-color="#0B0B0C"/></linearGradient><linearGradient id="lgTopH" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0A84FF"/><stop offset="1" stop-color="#64D2FF"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBgH)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTopH)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTopH)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/></svg></span><h1>INVENTRA</h1></button></div><div class="hdr"><div class="gs" id="gs" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="gsq" type="search" placeholder="Buscar peça por código ou nome  ( / )" autocomplete="off" aria-label="Buscar peça"><button type="button" id="gscam" class="gscam" title="Ler código de barras com a câmera" aria-label="Ler código de barras com a câmera"></button><div id="gsres" class="gsres" hidden></div></div><div class="who" id="who"></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
+<a class="skip" href="#view">Pular para o conteúdo</a>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="INVENTRA, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBgH" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2C2C2E"/><stop offset="1" stop-color="#0B0B0C"/></linearGradient><linearGradient id="lgTopH" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0A84FF"/><stop offset="1" stop-color="#64D2FF"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBgH)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTopH)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTopH)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/></svg></span><h1>INVENTRA</h1></button></div><div class="hdr"><div class="gs" id="gs" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="gsq" type="search" placeholder="Buscar peça por código ou nome  ( / )" autocomplete="off" aria-label="Buscar peça"><button type="button" id="gscam" class="gscam" title="Ler código de barras com a câmera" aria-label="Ler código de barras com a câmera"></button><div id="gsres" class="gsres" hidden></div></div><div class="bellw"><button type="button" id="bell" class="iconbtn" aria-label="Notificações" aria-haspopup="true" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span id="bellN" class="bellN" hidden></span></button><div id="bellpop" class="pop" role="menu" hidden></div></div><div class="who" id="who"></div><div class="umw"><button type="button" id="uBtn" class="ubtn" aria-label="Menu da conta" aria-haspopup="true" aria-expanded="false" hidden></button><div id="uPop" class="pop upop" role="menu" hidden></div></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <div id="alertas"></div>
@@ -1334,7 +1372,7 @@ table td,table th{border-bottom:.5px solid var(--line)!important}
   <button data-tab="resumo"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Resumo</button>
   <button data-tab="equipe"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20c0-2.6-1.6-4.8-4-5.6"/></svg></span>Equipe<span class="badge" id="badge" hidden></span></button>
 </nav>
-<div class="toast" id="toast" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script type="text/plain" id="sql">-- Inventário CD: estrutura do banco (rode uma vez no SQL Editor do Supabase)
 
@@ -1908,15 +1946,15 @@ function novo(){return{cat:ui.cat||'Garantia',setor:ui.cat==='Minucioso'?ui.seto
 
 function render(){
   {const rf=$('rodape');if(rf&&!rf.innerHTML)rf.innerHTML=rodapeHTML()}
-  const v=$('view'),fora=()=>{const al=$('alertas');if(al)al.innerHTML='';$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';$('side').hidden=true;if($('gs'))$('gs').hidden=true;abreMenu(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
+  const v=$('view'),fora=()=>{const al=$('alertas');if(al)al.innerHTML='';$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';{const b=$('bell'),u=$('uBtn');if(b)b.hidden=true;if(u)u.hidden=true}$('side').hidden=true;if($('gs'))$('gs').hidden=true;abreMenu(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
   if(!sb)return;
   document.body.classList.toggle('auth',!uid);
   if(!uid){fora();if(tela==='cadastro'){v.innerHTML=cadastroHTML();bindCadastro()}else{v.innerHTML=loginHTML();bindLogin()}return}
-  if(!carregou){fora();v.innerHTML='<div class="center box"><p class="muted">Carregando…</p></div>';return}
+  if(!carregou){fora();v.innerHTML=skelHTML();return}
   if(!eu){fora();v.innerHTML='<div class="center box stack"><h2>Perfil não encontrado</h2><p>Sua conta existe, mas o perfil não foi criado. Peça ao administrador para conferir a configuração do banco (passo do SQL).</p></div>';return}
   if(!eu.aprovado&&!eu.admin&&eu.recusado){fora();v.innerHTML=`<div class="center box stack"><h2>Acesso não liberado</h2><p>Olá, ${esc(eu.nome)}. O administrador não liberou seu acesso ao app. Se acha que é um engano, fale com ele.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
   if(!eu.aprovado&&!eu.admin){fora();v.innerHTML=`<div class="center box stack"><h2>Cadastro enviado</h2><p>Olá, ${esc(eu.nome)}. Seu cadastro foi recebido e está aguardando o administrador liberar o acesso.</p><button class="btn" id="recheck">Verificar de novo</button></div>`;$('recheck').onclick=carregar;return}
-  $('nav').hidden=false;$('gs').hidden=false;$('sair').hidden=false;$('side').hidden=false;$('menuBtn').hidden=false;document.body.classList.add('withside');renderSide();$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo)+(galpaoNome?' · '+galpaoNome:'');
+  $('nav').hidden=false;$('gs').hidden=false;$('sair').hidden=false;$('side').hidden=false;$('menuBtn').hidden=false;document.body.classList.add('withside');renderSide();$('who').textContent=eu.nome+' · '+cargoNome(eu.cargo)+(galpaoNome?' · '+galpaoNome:'');pintaTopo();
   const pend=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
   $('badge').hidden=!(eu.admin&&pend);$('badge').textContent=pend;{let mb=$('menuBtn').querySelector('.mb');if(eu.admin&&pend){if(!mb){mb=document.createElement('span');mb.className='mb';$('menuBtn').appendChild(mb)}mb.textContent=pend}else if(mb)mb.remove()}
   document.querySelector('[data-tab=resumo]').hidden=!pode('resumo');document.querySelector('[data-tab=equipe]').hidden=!eu.admin;
@@ -1942,6 +1980,7 @@ function render(){
   else if(ui.tab==='painel'){v.innerHTML=painelHTML();bindPainel()}
   else if(ui.tab==='resumo'){v.innerHTML=resumoHTML();bindCards();bindResumo()}
   else{v.innerHTML=equipeHTML();bindEquipe()}
+  poeMigalhas();
   pedirUrls();
 }
 
@@ -3064,6 +3103,45 @@ function atvHTML(){const q=(ui.atvQ||'').toLowerCase(),
   return`<div class="box stack" style="gap:10px"><input id="atvq" type="search" placeholder="Filtrar por pessoa, peça ou ação" value="${esc(ui.atvQ||'')}" aria-label="Filtrar atividade"><div class="muted small">Últimas ${atv.length} ações · só o Chefe vê esta lista</div>
    ${L.length?L.map(x=>`<div class="atvrow"><span class="cpill" style="--k:${cor[x.acao]||'#64748b'}">${esc(x.acao)}</span><span class="pcm"><b>${esc(nome(x.usuario))} · ${esc(nomeCat(x.categoria||''))}</b><small>${esc(x.resumo||'')}</small></span><span class="muted small">${fData(x.quando)}</span></div>`).join(''):'<p class="muted small" style="margin:0">Nada por aqui ainda.</p>'}</div>`}
 async function carregaAtv(){atvErro='';try{const {data,error}=await sb.from('atividade').select('*').order('quando',{ascending:false}).limit(200);if(error)throw error;atv=data||[]}catch(e){atvErro=erroMsg(e)||'Erro desconhecido';atv=[]}if(ui.tab==='equipe'&&ui.eqTab==='atv')render()}
+
+/* ---------- Topo corporativo: notificações, menu da conta, migalhas, carregamento ---------- */
+const IC_BELLOK='<path d="M20 6 9 17l-5-5"/>';
+function skelHTML(){return'<div class="skelw" aria-busy="true" aria-label="Carregando"><div class="skel h"></div><div class="skel-g"><div class="skel c"></div><div class="skel c"></div><div class="skel c"></div><div class="skel c"></div></div><div class="skel b"></div></div>'}
+function notifs(){const L=[];if(!eu)return L;const at=relAtrasados();
+  if(at.length)L.push({tone:'alta',ic:'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>',t:at.length+' relatório'+(at.length===1?'':'s')+' atrasado'+(at.length===1?'':'s'),s:'Mais de 2 dias úteis sem resolver',go:()=>{ui={...ui,tab:'lista',cat:'Relatório',setor:'',det:null,relSt:'atr',peca:null};render();scrollTo(0,0)}});
+  if(podeMod('Garantia')){const qa=ocs.filter(baiAtrasado).length,qv=ocs.filter(o=>!baiAtrasado(o)&&baiVence(o)).length;
+    if(qa||qv)L.push({tone:qa?'alta':'media',ic:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.4-.4-2.4z"/>',t:'Cobrar o Baiano',s:[qa?qa+' atrasado'+(qa===1?'':'s'):'',qv?qv+' vence'+(qv===1?'':'m')+' em até 2 dias':''].filter(Boolean).join(' e '),go:()=>{ui={...ui,tab:'lista',cat:'Garantia',gst:'Conserto Baiano',setor:'',det:null,peca:null};render();scrollTo(0,0)}});
+    const gp=ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')==='Pendente').length;
+    if(gp)L.push({tone:'info',ic:'<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/>',t:gp+' garantia'+(gp===1?'':'s')+' pendente'+(gp===1?'':'s'),s:'Aguardando envio à loja',go:()=>{ui={...ui,tab:'lista',cat:'Garantia',gst:'Pendente',setor:'',det:null,peca:null};render();scrollTo(0,0)}})}
+  if(eu.admin){const pe=Object.values(perfis).filter(p=>!p.aprovado&&!p.admin&&!p.recusado).length;
+    if(pe)L.push({tone:'info',ic:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M19 8v6M16 11h6"/>',t:pe+' pessoa'+(pe===1?'':'s')+' aguardando acesso',s:'Libere ou recuse na aba Equipe',go:()=>{ui.eqTab='pend';go('equipe');ui.eqTab='pend';render()}})}
+  return L}
+function fechaPops(){['bellpop','uPop'].forEach(i=>{const e=$(i);if(e)e.hidden=true});['bell','uBtn'].forEach(i=>{const e=$(i);if(e)e.setAttribute('aria-expanded','false')})}
+function pintaTopo(){if(!eu)return;const N=notifs(),b=$('bell'),n=$('bellN');b.hidden=false;n.hidden=!N.length;n.textContent=N.length;
+  b.setAttribute('aria-label','Notificações'+(N.length?' ('+N.length+')':''));
+  $('bellpop').innerHTML='<div class="pop-h">Notificações</div>'+(N.length?N.map((x,i)=>`<button type="button" class="pop-i ${x.tone}" role="menuitem" data-ni="${i}"><span class="pop-ic">${svgI(x.ic)}</span><span class="pop-t"><b>${esc(x.t)}</b><small>${esc(x.s)}</small></span></button>`).join(''):`<div class="pop-v"><span class="pop-ic ok">${svgI(IC_BELLOK)}</span><b>Tudo em dia</b><small>Nenhuma pendência no momento.</small></div>`);
+  $('bellpop').querySelectorAll('[data-ni]').forEach(el=>el.onclick=()=>{fechaPops();N[+el.dataset.ni].go()});
+  const u=$('uBtn');u.hidden=false;u.innerHTML=`<span class="uav" style="background:${corNome(eu.nome)}">${esc(iniciais(eu.nome))}</span>`;
+  $('uPop').innerHTML=`<div class="u-h"><span class="uav big" style="background:${corNome(eu.nome)}">${esc(iniciais(eu.nome))}</span><span class="pop-t"><b>${esc(eu.nome)}</b><small>${esc(cargoNome(eu.cargo))}${galpaoNome?' · '+esc(galpaoNome):''}</small></span></div>
+   <button type="button" class="pop-i" role="menuitem" id="uTema"><span class="pop-t"><b>Alternar tema claro e escuro</b></span></button>
+   <button type="button" class="pop-i danger" role="menuitem" id="uSair"><span class="pop-t"><b>Sair</b></span></button>`;
+  $('uTema').onclick=()=>{fechaPops();alternaTema()};$('uSair').onclick=()=>{fechaPops();$('sair').click()}}
+document.addEventListener('click',e=>{const bb=e.target.closest&&e.target.closest('#bell'),ub=e.target.closest&&e.target.closest('#uBtn');
+  if(bb||ub){const alvo=bb?'bellpop':'uPop',btn=bb?'bell':'uBtn',abrir=$(alvo).hidden;fechaPops();if(abrir){$(alvo).hidden=false;$(btn).setAttribute('aria-expanded','true')}return}
+  if(!(e.target.closest&&e.target.closest('.pop')))fechaPops()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fechaPops()});
+function poeMigalhas(){const v=$('view');if(!v||ui.tab==='painel'||!eu)return;
+  const ra=[['INVENTRA',()=>go('painel')]];
+  if(ui.peca)ra.push(['Histórico da peça']);
+  else if(ui.tab==='resumo')ra.push(['Resumo']);
+  else if(ui.tab==='equipe')ra.push(['Equipe']);
+  else if(ui.tab==='nova')ra.push(['Novo registro']);
+  else if(ui.tab==='lista'){const od=ui.det&&ocs.find(x=>x.id===ui.det),cn=od?(od.categoria||'Relatório'):ui.cat;ra.push([cn||'Registros',ui.det?()=>{ui.det=null;render()}:null]);if(!ui.det&&cn==='Minucioso'&&ui.setor)ra.push([ui.setor]);if(ui.det)ra.push(['Detalhe'])}
+  else return;
+  const n=document.createElement('div');n.className='migalhas';n.setAttribute('role','navigation');n.setAttribute('aria-label','Você está em');
+  ra.forEach(([tx,fn],i)=>{if(i)n.appendChild(Object.assign(document.createElement('span'),{className:'sep',textContent:'›',ariaHidden:'true'}));
+    if(fn&&i<ra.length-1){const b=document.createElement('button');b.type='button';b.textContent=tx;b.onclick=fn;n.appendChild(b)}else{const s=document.createElement('span');s.className='cur';s.textContent=tx;if(i===ra.length-1)s.setAttribute('aria-current','page');n.appendChild(s)}});
+  v.insertBefore(n,v.firstChild)}
 
 /* ---------- Equipe ---------- */
 const CARGO_COR={'Chefe de Inventário':'var(--gar)','Auxiliar de Inventário':'var(--accent)','Visitante':'var(--bai)'};
